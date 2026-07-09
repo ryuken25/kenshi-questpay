@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --color-base: #0B0D14;
+  --color-base-light: #12141D;
+  --color-base-lighter: #1A1D2B;
+  --color-verse-purple: #7C5CFF;
+  --color-verse-blue: #39D0FF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-base);
+  color: #e2e8f0;
+}
+
+.glass-panel {
+  background: rgba(18, 20, 29, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(124, 92, 255, 0.15);
+}
+
+.glass-panel-strong {
+  background: rgba(18, 20, 29, 0.85);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(124, 92, 255, 0.2);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7C5CFF 0%, #39D0FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, #7C5CFF, #39D0FF);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glow-purple {
+  box-shadow: 0 0 40px rgba(124, 92, 255, 0.3), 0 0 80px rgba(124, 92, 255, 0.1);
+}
+
+.glow-blue {
+  box-shadow: 0 0 40px rgba(57, 208, 255, 0.3), 0 0 80px rgba(57, 208, 255, 0.1);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(124, 92, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(124, 92, 255, 0.6); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 92, 255, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 92, 255, 0.6);
+}

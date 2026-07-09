@@ -1,0 +1,40 @@
+{
+  "name": "kenshi-questpay",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "wallet:create": "tsx scripts/create-dev-wallet.ts",
+    "wallet:balance": "tsx scripts/check-deployer-balance.ts",
+    "deploy:contract": "npx hardhat run scripts/deploy-service-pass.ts --network baseSepolia"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0",
+    "@tanstack/react-query": "^5.51.0",
+    "ethers": "^6.13.0",
+    "framer-motion": "^11.3.0",
+    "gsap": "^3.12.5",
+    "lucide-react": "^0.400.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "viem": "^2.17.0",
+    "wagmi": "^2.11.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "hardhat": "^2.22.0",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
