@@ -27,3 +27,5 @@ next-env.d.ts
 artifacts/
 cache/
 typechain-types/
+.vercel
+.env*
