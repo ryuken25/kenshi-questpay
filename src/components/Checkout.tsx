@@ -130,12 +130,16 @@ export default function Checkout({ selectedPackage, onTxSuccess }: CheckoutProps
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <h2 className="font-sora text-3xl sm:text-4xl font-bold text-white mb-4">
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-verse-blue">Package → Brief → Wallet → Receipt</p>
+          <h2 className="font-sora text-3xl sm:text-4xl font-bold text-white mb-4 mt-3">
             <span className="gradient-text">Checkout</span> Desk
           </h2>
-          <p className="text-gray-400 font-inter">Fill your brief, connect wallet, and pay</p>
+          <p className="text-gray-400 font-inter">Fill your brief, connect wallet, and pay on Base Sepolia.</p>
+          <div className="mt-5 grid grid-cols-4 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-2 text-[10px] font-bold text-gray-400 sm:text-xs">
+            {['Package','Brief','Wallet','Receipt'].map((step, i) => <span key={step} className="rounded-xl bg-black/20 px-2 py-2">{i + 1}. {step}</span>)}
+          </div>
         </motion.div>
 
         <motion.form
@@ -205,13 +209,13 @@ export default function Checkout({ selectedPackage, onTxSuccess }: CheckoutProps
             <label className="block text-sm text-gray-400 mb-2 font-inter">
               Package <span className="text-red-400">*</span>
             </label>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {PACKAGES.map((pkg) => (
                 <button
                   key={pkg.id}
                   type="button"
                   onClick={() => updateField("packageId", pkg.id)}
-                  className={`py-2 px-1 rounded-xl text-center transition-all text-xs font-mono ${
+                  className={`min-h-14 rounded-xl px-3 py-3 text-left transition-all text-xs font-mono ${
                     form.packageId === pkg.id
                       ? "bg-verse-purple/30 border border-verse-purple text-white"
                       : "bg-base-lighter border border-white/5 text-gray-500 hover:border-verse-purple/30"

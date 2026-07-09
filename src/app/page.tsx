@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Web3Provider } from "@/components/Web3Provider";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import WhatIsThis from "@/components/WhatIsThis";
 import PinnedStory from "@/components/PinnedStory";
 import Packages from "@/components/Packages";
+import ContractProof from "@/components/ContractProof";
 import Checkout from "@/components/Checkout";
 import Receipt from "@/components/Receipt";
 import FAQ from "@/components/FAQ";
@@ -29,8 +31,10 @@ export default function HomePage() {
       <Navbar />
       <main>
         <Hero />
+        <WhatIsThis />
         <PinnedStory />
         <Packages selectedPackage={selectedPackage} onSelect={setSelectedPackage} />
+        <ContractProof />
         <Checkout selectedPackage={selectedPackage} onTxSuccess={setReceipt} />
         <Receipt receipt={receipt} />
         <FAQ />

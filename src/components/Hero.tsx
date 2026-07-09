@@ -1,109 +1,64 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
+import { brandAssets } from "@/data/brand-assets";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-verse-purple/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-verse-blue/10 rounded-full blur-[120px]" />
+    <section className="relative min-screen-safe overflow-hidden px-4 pb-14 pt-24 sm:px-6 lg:px-8 lg:pt-28">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 top-24 h-72 w-72 rounded-full bg-verse-purple/20 blur-[110px]" />
+        <div className="absolute -right-24 bottom-24 h-72 w-72 rounded-full bg-verse-blue/20 blur-[110px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,92,255,.12),transparent_42%)]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Text */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-verse-purple mb-6 font-mono">
-              <span className="w-2 h-2 rounded-full bg-verse-purple animate-pulse" />
-              VIBE CODING WITH VERSE — July 2025
+      <div className="relative z-10 mx-auto w-full max-w-7xl">
+        <div className="grid gap-8 lg:grid-cols-[0.98fr_1.02fr] lg:items-center">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-verse-purple/20 bg-verse-purple/10 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-verse-purple">
+              <Image src={brandAssets.verseMark} alt="Verse mark" width={18} height={18} />
+              VIBE CODING WITH VERSE — July Entry
             </div>
 
-            <h1 className="font-sora text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              <span className="text-white">Skip the DM Chaos.</span>
-              <br />
-              <span className="gradient-text">Get a Clean Brief.</span>
-              <br />
-              <span className="text-white">Pay with Crypto.</span>
+            <h1 className="hero-title mt-5 font-sora font-black text-white">
+              QuestPay
             </h1>
-
-            <p className="text-gray-400 text-lg mb-8 max-w-lg font-inter leading-relaxed">
-              Micro-commission checkout for creators. Submit a structured brief, pay with Base Sepolia ETH, 
-              and receive an NFT Service Pass as proof of your quest.
+            <p className="mt-4 max-w-2xl text-base leading-7 text-gray-300 sm:text-lg lg:text-xl">
+              A crypto checkout desk for small creator jobs: clear brief, fixed package, Base Sepolia payment, and an NFT Service Pass receipt.
+            </p>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
+              Built as a community demo for VERSE / Bitcoin.com-style Web3 flows — not an official Bitcoin.com product.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="#checkout"
-                className="px-8 py-3 rounded-xl bg-verse-purple text-white font-sora font-semibold text-sm hover:bg-verse-purple/80 transition-all glow-purple text-center"
-              >
-                Start Your Quest →
-              </a>
-              <a
-                href="#packages"
-                className="px-8 py-3 rounded-xl glass-panel text-gray-300 font-sora font-semibold text-sm hover:border-verse-purple/50 transition-all text-center"
-              >
-                View Packages
-              </a>
+            <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
+              <a href="#checkout" className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-verse-purple px-6 py-3 text-center font-sora text-sm font-bold text-white shadow-[0_0_38px_rgba(124,92,255,.28)] transition hover:bg-verse-purple/80">Start a Quest</a>
+              <a href="#what" className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-center font-sora text-sm font-bold text-gray-200 transition hover:border-verse-blue/40 hover:bg-verse-blue/10">See How It Works</a>
+              <a href="#proof" className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-green-400/20 bg-green-400/10 px-6 py-3 text-center font-sora text-sm font-bold text-green-300 transition hover:bg-green-400/15">View Contract</a>
+            </div>
+
+            <div className="mt-6 grid grid-cols-3 gap-2 text-center text-[11px] font-bold text-gray-400 sm:max-w-xl">
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Real</span> test tx</div>
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Private</span> brief</div>
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Base</span> Sepolia</div>
             </div>
           </motion.div>
 
-          {/* Right: Animated QuestPass Card */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex justify-center"
-          >
-            <div className="relative">
-              <div className="w-80 h-[420px] rounded-2xl glass-panel-strong glow-purple animate-float p-6 flex flex-col justify-between">
-                {/* Card top */}
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="font-sora font-bold text-sm gradient-text">QUESTPASS™</span>
-                    <span className="text-xs text-gray-500 font-mono">NFT</span>
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.08 }} className="mx-auto w-full max-w-md lg:max-w-lg">
+            <div className="relative rounded-[2rem] border border-white/10 bg-[#11131D]/85 p-4 shadow-[0_26px_90px_rgba(0,0,0,.5)] backdrop-blur-xl sm:p-5">
+              <div className="absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-verse-purple/20 to-verse-blue/10 blur-2xl" />
+              <Image src={brandAssets.questpayPass} alt="QuestPay pass" width={400} height={240} className="w-full rounded-[1.5rem]" priority />
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {["Brief", "Wallet", "NFT Receipt"].map((label, i) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <p className="font-mono text-[10px] text-gray-500">0{i + 1}</p>
+                    <p className="mt-1 text-sm font-bold text-white">{label}</p>
                   </div>
-                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-verse-purple to-verse-blue flex items-center justify-center text-3xl mb-4">
-                    ⚔️
-                  </div>
-                  <h3 className="font-sora text-white text-lg font-semibold mb-1">Service Pass #0001</h3>
-                  <p className="text-gray-500 text-xs font-mono">Base Sepolia • ERC-1155</p>
-                </div>
-
-                {/* Card details */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center py-2 border-t border-white/5">
-                    <span className="text-xs text-gray-500">Package</span>
-                    <span className="text-xs text-white font-mono">Standard ⚔️</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-t border-white/5">
-                    <span className="text-xs text-gray-500">Price</span>
-                    <span className="text-xs text-verse-blue font-mono">0.0003 ETH</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-t border-white/5">
-                    <span className="text-xs text-gray-500">Status</span>
-                    <span className="text-xs text-green-400 font-mono flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                      Active
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card bottom */}
-                <div className="pt-4 border-t border-white/5">
-                  <p className="text-[10px] text-gray-600 font-mono truncate">
-                    questpay:20250709:a3f8b2c1
-                  </p>
-                </div>
+                ))}
               </div>
-
-              {/* Glow behind card */}
-              <div className="absolute inset-0 -z-10 bg-verse-purple/20 rounded-2xl blur-[60px] scale-110" />
+              <div className="mt-3 rounded-2xl border border-verse-blue/20 bg-verse-blue/10 p-3">
+                <p className="hash-chip text-xs text-verse-blue">questpay:20260710:a3f8b2c1 → on-chain proof hash</p>
+              </div>
             </div>
           </motion.div>
         </div>

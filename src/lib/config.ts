@@ -14,11 +14,11 @@ export const APP_CONFIG = {
 } as const;
 
 export const PACKAGES = [
-  { id: 1, name: "Quick Fix", price: "0.0001", priceWei: 100000000000000n, description: "Small bug fix or minor tweak", emoji: "⚡" },
-  { id: 2, name: "Mini Quest", price: "0.0002", priceWei: 200000000000000n, description: "Small feature or component", emoji: "🎯" },
-  { id: 3, name: "Standard", price: "0.0003", priceWei: 300000000000000n, description: "Medium feature or page build", emoji: "⚔️" },
-  { id: 4, name: "Boss Battle", price: "0.0004", priceWei: 400000000000000n, description: "Complex feature or integration", emoji: "🐉" },
-  { id: 5, name: "Legendary", price: "0.0005", priceWei: 500000000000000n, description: "Full project or major build", emoji: "👑" },
+  { id: 1, name: "Quick Fix Pass", price: "0.0001", priceWei: 100000000000000n, description: "Small UI fix, quick bug review, or tiny landing polish.", emoji: "⚡" },
+  { id: 2, name: "Mini Quest Pass", price: "0.0002", priceWei: 200000000000000n, description: "Small component, copy polish, or short design pass.", emoji: "🎯" },
+  { id: 3, name: "Standard Quest Pass", price: "0.0003", priceWei: 300000000000000n, description: "Medium page/feature build or Web3 wallet integration review.", emoji: "⚔️" },
+  { id: 4, name: "Boss Battle Pass", price: "0.0004", priceWei: 400000000000000n, description: "Complex bug, multi-section page, or deployment rescue.", emoji: "🐉" },
+  { id: 5, name: "Legendary Quest Pass", price: "0.0005", priceWei: 500000000000000n, description: "Large custom scoped request.", emoji: "👑" },
 ] as const;
 
 export const CONTRACT_ABI = [
