@@ -4,7 +4,7 @@ export const APP_CONFIG = {
   chainName: process.env.NEXT_PUBLIC_CHAIN_NAME || "Base Sepolia",
   rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || "https://sepolia.base.org",
   blockExplorer: process.env.NEXT_PUBLIC_BLOCK_EXPLORER || "https://sepolia.basescan.org",
-  contractAddress: (process.env.NEXT_PUBLIC_KENSHI_SERVICE_PASS_ADDRESS || "") as `0x${string}`,
+  contractAddress: (process.env.NEXT_PUBLIC_KENSHI_SERVICE_PASS_ADDRESS || "0x1e8d3843096C2f8A85e30C205B67e8eFfCB69029") as `0x${string}`,
   creator: {
     github: process.env.NEXT_PUBLIC_CREATOR_GITHUB || "",
     x: process.env.NEXT_PUBLIC_CREATOR_X || "",

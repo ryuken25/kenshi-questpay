@@ -1,0 +1,9 @@
+{
+  "network": "baseSepolia",
+  "chainId": 84532,
+  "contract": "KenshiServicePass",
+  "address": "0x1e8d3843096C2f8A85e30C205B67e8eFfCB69029",
+  "deployer": "0x832a40E8A18E1De4ca858eCCd74f5B2622eD31e8",
+  "txHash": "0x2f79ab2e03e7968adbf1f0972547160f0eaf85940f3d033a1dc5a4a91820133e",
+  "deployedAt": "2026-07-09T16:04:41.240Z"
+}
