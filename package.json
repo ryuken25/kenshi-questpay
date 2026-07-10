@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "wallet:create": "tsx scripts/create-dev-wallet.ts",
     "wallet:balance": "tsx scripts/check-deployer-balance.ts",
     "deploy:contract": "npx hardhat run scripts/deploy-service-pass.ts --network baseSepolia"

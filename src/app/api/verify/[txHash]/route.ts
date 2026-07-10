@@ -84,8 +84,8 @@ export async function GET(
 
       if (result.ok) {
         return NextResponse.json({
-          ok: true,
           ...result,
+          ok: true,
           note: "Stateless verification — not linked to a specific order.",
         });
       }

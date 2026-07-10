@@ -6,6 +6,8 @@
       "dom.iterable",
       "esnext"
     ],
+    "typeRoots": ["./node_modules/@types", "./node_modules/next/types"],
+    "types": ["node", "react", "react-dom", "next"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

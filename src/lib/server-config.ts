@@ -54,3 +54,17 @@ export function isValidAddress(addr: string): boolean {
 /** True when the receive address is present and valid. */
 export const receiveAddressValid =
   Boolean(QUESTPAY_RECEIVE_ADDRESS) && isValidAddress(QUESTPAY_RECEIVE_ADDRESS);
+
+import { createClient } from "@supabase/supabase-js";
+
+/** Fetch a sanitized order by public_id (no brief/contact in response). */
+export async function getServerSideOrder(publicOrderId: string) {
+  if (!hasSupabase) return null;
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data } = await supabase
+    .from("orders")
+    .select("public_order_id,slug,status,amount_human,token_symbol,created_at")
+    .eq("public_order_id", publicOrderId)
+    .single();
+  return data;
+}

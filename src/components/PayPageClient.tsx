@@ -158,7 +158,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
             { type: "function", name: "transfer", stateMutability: "nonpayable", inputs: [{ type: "address" }, { type: "uint256" }], outputs: [{ type: "bool" }] },
           ],
           functionName: "transfer",
-          args: [receiveAddress, value],
+          args: [receiveAddress as `0x${string}`, value],
         });
         hash = await provider.request({
           method: "eth_sendTransaction",
