@@ -3,6 +3,7 @@ import { Github } from "lucide-react";
 import { SITE } from "@/lib/site";
 
 export default function Footer() {
+  const buildSha = (process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_BUILD_SHA || "local").slice(0, 7);
   return (
     <footer className="border-t border-white/5 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,6 +29,9 @@ export default function Footer() {
             <Link href="/terms" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
               Terms
             </Link>
+            <Link href="/studio/login" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              Creator Studio
+            </Link>
             <span className="text-xs text-gray-700 font-mono">
               {SITE.realNetwork}
             </span>
@@ -35,7 +39,10 @@ export default function Footer() {
         </div>
         <div className="mt-8 text-center">
           <p className="text-[10px] text-gray-700 font-mono">
-            Built with Next.js, wagmi, viem, Supabase & Nodemailer • {SITE.realNetwork}
+            QuestPay v2 • build {buildSha} • Polygon mainnet
+          </p>
+          <p className="mt-1 text-[10px] text-gray-700 font-mono">
+            Built with Next.js, wagmi, viem, Supabase & Nodemailer
           </p>
           <p className="mt-2 text-[10px] text-gray-700">{SITE.disclaimer}</p>
         </div>

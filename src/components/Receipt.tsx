@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, Copy, ExternalLink, FileText, Shield } from "lucide-react";
 import { PACKAGES } from "@/lib/config";
-import { polygonScanTx } from "@/config/payments";
-import { middle } from "@/lib/payment-utils";
+import { middle } from "@/lib/payment-utils-client";
+
+const polygonScanTx = (tx: string) => `https://polygonscan.com/tx/${tx}`;
 
 interface ReceiptData {
   packageId: number;

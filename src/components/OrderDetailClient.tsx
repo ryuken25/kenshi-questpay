@@ -20,11 +20,6 @@ interface OrderResponse {
   tokenAddress: string | null;
   tokenDecimals: number;
   amountHuman: string;
-  customerName: string | null;
-  contactMethod: string | null;
-  contactValue: string | null;
-  brief: string | null;
-  deadline: string | null;
   createdAt: string;
   paidAt: string | null;
   payment: {
@@ -116,17 +111,8 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
           <Row label="Price" value={`$${order.serviceUsd} USDT`} />
           <Row label="Token" value={order.tokenSymbol} />
           <Row label="Amount" value={`${order.amountHuman} ${order.tokenSymbol}`} />
-          <Row label="Customer" value={order.customerName || "—"} />
-          <Row label="Contact" value={order.contactValue || "—"} />
-          <Row label="Deadline" value={order.deadline || "—"} />
           <Row label="Created" value={new Date(order.createdAt).toLocaleString()} />
-
-          {order.brief && (
-            <div className="rounded-2xl bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">Brief</p>
-              <p className="text-sm text-gray-300 whitespace-pre-wrap">{order.brief}</p>
-            </div>
-          )}
+          <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-gray-400">Private brief and contact details are visible only inside the authenticated Creator Studio.</p>
 
           {order.payment && (
             <div className="rounded-2xl border border-green-400/30 bg-green-400/10 p-4">

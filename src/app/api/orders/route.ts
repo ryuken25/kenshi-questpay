@@ -7,6 +7,7 @@ import {
 } from "@/lib/server-config";
 import { getServiceBySlug, TOKENS, tokenAmountForService, type TokenSymbol } from "@/lib/services";
 import { createOrderSchema } from "@/lib/schemas";
+import { sendOrderCreatedEmails } from "@/lib/email";
 import { parseUnits } from "viem";
 
 export const dynamic = "force-dynamic";
@@ -114,6 +115,24 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
+
+  await sb.from("questpay_order_events").insert({
+    order_id: data.id,
+    event_type: "order_created",
+    to_status: "pending",
+    metadata: { status: "pending", source: "public_checkout" },
+  });
+  await sendOrderCreatedEmails({
+    id: data.id,
+    publicOrderId: data.public_order_id,
+    serviceName: service.name,
+    amountHuman,
+    tokenSymbol,
+    customerName: brief.customerName,
+    contactMethod: brief.contactMethod,
+    contactValue: brief.contactValue,
+    brief: brief.mainProblem,
+  });
 
   return NextResponse.json({
     publicOrderId: data.public_order_id,

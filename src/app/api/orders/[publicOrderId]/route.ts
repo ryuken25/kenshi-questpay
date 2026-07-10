@@ -21,7 +21,7 @@ export async function GET(
   const { data: order, error } = await sb
     .from("orders")
     .select(
-      "id, public_order_id, slug, status, receive_address, chain_id, token_symbol, token_address, token_decimals, amount_human, amount_raw, usd_price, customer_name, contact_method, contact_value, project_link, brief, expected_output, ref_links, notes, deadline, created_at, paid_at",
+      "id, public_order_id, slug, status, receive_address, chain_id, token_symbol, token_address, token_decimals, amount_human, amount_raw, usd_price, created_at, paid_at",
     )
     .eq("public_order_id", publicOrderId)
     .single();
@@ -54,13 +54,6 @@ export async function GET(
     tokenDecimals: order.token_decimals,
     amountHuman: order.amount_human,
     amountRaw: order.amount_raw,
-    customerName: order.customer_name,
-    contactMethod: order.contact_method,
-    contactValue: order.contact_value,
-    brief: order.brief,
-    expectedOutput: order.expected_output,
-    refLinks: order.ref_links,
-    deadline: order.deadline,
     createdAt: order.created_at,
     paidAt: order.paid_at,
     payment: payment || null,

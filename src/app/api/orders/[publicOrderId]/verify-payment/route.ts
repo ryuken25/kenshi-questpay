@@ -137,10 +137,12 @@ export async function POST(
     .eq("id", order.id);
 
   // Insert order event
-  await sb.from("order_events").insert({
+  await sb.from("questpay_order_events").insert({
     order_id: order.id,
     event_type: "payment_verified",
-    payload: { tx_hash: txHash, token: tokenSymbol, amount: result.amountHuman },
+    from_status: order.status,
+    to_status: "paid",
+    metadata: { tx_hash: txHash, token: tokenSymbol, amount: result.amountHuman },
   });
 
   // ── Send emails (after persistence, non-blocking but awaited) ──

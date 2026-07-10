@@ -5,11 +5,15 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   return NextResponse.json({
-    status: "ok",
-    service: "QuestPay v2",
-    time: new Date().toISOString(),
-    supabase: hasSupabase,
-    smtp: hasSMTP,
-    paymentsEnabled: receiveAddressValid,
+    ok: true,
+    app: "questpay",
+    version: "2.3",
+    gitSha: process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_BUILD_SHA || "local",
+    supabaseConfigured: hasSupabase,
+    smtpConfigured: hasSMTP,
+    polygonRpcConfigured: Boolean(process.env.POLYGON_RPC_URL),
+    receiverConfigured: receiveAddressValid,
+    hubImpactConfigured: Boolean(process.env.NEXT_PUBLIC_HUB_IMPACT_SRC?.trim()),
+    timestamp: new Date().toISOString(),
   });
 }
