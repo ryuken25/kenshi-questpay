@@ -13,7 +13,7 @@ export async function GET() {
     smtpConfigured: hasSMTP,
     polygonRpcConfigured: Boolean(process.env.POLYGON_RPC_URL),
     receiverConfigured: receiveAddressValid,
-    hubImpactConfigured: Boolean(process.env.NEXT_PUBLIC_HUB_IMPACT_SRC?.trim()),
+    hubImpactConfigured: Boolean(process.env.HUB_IMPACT_SCRIPT_SRC?.trim()),
     timestamp: new Date().toISOString(),
   });
 }

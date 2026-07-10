@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const hubImpactSrc = process.env.NEXT_PUBLIC_HUB_IMPACT_SRC?.trim();
+  const hubImpactSrc = process.env.HUB_IMPACT_SCRIPT_SRC?.trim();
   const hubSiteId = process.env.NEXT_PUBLIC_HUB_SITE_ID?.trim();
   return (
     <html lang="en" className="dark">
