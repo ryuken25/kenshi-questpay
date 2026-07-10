@@ -13,7 +13,7 @@ function LinkButton({ href, children }: { href: string; children: React.ReactNod
 
 export default function ContractProof() {
   return (
-    <section id="proof" className="relative px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
+    <section id="contract-proof" className="relative px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
         <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div>
