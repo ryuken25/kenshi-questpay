@@ -6,11 +6,10 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "#story", label: "Story" },
-  { href: "#packages", label: "Packages" },
-  { href: "#checkout", label: "Checkout" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#contact", label: "Contact" },
+  { href: "/services", label: "Services" },
+  { href: "/how-it-works", label: "How It Works" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -41,7 +40,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="#checkout"
+              href="/services"
               className="px-4 py-2 rounded-lg bg-verse-purple/20 text-verse-purple border border-verse-purple/30 text-sm font-medium hover:bg-verse-purple/30 transition-all"
             >
               Start Quest

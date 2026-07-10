@@ -5,10 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Kenshi QuestPay — Micro-Commission Checkout for Creators",
   description:
-    "Structured briefs, Polygon crypto checkout, and verifiable on-chain receipts for creator micro-commissions. Built for VIBE CODING WITH VERSE July Edition.",
+    "Structured briefs, Polygon crypto checkout, and verifiable on-chain receipts for creator micro-commissions. Real payments on Polygon mainnet. Free evaluator demo on Base Sepolia.",
   openGraph: {
     title: "Kenshi QuestPay",
-    description: "Micro-commission checkout for creators. Pay with POL/USDT/fxVERSE on Polygon. Verify receipts on-chain.",
+    description:
+      "Micro-commission checkout for creators. Pay with USDT, VERSE, or POL on Polygon. Verify receipts on-chain.",
     type: "website",
   },
 };

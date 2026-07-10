@@ -1,52 +1,155 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
-import { CheckCircle2, Copy, ExternalLink, Loader2, XCircle } from "lucide-react";
-import { TokenSymbol, polygonScanTx } from "@/config/payments";
-import { middle, verifyPolygonPayment, type VerifyResult } from "@/lib/payment-utils";
+import { useState } from "react";
+import { CheckCircle2, Copy, ExternalLink, Loader2, XCircle, Search } from "lucide-react";
+import { middle } from "@/lib/payment-utils-client";
 
-function VerifyInner() {
-  const params = useSearchParams();
-  const tx = params.get('tx') || '';
-  const packageId = Number(params.get('package') || '1');
-  const token = (params.get('token') || 'USDT') as TokenSymbol;
+interface VerifyResult {
+  ok: boolean;
+  reason?: string;
+  txHash: string;
+  from?: string;
+  to?: string;
+  token?: string;
+  amountHuman?: string;
+  blockNumber?: number;
+  blockTimestamp?: number;
+  confirmations?: number;
+  explorer?: string;
+  order?: { public_order_id: string; slug: string; status: string } | null;
+}
+
+export default function VerifyPage() {
+  const [txHash, setTxHash] = useState("");
   const [result, setResult] = useState<VerifyResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    const tx = txHash.trim();
     if (!tx) return;
     setLoading(true);
-    verifyPolygonPayment(tx, packageId, token).then(setResult).finally(() => setLoading(false));
-  }, [tx, packageId, token]);
+    setResult(null);
+    try {
+      const res = await fetch(`/api/verify/${tx}`);
+      const data = await res.json();
+      setResult(data);
+    } catch {
+      setResult({ ok: false, txHash: tx, reason: "Request failed." });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <main className="min-h-screen bg-[#0B0D14] px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#0B0D14] px-4 py-10 text-white sm:px-6 lg:px-8 lg:pt-24">
       <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl sm:p-8">
-        <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-verse-blue">QuestPay Public Verify</p>
-        <h1 className="mt-3 font-sora text-3xl font-black tracking-[-0.05em] sm:text-5xl">On-chain payment proof</h1>
-        <p className="mt-3 text-sm leading-6 text-gray-400">This page is stateless. It re-checks Polygon mainnet live via public RPC and verifies receiver, token, amount, status, and recency.</p>
+        <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-verse-blue">
+          QuestPay Public Verify
+        </p>
+        <h1 className="mt-3 font-sora text-3xl font-black tracking-[-0.05em] sm:text-5xl">
+          On-chain payment proof
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-gray-400">
+          This page is stateless. It re-checks Polygon mainnet live and verifies receiver, token, amount, status, and confirmations.
+        </p>
 
-        {!tx && <div className="mt-8 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-5 text-yellow-100">Missing tx hash. Use `/verify?tx=0x...&package=1&token=USDT`.</div>}
-        {loading && <div className="mt-8 flex items-center gap-3 rounded-2xl bg-white/5 p-5"><Loader2 className="animate-spin"/> Verifying on Polygon...</div>}
-        {result && <div className={`mt-8 rounded-2xl border p-5 ${result.ok ? 'border-green-400/30 bg-green-400/10' : 'border-red-400/30 bg-red-400/10'}`}>
-          <div className="mb-5 flex items-center gap-3">{result.ok ? <CheckCircle2 className="text-green-400"/> : <XCircle className="text-red-400"/>}<b>{result.ok ? 'Payment verified' : 'Verification failed'}</b></div>
-          {!result.ok && <p className="text-sm text-red-100">{result.reason}</p>}
-          {result.ok && <div className="space-y-3 text-sm">
-            <Row label="Token" value={result.token || token}/>
-            <Row label="Amount" value={result.amount || ''}/>
-            <Row label="From" value={middle(result.from || '')} raw={result.from}/>
-            <Row label="To" value={middle(result.to || '')} raw={result.to}/>
-            <Row label="Block" value={String(result.blockNumber || '')}/>
-            <Row label="Time" value={result.timestamp ? new Date(result.timestamp * 1000).toLocaleString() : ''}/>
-            <div className="flex flex-wrap items-center gap-3 rounded-xl bg-black/20 p-3"><code className="hash-chip text-verse-blue">{middle(tx, 10, 8)}</code><button onClick={()=>navigator.clipboard.writeText(tx)} className="rounded-lg bg-white/10 p-2"><Copy size={14}/></button><a href={polygonScanTx(tx)} target="_blank" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 font-black text-black">Polygonscan <ExternalLink size={14}/></a></div>
-          </div>}
-        </div>}
+        <form onSubmit={handleVerify} className="mt-6 flex gap-2">
+          <input
+            className="w-full rounded-xl border border-white/5 bg-base-lighter px-4 py-3 text-base text-white placeholder-gray-600 outline-none focus:border-verse-purple/50"
+            value={txHash}
+            onChange={(e) => setTxHash(e.target.value)}
+            placeholder="Paste Polygon tx hash: 0x..."
+          />
+          <button
+            type="submit"
+            disabled={loading || !txHash}
+            className="flex min-h-12 items-center gap-2 rounded-2xl bg-verse-purple px-5 font-black text-white disabled:opacity-40"
+          >
+            {loading ? <Loader2 className="animate-spin" /> : <Search size={18} />}
+            Verify
+          </button>
+        </form>
+
+        {loading && (
+          <div className="mt-8 flex items-center gap-3 rounded-2xl bg-white/5 p-5">
+            <Loader2 className="animate-spin" /> Verifying on Polygon...
+          </div>
+        )}
+
+        {result && (
+          <div
+            className={`mt-8 rounded-2xl border p-5 ${
+              result.ok
+                ? "border-green-400/30 bg-green-400/10"
+                : "border-red-400/30 bg-red-400/10"
+            }`}
+          >
+            <div className="mb-5 flex items-center gap-3">
+              {result.ok ? (
+                <CheckCircle2 className="text-green-400" />
+              ) : (
+                <XCircle className="text-red-400" />
+              )}
+              <b>{result.ok ? "Payment verified" : "Verification failed"}</b>
+            </div>
+            {!result.ok && <p className="text-sm text-red-100">{result.reason}</p>}
+            {result.ok && (
+              <div className="space-y-3 text-sm">
+                <Row label="Token" value={result.token || ""} />
+                <Row label="Amount" value={result.amountHuman || ""} />
+                <Row label="From" value={middle(result.from || "")} raw={result.from} />
+                <Row label="To" value={middle(result.to || "")} raw={result.to} />
+                <Row label="Block" value={result.blockNumber ? String(result.blockNumber) : ""} />
+                <Row
+                  label="Time"
+                  value={
+                    result.blockTimestamp
+                      ? new Date(result.blockTimestamp * 1000).toLocaleString()
+                      : ""
+                  }
+                />
+                <Row label="Confirmations" value={result.confirmations ? String(result.confirmations) : ""} />
+                {result.order && (
+                  <Row label="Order" value={result.order.public_order_id} />
+                )}
+                <div className="flex flex-wrap items-center gap-3 rounded-xl bg-black/20 p-3">
+                  <code className="hash-chip text-verse-blue">{middle(txHash, 10, 8)}</code>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(txHash)}
+                    className="rounded-lg bg-white/10 p-2"
+                  >
+                    <Copy size={14} />
+                  </button>
+                  <a
+                    href={`https://polygonscan.com/tx/${txHash}`}
+                    target="_blank"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 font-black text-black"
+                  >
+                    Polygonscan <ExternalLink size={14} />
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </section>
     </main>
   );
 }
 
-function Row({ label, value, raw }: { label: string; value: string; raw?: string }) { return <div className="flex flex-col gap-1 rounded-xl bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between"><span className="text-gray-500">{label}</span><span className="flex min-w-0 items-center gap-2 font-mono text-white"><span className="hash-chip">{value}</span>{raw && <button onClick={()=>navigator.clipboard.writeText(raw)} className="rounded-lg bg-white/10 p-2"><Copy size={14}/></button>}</span></div> }
-
-export default function VerifyPage() { return <Suspense fallback={<main className="min-h-screen bg-[#0B0D14] text-white">Loading...</main>}><VerifyInner /></Suspense>; }
+function Row({ label, value, raw }: { label: string; value: string; raw?: string }) {
+  return (
+    <div className="flex flex-col gap-1 rounded-xl bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-gray-500">{label}</span>
+      <span className="flex min-w-0 items-center gap-2 font-mono text-white">
+        <span className="hash-chip">{value}</span>
+        {raw && (
+          <button onClick={() => navigator.clipboard.writeText(raw)} className="rounded-lg bg-white/10 p-2">
+            <Copy size={14} />
+          </button>
+        )}
+      </span>
+    </div>
+  );
+}
