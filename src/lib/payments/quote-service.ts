@@ -1,10 +1,11 @@
 import { parseUnits } from "viem";
-import { getServiceBySlug, TOKENS, type TokenSymbol } from "@/lib/services";
+import { getServiceBySlug, getTokenConfig, NETWORKS, type ChainKey, type TokenSymbol } from "@/lib/services";
 
 export interface PaymentQuote {
   id: string;
   serviceSlug: string;
-  chainId: 137;
+  chainKey: ChainKey;
+  chainId: number;
   tokenSymbol: TokenSymbol;
   tokenAddress: string | null;
   tokenDecimals: number;
@@ -49,10 +50,11 @@ async function fetchCoingeckoUsd(id: string, timeoutMs = 5000): Promise<{price: 
   } finally { clearTimeout(timer); }
 }
 
-export async function createPaymentQuote(serviceSlug: string, tokenSymbol: TokenSymbol): Promise<PaymentQuote> {
+export async function createPaymentQuote(params: { slug: string; chainKey: ChainKey; tokenSymbol: TokenSymbol }): Promise<PaymentQuote> {
+  const { slug: serviceSlug, chainKey, tokenSymbol } = params;
   const service = getServiceBySlug(serviceSlug);
   if (!service) throw new Error("unknown_service");
-  const token = TOKENS[tokenSymbol];
+  const token = getTokenConfig(chainKey, tokenSymbol);
   if (!token?.enabled) throw new Error("token_disabled");
 
   let tokenUsdPrice = 1;
@@ -69,7 +71,7 @@ export async function createPaymentQuote(serviceSlug: string, tokenSymbol: Token
   const amountRaw = parseUnits(amountHuman, token.decimals).toString();
   const createdAt = new Date();
   const expiresAt = new Date(createdAt.getTime() + QUOTE_TTL_SECONDS * 1000);
-  return { id: quoteId(), serviceSlug, chainId: 137, tokenSymbol, tokenAddress: token.address || null, tokenDecimals: token.decimals, usdPrice: String(service.usd), tokenUsdPrice: String(tokenUsdPrice), amountHuman, amountRaw, source, createdAt: createdAt.toISOString(), expiresAt: expiresAt.toISOString() };
+  return { id: quoteId(), serviceSlug, chainKey, chainId: NETWORKS[chainKey].chainId, tokenSymbol, tokenAddress: token.address || null, tokenDecimals: token.decimals, usdPrice: String(service.usd), tokenUsdPrice: String(tokenUsdPrice), amountHuman, amountRaw, source, createdAt: createdAt.toISOString(), expiresAt: expiresAt.toISOString() };
 }
 
 export function isQuoteExpired(expiresAt: string, now = new Date()) { return new Date(expiresAt).getTime() <= now.getTime(); }

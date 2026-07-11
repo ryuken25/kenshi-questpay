@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, CheckCircle2, Copy, ExternalLink, Loader2, Wallet } from "lucide-react";
-import type { TokenSymbol } from "@/lib/services";
+import { NETWORKS, chainKeyFromId, type TokenSymbol } from "@/lib/services";
 
 interface OrderData {
   public_order_id: string;
@@ -40,10 +40,12 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
   const tokenSymbol = (order?.token_symbol || "USDT") as TokenSymbol;
   const amountHuman = order?.amount_human || "";
   const tokenAddress = order?.token_address;
+  const chainKey = chainKeyFromId(order?.chain_id);
+  const network = NETWORKS[chainKey];
   const eip681Uri = order
     ? tokenSymbol === "POL"
-      ? `ethereum:${receiveAddress}@137?value=${order.amount_raw}`
-      : `ethereum:${tokenAddress}@137/transfer?address=${receiveAddress}&uint256=${order.amount_raw}`
+      ? `ethereum:${receiveAddress}@${network.chainId}?value=${order.amount_raw}`
+      : `ethereum:${tokenAddress}@${network.chainId}/transfer?address=${receiveAddress}&uint256=${order.amount_raw}`
     : "";
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
         return;
       }
       setBusy(true);
-      setStatus("Verifying payment on Polygon...");
+      setStatus(`Verifying payment on ${network.name}...`);
       try {
         const res = await fetch(`/api/orders/${publicOrderId}/verify-payment`, {
           method: "POST",
@@ -87,7 +89,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
         setBusy(false);
       }
     },
-    [txHash, publicOrderId, router],
+    [txHash, publicOrderId, router, network.name],
   );
 
   if (!order) {
@@ -134,7 +136,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
     <section className="px-4 py-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 text-center">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">Pay on Polygon Mainnet</p>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">Pay on {network.name}</p>
           <h1 className="mt-3 font-sora text-3xl font-black text-white">{serviceName || "Service"} — <span className="gradient-text">${order.usd_price}</span></h1>
           <p className="mt-2 text-sm text-muted">Send <b className="text-white">{amountHuman} {tokenSymbol}</b> to the address below.</p>
         </div>
@@ -155,7 +157,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
                   <button onClick={copyAddress} className="shrink-0 rounded-lg bg-white/10 p-2">{copied ? <CheckCircle2 size={14} className="text-green-400" /> : <Copy size={14} />}</button>
                 </div>
               </div>
-              <a href={`https://polygonscan.com/address/${receiveAddress}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[var(--qp-surface)] px-3 text-xs text-muted hover:text-white">View on Polygonscan <ExternalLink size={12} /></a>
+              <a href={`${network.explorer}/address/${receiveAddress}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[var(--qp-surface)] px-3 text-xs text-muted hover:text-white">View on {network.name.includes("BNB") ? "BscScan" : "Polygonscan"} <ExternalLink size={12} /></a>
             </div>
           </div>
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase-server";
 import { verifyPayment } from "@/lib/verify-payment";
 import { verifyPaymentSchema } from "@/lib/schemas";
-import { TOKENS, type TokenSymbol, getServiceBySlug } from "@/lib/services";
+import { getTokenConfig, chainKeyFromId, type TokenSymbol, getServiceBySlug } from "@/lib/services";
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
@@ -68,17 +68,18 @@ export async function POST(
   }
 
   // ── Derive expected context from the order (NOT from the client) ──
+  const chainKey = chainKeyFromId(order.chain_id);
   const tokenSymbol = order.token_symbol as TokenSymbol;
-  const token = TOKENS[tokenSymbol];
+  const token = getTokenConfig(chainKey, tokenSymbol);
   if (!token) {
     return NextResponse.json({ error: "Order token misconfigured." }, { status: 500 });
   }
 
-  // ── Check if tx hash is already used by another order ──
+  // ── Check if tx hash is already used by another order (scoped to this chain) ──
   const { data: existingPayment } = await sb
     .from("payments")
     .select("id, order_id")
-    .eq("chain_id", 137)
+    .eq("chain_id", order.chain_id)
     .ilike("tx_hash", txHash)
     .maybeSingle();
 
@@ -91,6 +92,7 @@ export async function POST(
 
   // ── Verify on-chain ──
   const result = await verifyPayment(txHash, {
+    chainKey,
     receiveAddress: order.receive_address,
     token: { ...token, address: order.token_address ? order.token_address as `0x${string}` : token.address },
     amountHuman: order.amount_human,
@@ -104,7 +106,7 @@ export async function POST(
   // Preferred path: database RPC wraps insert/update/event in one transaction.
   const paymentPayload = {
     p_order_id: order.id,
-    p_chain_id: 137,
+    p_chain_id: order.chain_id,
     p_tx_hash: txHash,
     p_from_address: result.from || "",
     p_to_address: result.to || "",
@@ -122,7 +124,7 @@ export async function POST(
     // Compatibility fallback for environments not migrated yet. Still keeps tx uniqueness guard above.
     const { error: payInsertErr } = await sb.from("payments").insert({
       order_id: order.id,
-      chain_id: 137,
+      chain_id: order.chain_id,
       tx_hash: txHash.toLowerCase(),
       from_address: result.from,
       to_address: result.to,

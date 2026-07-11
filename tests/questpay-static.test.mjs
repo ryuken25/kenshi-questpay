@@ -5,10 +5,25 @@ import { readFileSync, existsSync } from 'node:fs';
 const root = new URL('..', import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), 'utf8');
 
-test('production config is Polygon only', () => {
+test('wallet config includes Polygon and staged BNB Chain, no testnets, and no BNB token is live for payment', () => {
   const provider = read('src/components/Web3Provider.tsx');
-  assert.match(provider, /chains:\s*\[polygon\]/);
+  assert.match(provider, /chains:\s*\[polygon,\s*bsc\]/);
   assert.doesNotMatch(provider, /baseSepolia|84532|sepolia\.base/);
+
+  const services = read('src/lib/services.ts');
+  // BNB Chain wallet connectivity exists, but every BNB token entry in the
+  // CHAIN_TOKENS matrix must stay enabled:false until a real send/verify
+  // path against BSC is proven. Slice between CHAIN_TOKENS's "bnb:" key and
+  // the matrix's closing "};" — plain slicing avoids CRLF-sensitive regexes,
+  // and NETWORKS.bnb (a separate, single-line object) is excluded by
+  // starting the search at CHAIN_TOKENS.
+  const chainTokensStart = services.indexOf('CHAIN_TOKENS');
+  assert.ok(chainTokensStart !== -1, 'expected a CHAIN_TOKENS export');
+  const bnbStart = services.indexOf('bnb:', chainTokensStart);
+  const matrixEnd = services.indexOf('};', bnbStart);
+  assert.ok(bnbStart !== -1 && matrixEnd !== -1, 'expected a bnb block inside CHAIN_TOKENS');
+  const bnbBlock = services.slice(bnbStart, matrixEnd);
+  assert.doesNotMatch(bnbBlock, /enabled:\s*true/);
 });
 
 test('payment page does not use direct window.ethereum transaction path', () => {
@@ -91,4 +106,39 @@ test('navbar uses Sign In and Start Selling, no persistent Connect Wallet, no Cr
   assert.match(navbar, /AuthModal/);
   assert.doesNotMatch(navbar, /Connect Wallet/);
   assert.doesNotMatch(navbar, /Creator Login/);
+});
+
+test('order creation API rejects unauthenticated and incomplete-profile requests before touching payment logic', () => {
+  const route = read('src/app/api/orders/route.ts');
+  assert.match(route, /getSession\(\)/);
+  assert.match(route, /status:\s*401/);
+  assert.match(route, /onboardingCompletedAt/);
+  assert.match(route, /status:\s*409/);
+  assert.match(route, /account_id:\s*session\.accountId/);
+  // The auth/profile gate must run before any quote/payment work, not after.
+  const authGateIndex = route.indexOf('status: 401');
+  const quoteIndex = route.indexOf('createPaymentQuote(');
+  assert.ok(authGateIndex !== -1 && quoteIndex !== -1 && authGateIndex < quoteIndex);
+});
+
+test('checkout page gates anonymous and incomplete-profile sessions server-side', () => {
+  const checkout = read('src/app/checkout/[slug]/page.tsx');
+  assert.match(checkout, /getSession\(\)/);
+  assert.match(checkout, /CheckoutAuthGate/);
+  assert.match(checkout, /redirect\(`\/onboarding/);
+});
+
+test('profile migration and APIs never trust a client-supplied account_id', () => {
+  const migration = read('supabase/migrations/20260712_questpay_v6_profile_onboarding.sql');
+  assert.match(migration, /account_profiles/);
+  assert.match(migration, /preferred_chain/);
+  assert.match(migration, /onboarding_completed_at/);
+  assert.match(migration, /orders_account_id_fkey/);
+
+  for (const file of ['src/app/api/profile/route.ts', 'src/app/api/profile/onboarding/route.ts']) {
+    const src = read(file);
+    assert.match(src, /getSession\(\)/, file);
+    assert.match(src, /status:\s*401/, file);
+    assert.doesNotMatch(src, /body\.accountId|req\.accountId/, file);
+  }
 });

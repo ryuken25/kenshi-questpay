@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import AuthPanel from "@/components/auth/AuthPanel";
 
-export type AuthIntent = "signin" | "wallet" | "creator";
+export type AuthIntent = "signin" | "wallet" | "creator" | "checkout";
 
 export default function AuthModal({ open, onClose, intent = "signin", next }: { open: boolean; onClose: () => void; intent?: AuthIntent; next?: string }) {
   useEffect(() => {

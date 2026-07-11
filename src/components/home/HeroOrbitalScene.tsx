@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 type OrbitTokenId = "usdt" | "usdc" | "verse" | "pol";
 type TokenTone = "green" | "blue" | "violet" | "purple";
+type CubeFace = "front" | "back" | "right" | "left" | "top" | "bottom";
 
 type OrbitTokenConfig = {
   id: OrbitTokenId;
@@ -26,7 +27,6 @@ type Pose = {
   tone: TokenTone;
   x: number;
   y: number;
-  z: number;
   scale: number;
   opacity: number;
   isFront: boolean;
@@ -45,16 +45,35 @@ const signinTokens: OrbitTokenConfig[] = [
   { id: "verse", label: "VERSE", tone: "violet", speed: 0.36, phase: 3.4, radiusX: 122, radiusY: 46, depthRadius: 82, verticalOffset: 12, baseScale: 0.82, direction: -1 },
 ];
 
+const CUBE_FACES: CubeFace[] = ["front", "back", "right", "left", "top", "bottom"];
+
+function faceTransform(face: CubeFace, distance: number): string {
+  switch (face) {
+    case "front":
+      return `translateZ(${distance}px)`;
+    case "back":
+      return `rotateY(180deg) translateZ(${distance}px)`;
+    case "right":
+      return `rotateY(90deg) translateZ(${distance}px)`;
+    case "left":
+      return `rotateY(-90deg) translateZ(${distance}px)`;
+    case "top":
+      return `rotateX(90deg) translateZ(${distance}px)`;
+    case "bottom":
+      return `rotateX(-90deg) translateZ(${distance}px)`;
+  }
+}
+
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
-function getPose(config: OrbitTokenConfig, elapsedSeconds: number): Pose {
+function getPose(config: OrbitTokenConfig, elapsedSeconds: number, orbitScale: number): Pose {
   const angle = config.phase + elapsedSeconds * config.speed * config.direction;
-  const x = Math.cos(angle) * config.radiusX;
-  const y = Math.sin(angle) * config.radiusY + config.verticalOffset;
-  const z = Math.sin(angle) * config.depthRadius;
-  const depth01 = (z + config.depthRadius) / (config.depthRadius * 2);
+  const zBase = Math.sin(angle) * config.depthRadius;
+  const x = Math.cos(angle) * config.radiusX * orbitScale;
+  const y = (Math.sin(angle) * config.radiusY + config.verticalOffset) * orbitScale;
+  const depth01 = (zBase + config.depthRadius) / (config.depthRadius * 2);
 
   return {
     id: config.id,
@@ -62,26 +81,33 @@ function getPose(config: OrbitTokenConfig, elapsedSeconds: number): Pose {
     tone: config.tone,
     x,
     y,
-    z,
     scale: config.baseScale * lerp(0.78, 1.1, depth01),
     opacity: lerp(0.58, 1, depth01),
-    isFront: z >= 34,
+    isFront: zBase >= 34,
     rotation: angle * 38,
   };
 }
 
-export default function HeroOrbitalScene({ variant = "home", className = "" }: { variant?: "home" | "signin"; className?: string }) {
-  const [elapsed, setElapsed] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const tokens = variant === "home" ? homeTokens : signinTokens;
-
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false);
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(media.matches);
+    const media = window.matchMedia(query);
+    const update = () => setMatches(media.matches);
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
-  }, []);
+  }, [query]);
+  return matches;
+}
+
+export default function HeroOrbitalScene({ variant = "home", className = "" }: { variant?: "home" | "signin"; className?: string }) {
+  const [elapsed, setElapsed] = useState(0);
+  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const coarsePointer = useMediaQuery("(pointer: coarse)");
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const parallaxRef = useRef<HTMLDivElement>(null);
+  const tokens = variant === "home" ? homeTokens : signinTokens;
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -106,61 +132,115 @@ export default function HeroOrbitalScene({ variant = "home", className = "" }: {
     };
   }, [reducedMotion]);
 
-  const poses = useMemo(() => tokens.map((token) => getPose(token, reducedMotion ? token.phase : elapsed)), [elapsed, reducedMotion, tokens]);
+  // Pointer parallax — desktop only. Applied on a dedicated wrapper so it composes
+  // with (rather than overrides) the CSS-driven breathing animation on qp-cube-world.
+  useEffect(() => {
+    const scene = sceneRef.current;
+    const layer = parallaxRef.current;
+    if (!scene || !layer || reducedMotion || coarsePointer) return;
+    const onMove = (event: PointerEvent) => {
+      const rect = scene.getBoundingClientRect();
+      const nx = (event.clientX - rect.left) / rect.width - 0.5;
+      const ny = (event.clientY - rect.top) / rect.height - 0.5;
+      layer.style.transform = `rotateX(${(-ny * 4).toFixed(2)}deg) rotateY(${(nx * 4).toFixed(2)}deg)`;
+    };
+    const reset = () => {
+      layer.style.transform = "";
+    };
+    scene.addEventListener("pointermove", onMove);
+    scene.addEventListener("pointerleave", reset);
+    return () => {
+      scene.removeEventListener("pointermove", onMove);
+      scene.removeEventListener("pointerleave", reset);
+      reset();
+    };
+  }, [reducedMotion, coarsePointer]);
+
+  const orbitScale = isMobile ? 0.695 : 1;
+  const poses = useMemo(
+    () => tokens.map((token) => getPose(token, reducedMotion ? token.phase : elapsed, orbitScale)),
+    [elapsed, reducedMotion, tokens, orbitScale],
+  );
   const rear = poses.filter((pose) => !pose.isFront);
   const front = poses.filter((pose) => pose.isFront);
 
+  // Cube geometry (v3 CSS supplies face appearance + breathing; positions are supplied
+  // here so the scene renders correctly regardless of the shared stylesheet's state).
+  const baseCube = variant === "home" ? 282 : 176;
+  const cubeSize = Math.round(isMobile ? baseCube * 0.695 : baseCube);
+  const half = cubeSize / 2;
+  const coreDistance = half - 10;
+  const tokenDepth = half + 30;
+  const markSize = variant === "home" ? 104 : 76;
+
+  const cubeContainerStyle: CSSProperties = {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: cubeSize,
+    height: cubeSize,
+    marginLeft: -half,
+    marginTop: -half,
+    transformStyle: "preserve-3d",
+  };
+
+  const ringStyle: CSSProperties | undefined =
+    variant === "signin" ? { width: 280, height: 90, marginLeft: -140, marginTop: -45 } : undefined;
+
+  const rootStyle: CSSProperties | undefined = variant === "signin" ? { minHeight: 300 } : undefined;
+
   return (
-    <div className={`qp-orbital-scene qp-orbital-scene--${variant} ${className}`} aria-hidden="true" data-testid="hero-orbital-scene">
-      <div className="qp-scene-world">
-        <div className="qp-depth-ring qp-depth-ring--back" />
-        <TokenLayer poses={rear} layer="back" />
-        <Cube variant={variant} />
-        <div className="qp-depth-ring qp-depth-ring--front" />
-        <TokenLayer poses={front} layer="front" />
-        <div className="qp-scene-glow" />
+    <div
+      ref={sceneRef}
+      className={`qp-hero-scene qp-hero-scene--${variant} ${className}`}
+      style={rootStyle}
+      aria-hidden="true"
+      data-testid="hero-orbital-scene"
+    >
+      <div className="qp-cube-world">
+        <div ref={parallaxRef} className="qp-cube-parallax" style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d" }}>
+          <div className="qp-orbit-rear qp-orbit-ring qp-orbit-ring--rear" style={ringStyle} />
+          <TokenLayer poses={rear} layer="rear" depth={-tokenDepth} />
+          <div className="qp-cube-core3d" style={cubeContainerStyle}>
+            {CUBE_FACES.map((face) => (
+              <div key={face} className="qp-cube-core-face" style={{ transform: faceTransform(face, coreDistance) }} />
+            ))}
+          </div>
+          <div className="qp-cube-shell" style={cubeContainerStyle}>
+            {CUBE_FACES.map((face) => (
+              <div key={face} className="qp-cube-shell-face" style={{ transform: faceTransform(face, half) }} />
+            ))}
+          </div>
+          <div
+            className="qp-cube-mark"
+            style={{ position: "absolute", left: "50%", top: "50%", transform: `translate(-50%, -50%) translateZ(${half + 1}px)` }}
+          >
+            <Image src="/brand/questpay/questpay-mark-mono.svg" alt="" width={markSize} height={markSize} priority={variant === "home"} />
+          </div>
+          <div className="qp-orbit-front qp-orbit-ring qp-orbit-ring--front" style={ringStyle} />
+          <TokenLayer poses={front} layer="front" depth={tokenDepth} />
+        </div>
       </div>
     </div>
   );
 }
 
-function TokenLayer({ poses, layer }: { poses: Pose[]; layer: "front" | "back" }) {
+function TokenLayer({ poses, layer, depth }: { poses: Pose[]; layer: "front" | "rear"; depth: number }) {
   return (
-    <div className={`qp-token-layer qp-token-layer--${layer}`}>
+    <div className={`qp-token-${layer}`} style={{ position: "absolute", left: "50%", top: "50%", transform: `translateZ(${depth}px)` }}>
       {poses.map((pose) => (
         <div
           key={`${layer}-${pose.id}`}
           className={`qp-token qp-token-${pose.tone}`}
           style={{
-            transform: `translate3d(${pose.x}px, ${pose.y}px, ${pose.z}px) scale(${pose.scale}) rotateZ(${pose.rotation}deg)`,
+            transform: `translate3d(${pose.x}px, ${pose.y}px, 0) scale(${pose.scale}) rotateZ(${pose.rotation}deg)`,
             opacity: pose.opacity,
-            filter: layer === "back" ? "saturate(.82) brightness(.78)" : "saturate(1.05) brightness(1.04)",
+            filter: layer === "rear" ? "saturate(.82) brightness(.78)" : "saturate(1.05) brightness(1.04)",
           }}
         >
           <span>{pose.label}</span>
         </div>
       ))}
-    </div>
-  );
-}
-
-function Cube({ variant }: { variant: "home" | "signin" }) {
-  const markSize = variant === "home" ? 104 : 76;
-  return (
-    <div className={`qp-cube-group qp-cube-group--${variant}`}>
-      <div className="qp-cube-core" />
-      <div className="qp-cube-shell">
-        <div className="qp-cube-plane qp-cube-plane-front">
-          <div className="qp-cube-face-mark">
-            <Image src="/brand/questpay/questpay-mark-mono.svg" alt="" width={markSize} height={markSize} priority={variant === "home"} />
-          </div>
-        </div>
-        <div className="qp-cube-plane qp-cube-plane-back" />
-        <div className="qp-cube-plane qp-cube-plane-right" />
-        <div className="qp-cube-plane qp-cube-plane-left" />
-        <div className="qp-cube-plane qp-cube-plane-top" />
-        <div className="qp-cube-plane qp-cube-plane-bottom" />
-      </div>
     </div>
   );
 }

@@ -1,8 +1,19 @@
 import { z } from "zod";
 
+export const contactMethodEnum = z.enum(["email", "discord", "telegram", "x", "whatsapp", "other"]);
+export type ContactMethod = z.infer<typeof contactMethodEnum>;
+export const CONTACT_METHOD_LABELS: Record<ContactMethod, string> = {
+  email: "Email",
+  discord: "Discord",
+  telegram: "Telegram",
+  x: "X / Twitter",
+  whatsapp: "WhatsApp",
+  other: "Other",
+};
+
 export const briefSchema = z.object({
   customerName: z.string().min(2, "Name/handle is required (min 2 chars)"),
-  contactMethod: z.string().min(3, "Contact method is required (e.g., email, Discord, X DM)"),
+  contactMethod: contactMethodEnum,
   contactValue: z.string().min(3, "Contact value is required"),
   projectLink: z.string().url().optional().or(z.literal("")),
   deadline: z.string().optional().or(z.literal("")),
@@ -16,7 +27,9 @@ export type BriefFormData = z.infer<typeof briefSchema>;
 
 export const createOrderSchema = z.object({
   slug: z.string().min(1),
+  chainKey: z.enum(["polygon", "bnb"]).default("polygon"),
   tokenSymbol: z.enum(["USDT", "USDC", "POL", "VERSE"]),
+  saveProfileDefaults: z.boolean().optional().default(false),
   brief: briefSchema,
 });
 
@@ -33,3 +46,15 @@ export const magicLinkSchema = z.object({
 });
 
 export type MagicLinkInput = z.infer<typeof magicLinkSchema>;
+
+export const profileSchema = z.object({
+  displayName: z.string().trim().min(2).max(80),
+  publicHandle: z.string().trim().max(80).optional().or(z.literal("")),
+  contactMethod: contactMethodEnum,
+  contactValue: z.string().trim().min(3).max(160),
+  organization: z.string().trim().max(120).optional().or(z.literal("")),
+  preferredChain: z.enum(["polygon", "bnb"]),
+  timezone: z.string().trim().max(80).optional().or(z.literal("")),
+});
+
+export type ProfileInput = z.infer<typeof profileSchema>;

@@ -34,7 +34,7 @@ const magicLinkMessages: Record<Exclude<MagicLinkState, "idle" | "submitting">, 
   network_error: { tone: "error", text: "Network error. Check your connection and try again." },
 };
 
-export default function AuthPanel({ next, error, compact = false, intent = "signin" }: { next?: string | null; error?: string | null; compact?: boolean; intent?: "signin" | "wallet" | "creator" }) {
+export default function AuthPanel({ next, error, compact = false, intent = "signin" }: { next?: string | null; error?: string | null; compact?: boolean; intent?: "signin" | "wallet" | "creator" | "checkout" }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [linkState, setLinkState] = useState<MagicLinkState>("idle");

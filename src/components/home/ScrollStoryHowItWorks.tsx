@@ -20,7 +20,7 @@ export default function ScrollStoryHowItWorks() {
           <p className="font-sora text-sm font-bold uppercase tracking-[0.16em] text-[#a793ff]">How QuestPay works</p>
           <h2 className="mt-3 font-sora text-[clamp(2.1rem,5.2vw,4.6rem)] font-black leading-[.94] tracking-[-.05em] text-white">From brief to proof.</h2>
           <p className="mt-5 max-w-md text-base leading-7 text-[var(--qp-text-secondary)]">QuestPay turns small creator work into a clean path: scope, order, payment, status, delivery, and receipt.</p>
-          <div className="mt-7 hidden rounded-[1.5rem] border border-[#7c5cff]/18 bg-[#090d1b]/80 p-5 lg:block">
+          <div className="mt-7 hidden rounded-[1.5rem] border border-[#7c5cff]/18 bg-[var(--qp-surface-1)] p-5 lg:block">
             <p className="text-sm font-bold text-white">Revenue proof path</p>
             <p className="mt-2 text-sm leading-6 text-[var(--qp-text-muted)]">Order total → selected chain/token → locked receive address → tx hash → public receipt.</p>
           </div>

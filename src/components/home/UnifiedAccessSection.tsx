@@ -17,7 +17,7 @@ export default function UnifiedAccessSection() {
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {cards.map(({ title, body, icon: Icon }) => (
-            <article key={title} className="rounded-[1.5rem] border border-[#7c5cff]/20 bg-[#090d1b]/80 p-5 shadow-[0_0_60px_rgba(124,92,255,.06)]">
+            <article key={title} className="rounded-[1.5rem] border border-[#7c5cff]/20 bg-[var(--qp-surface-1)] p-5 shadow-[0_0_60px_rgba(124,92,255,.06)]">
               <div className="grid size-12 place-items-center rounded-2xl border border-[#7c5cff]/30 bg-[#7c5cff]/12 text-[#c1b6ff]"><Icon size={22} /></div>
               <h3 className="mt-4 font-sora text-xl font-black text-white">{title}</h3>
               <p className="mt-2 text-sm leading-6 text-[var(--qp-text-muted)]">{body}</p>

@@ -16,7 +16,7 @@ export default function HomePage() {
       <main>
         <PremiumHomeHero />
         <section className="px-4 pb-8 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-3 rounded-[1.4rem] border border-[#7c5cff]/18 bg-[#090d1b]/80 p-4 text-center text-sm font-semibold text-[#cfc7ff] sm:grid-cols-4">
+          <div className="mx-auto grid max-w-7xl gap-3 rounded-[1.4rem] border border-[#7c5cff]/18 bg-[var(--qp-surface-1)] p-4 text-center text-sm font-semibold text-[#cfc7ff] sm:grid-cols-4">
             <span>Direct-to-creator payment</span><span>Locked quote</span><span>Verified on-chain</span><span>Public receipt</span>
           </div>
         </section>

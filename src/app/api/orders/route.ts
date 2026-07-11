@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { getSupabase } from "@/lib/supabase-server";
 import { QUESTPAY_RECEIVE_ADDRESS, receiveAddressValid } from "@/lib/server-config";
-import { getServiceBySlug } from "@/lib/services";
-import { createOrderSchema } from "@/lib/schemas";
+import { getServiceBySlug, isValidChainTokenPair } from "@/lib/services";
+import { createOrderSchema, profileSchema } from "@/lib/schemas";
 import { sendOrderCreatedEmails } from "@/lib/email";
 import { createPaymentQuote } from "@/lib/payments/quote-service";
+import { getSession } from "@/lib/auth";
+import { getProfile, upsertProfile } from "@/lib/profile";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,16 @@ function sha256(input: unknown): string {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Sign in is required to create an order." }, { status: 401 });
+  }
+
+  const profile = await getProfile(session.accountId);
+  if (!profile?.onboardingCompletedAt) {
+    return NextResponse.json({ error: "Complete your profile before creating an order." }, { status: 409 });
+  }
+
   if (!receiveAddressValid || !QUESTPAY_RECEIVE_ADDRESS) {
     return NextResponse.json({ error: "Payments are being upgraded. Order drafting is available, but payment is temporarily unavailable." }, { status: 503 });
   }
@@ -33,16 +45,36 @@ export async function POST(req: NextRequest) {
   const parsed = createOrderSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.issues }, { status: 400 });
 
-  const { slug, tokenSymbol, brief } = parsed.data;
+  const { slug, chainKey, tokenSymbol, brief, saveProfileDefaults } = parsed.data;
   const service = getServiceBySlug(slug);
   if (!service) return NextResponse.json({ error: "Unknown service slug." }, { status: 400 });
 
+  if (!isValidChainTokenPair(chainKey, tokenSymbol)) {
+    return NextResponse.json({ error: `${tokenSymbol} is not enabled on ${chainKey}.` }, { status: 400 });
+  }
+
   let quote;
   try {
-    quote = await createPaymentQuote(slug, tokenSymbol);
+    quote = await createPaymentQuote({ slug, chainKey, tokenSymbol });
   } catch (e) {
     const reason = e instanceof Error ? e.message : "quote_unavailable";
     return NextResponse.json({ error: `${tokenSymbol} quote is unavailable. Token is disabled until a real price source responds.`, reason }, { status: 503 });
+  }
+
+  if (saveProfileDefaults) {
+    try {
+      await upsertProfile(session.accountId, profileSchema.parse({
+        displayName: brief.customerName,
+        publicHandle: profile.publicHandle ?? "",
+        contactMethod: brief.contactMethod,
+        contactValue: brief.contactValue,
+        organization: profile.organization ?? "",
+        preferredChain: chainKey,
+        timezone: profile.timezone ?? "",
+      }));
+    } catch {
+      // Non-fatal — the order itself still proceeds with the submitted snapshot.
+    }
   }
 
   const publicOrderId = generatePublicOrderId();
@@ -53,9 +85,10 @@ export async function POST(req: NextRequest) {
   const { data, error } = await sb.from("orders").insert({
     public_order_id: publicOrderId,
     slug,
+    account_id: session.accountId,
     status: "awaiting_payment",
     receive_address: QUESTPAY_RECEIVE_ADDRESS,
-    chain_id: 137,
+    chain_id: quote.chainId,
     token_symbol: tokenSymbol,
     token_address: quote.tokenAddress,
     token_decimals: quote.tokenDecimals,
@@ -118,6 +151,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     publicOrderId: data.public_order_id,
     slug,
+    chainKey: quote.chainKey,
     tokenSymbol,
     amountHuman: quote.amountHuman,
     amountRaw: quote.amountRaw,
@@ -126,7 +160,7 @@ export async function POST(req: NextRequest) {
     quoteExpiresAt: quote.expiresAt,
     paymentExpiresAt,
     receiveAddress: QUESTPAY_RECEIVE_ADDRESS,
-    chainId: 137,
+    chainId: quote.chainId,
     tokenAddress: quote.tokenAddress,
     tokenDecimals: quote.tokenDecimals,
     serviceName: service.name,

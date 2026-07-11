@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase-server";
 import { verifyPayment } from "@/lib/verify-payment";
-import { TOKENS, type TokenSymbol, getServiceBySlug } from "@/lib/services";
+import { chainKeyFromId, getEnabledTokensForChain, explorerTxUrl, type ChainKey } from "@/lib/services";
 import { receiveAddressValid, QUESTPAY_RECEIVE_ADDRESS } from "@/lib/server-config";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +32,7 @@ export async function GET(
     const { data: payment } = await sb
       .from("payments")
       .select(`
-        tx_hash, from_address, to_address, token_symbol, amount_human,
+        tx_hash, from_address, to_address, token_symbol, amount_human, chain_id,
         block_number, block_timestamp, confirmations, verified_at,
         orders:order_id ( public_order_id, slug, status )
       `)
@@ -53,7 +53,7 @@ export async function GET(
           : undefined,
         confirmations: payment.confirmations,
         verifiedAt: payment.verified_at,
-        explorer: `https://polygonscan.com/tx/${txHash}`,
+        explorer: explorerTxUrl(chainKeyFromId(payment.chain_id), txHash),
         order: payment.orders,
       });
     }
@@ -67,30 +67,30 @@ export async function GET(
     }, { status: 404 });
   }
 
-  // Try each enabled token to see if this tx matches
-  for (const sym of ["USDT", "VERSE", "POL"] as TokenSymbol[]) {
-    const token = TOKENS[sym];
-    if (!token) continue;
-
-    // We don't know the exact expected amount without an order, so
-    // we just check that a transfer to the receive address exists
-    // with a positive amount. This is a "is this a payment to QuestPay?" check.
-    try {
-      const result = await verifyPayment(txHash, {
-        receiveAddress: QUESTPAY_RECEIVE_ADDRESS,
-        token: token,
-        amountHuman: "0", // accept any positive amount in stateless mode
-      });
-
-      if (result.ok) {
-        return NextResponse.json({
-          ...result,
-          ok: true,
-          note: "Stateless verification — not linked to a specific order.",
+  // Try each enabled token on each network to see if this tx matches
+  for (const chainKey of ["polygon", "bnb"] as ChainKey[]) {
+    for (const token of getEnabledTokensForChain(chainKey)) {
+      // We don't know the exact expected amount without an order, so
+      // we just check that a transfer to the receive address exists
+      // with a positive amount. This is a "is this a payment to QuestPay?" check.
+      try {
+        const result = await verifyPayment(txHash, {
+          chainKey,
+          receiveAddress: QUESTPAY_RECEIVE_ADDRESS,
+          token,
+          amountHuman: "0", // accept any positive amount in stateless mode
         });
+
+        if (result.ok) {
+          return NextResponse.json({
+            ...result,
+            ok: true,
+            note: "Stateless verification — not linked to a specific order.",
+          });
+        }
+      } catch {
+        // try next token
       }
-    } catch {
-      // try next token
     }
   }
 

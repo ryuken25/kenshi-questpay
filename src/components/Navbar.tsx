@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import AuthModal, { type AuthIntent } from "@/components/auth/AuthModal";
 
 const navLinks = [
@@ -23,16 +23,28 @@ type NavbarProps = {
   authPage?: boolean;
 };
 
+type SessionState = { authenticated: boolean; roles: string[] } | null;
+
 export default function Navbar({ authPage = false }: NavbarProps) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [intent, setIntent] = useState<AuthIntent>("signin");
+  const [session, setSession] = useState<SessionState>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((d) => setSession({ authenticated: Boolean(d.authenticated), roles: d.roles ?? [] }))
+      .catch(() => setSession({ authenticated: false, roles: [] }));
+  }, []);
 
   const openAuth = (nextIntent: AuthIntent) => {
     setIntent(nextIntent);
     setOpen(false);
     setAuthOpen(true);
   };
+
+  const isAuthenticated = session?.authenticated ?? false;
 
   return (
     <>
@@ -54,11 +66,16 @@ export default function Navbar({ authPage = false }: NavbarProps) {
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className={linkClass}>{link.label}</Link>)}
             </div>
             <div className="flex items-center justify-self-end gap-2.5">
-              {!authPage ? (
+              {!authPage && !isAuthenticated ? (
                 <>
                   <button type="button" onClick={() => openAuth("signin")} className={`hidden md:inline-flex ${signInClass}`}>Sign In</button>
                   <button type="button" onClick={() => openAuth("creator")} className={`hidden md:inline-flex ${startSellingClass}`}>Start Selling</button>
                 </>
+              ) : null}
+              {!authPage && isAuthenticated ? (
+                <Link href="/account" className={`hidden md:inline-flex items-center gap-2 ${signInClass}`}>
+                  <User size={15} /> Account
+                </Link>
               ) : null}
               <button type="button" aria-label="Open menu" onClick={() => setOpen(!open)} className="grid size-11 place-items-center rounded-xl border border-[var(--qp-border-soft)] text-[var(--qp-text-primary)] md:hidden">{open ? <X /> : <Menu />}</button>
             </div>
@@ -66,8 +83,15 @@ export default function Navbar({ authPage = false }: NavbarProps) {
           {open ? (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-2 border-t border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] py-4 md:hidden">
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
-              {!authPage ? <button type="button" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign In</button> : null}
-              {!authPage ? <button type="button" onClick={() => openAuth("creator")} className="block min-h-12 w-full rounded-xl border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-3 py-3 text-left text-base font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)]">Start Selling</button> : null}
+              {!authPage && !isAuthenticated ? (
+                <>
+                  <button type="button" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign In</button>
+                  <button type="button" onClick={() => openAuth("creator")} className="block min-h-12 w-full rounded-xl border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-3 py-3 text-left text-base font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)]">Start Selling</button>
+                </>
+              ) : null}
+              {!authPage && isAuthenticated ? (
+                <Link href="/account" onClick={() => setOpen(false)} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)]">Account</Link>
+              ) : null}
             </motion.div>
           ) : null}
         </div>

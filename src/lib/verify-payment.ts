@@ -1,7 +1,7 @@
 import "server-only";
-import { parseUnits, formatUnits, erc20Abi, type Hash, type Address } from "viem";
-import { getPolygonClient } from "./viem-server";
-import type { TokenConfig, TokenSymbol } from "./services";
+import { parseUnits, formatUnits, type Hash, type Address } from "viem";
+import { getChainClient } from "./viem-server";
+import { NETWORKS, type ChainKey, type TokenConfig, type TokenSymbol } from "./services";
 
 const TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef" as const;
@@ -9,6 +9,7 @@ const TRANSFER_TOPIC =
 const MIN_CONFIRMATIONS = 3;
 
 export interface VerifyContext {
+  chainKey: ChainKey;
   receiveAddress: string;
   token: TokenConfig;
   amountHuman: string;
@@ -57,7 +58,8 @@ export async function verifyPayment(
     return { ...base, reason: "Invalid transaction hash format." };
   }
 
-  const client = getPolygonClient();
+  const client = getChainClient(ctx.chainKey);
+  const explorerBase = NETWORKS[ctx.chainKey].explorer;
   const expectedRaw = parseUnits(ctx.amountHuman, ctx.token.decimals);
 
   // Fetch tx, receipt, and current block number in parallel
@@ -68,7 +70,7 @@ export async function verifyPayment(
   ]);
 
   if (!tx || !receipt) {
-    return { ...base, reason: "Transaction not found on Polygon yet." };
+    return { ...base, reason: `Transaction not found on ${NETWORKS[ctx.chainKey].name} yet.` };
   }
 
   if (receipt.status !== "success") {
@@ -103,7 +105,7 @@ export async function verifyPayment(
     if (value < expectedRaw) {
       return {
         ...base,
-        reason: `Transaction value (${formatUnits(value, ctx.token.decimals)} POL) is less than expected (${ctx.amountHuman} POL).`,
+        reason: `Transaction value (${formatUnits(value, ctx.token.decimals)} ${ctx.token.symbol}) is less than expected (${ctx.amountHuman} ${ctx.token.symbol}).`,
       };
     }
 
@@ -118,7 +120,7 @@ export async function verifyPayment(
       blockNumber: receipt.blockNumber,
       blockTimestamp,
       confirmations,
-      explorer: `https://polygonscan.com/tx/${txHashInput}`,
+      explorer: `${explorerBase}/tx/${txHashInput}`,
     };
   }
 
@@ -164,6 +166,6 @@ export async function verifyPayment(
     blockNumber: receipt.blockNumber,
     blockTimestamp,
     confirmations,
-    explorer: `https://polygonscan.com/tx/${txHashInput}`,
+    explorer: `${explorerBase}/tx/${txHashInput}`,
   };
 }
