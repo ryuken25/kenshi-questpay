@@ -1,3 +1,4 @@
 import Contact from '@/components/Contact';
+import PublicShell from '@/components/PublicShell';
 export const metadata = { title: 'Contact — Kenshi QuestPay' };
-export default function ContactPage() { return <main className="min-h-screen bg-[#0B0D14] text-white"><Contact /></main>; }
+export default function ContactPage() { return <PublicShell><main className="min-screen-safe pt-20"><Contact /></main></PublicShell>; }

@@ -35,7 +35,7 @@ export default function Receipt({ receipt }: ReceiptProps) {
           <div className="mb-8 text-center">
             <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-400" />
             <h2 className="font-sora mb-2 text-2xl font-bold text-white">Payment Verified</h2>
-            <p className="text-gray-400">Save this receipt. The on-chain tx is the canonical proof.</p>
+            <p className="text-muted">Save this receipt. The on-chain tx is the canonical proof.</p>
           </div>
           <div className="space-y-3">
             <Row label="Package" value={`${pkg?.name || receipt.packageId}`} />
@@ -44,10 +44,10 @@ export default function Receipt({ receipt }: ReceiptProps) {
             <Row label="Buyer" value={middle(receipt.buyerAddress)} raw={receipt.buyerAddress} onCopy={copyToClipboard} />
             <Row label="Network" value={receipt.network} />
             <Row label="Brief ID" value={receipt.briefId} icon={<FileText className="h-3 w-3"/>} raw={receipt.briefId} onCopy={copyToClipboard} />
-            <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-              <p className="mb-2 text-xs uppercase tracking-wider text-gray-500">Tx Hash</p>
+            <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4">
+              <p className="mb-2 text-xs uppercase tracking-wider text-muted">Tx Hash</p>
               <div className="flex flex-wrap items-center gap-3">
-                <code className="hash-chip text-sm text-verse-blue">{middle(receipt.txHash, 10, 8)}</code>
+                <code className="hash-chip text-sm text-[#8FEAFF]">{middle(receipt.txHash, 10, 8)}</code>
                 <button onClick={() => copyToClipboard(receipt.txHash)} className="rounded-xl bg-white/10 p-2"><Copy className="h-4 w-4" /></button>
                 <a href={explorer} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black">Explorer <ExternalLink className="h-4 w-4" /></a>
               </div>
@@ -61,5 +61,5 @@ export default function Receipt({ receipt }: ReceiptProps) {
 }
 
 function Row({ label, value, raw, onCopy, icon }: { label: string; value: string; raw?: string; onCopy?: (v:string)=>void; icon?: React.ReactNode }) {
-  return <div className="flex flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between"><span className="text-sm text-gray-500">{label}</span><span className="flex min-w-0 items-center gap-2 font-mono text-sm text-white">{icon}<span className="hash-chip">{value}</span>{raw && onCopy && <button onClick={()=>onCopy(raw)} className="shrink-0 rounded-lg bg-white/10 p-2"><Copy className="h-3 w-3"/></button>}</span></div>
+  return <div className="flex flex-col gap-2 rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4 sm:flex-row sm:items-center sm:justify-between"><span className="text-sm text-muted">{label}</span><span className="flex min-w-0 items-center gap-2 font-mono text-sm text-white">{icon}<span className="hash-chip">{value}</span>{raw && onCopy && <button onClick={()=>onCopy(raw)} className="shrink-0 rounded-lg bg-white/10 p-2"><Copy className="h-3 w-3"/></button>}</span></div>
 }

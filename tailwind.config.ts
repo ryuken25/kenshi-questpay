@@ -5,14 +5,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        base: {
-          DEFAULT: "#0B0D14",
-          light: "#12141D",
-          lighter: "#1A1D2B",
-        },
         verse: {
-          purple: "#7C5CFF",
-          blue: "#39D0FF",
+          purple: "#684DE8",
+          blue: "#42D7F5",
         },
       },
       fontFamily: {

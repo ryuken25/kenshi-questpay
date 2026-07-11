@@ -35,14 +35,14 @@ export default function CheckoutPage({ params }: Props) {
         <section className="px-4 py-14 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl">
             <div className="text-center mb-8">
-              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-verse-blue">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">
                 Checkout
               </p>
               <h1 className="mt-3 font-sora text-3xl font-black text-white">
                 {svc.name} — <span className="gradient-text">${svc.usd}</span>
               </h1>
-              <p className="mt-2 text-sm text-gray-400">{svc.description}</p>
-              <p className="mt-1 text-xs text-gray-600">{SITE.disclaimer}</p>
+              <p className="mt-2 text-sm text-muted">{svc.description}</p>
+              <p className="mt-1 text-xs text-subtle">{SITE.disclaimer}</p>
             </div>
             <CheckoutForm slug={params.slug} serviceName={svc.name} serviceUsd={svc.usd} />
           </div>

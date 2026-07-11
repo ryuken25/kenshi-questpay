@@ -2,10 +2,10 @@ import { getServerSideOrder } from '@/lib/server-config';
 export const dynamic = 'force-dynamic';
 export default async function OrderStatusPage({ params }: { params: { publicOrderId: string } }) {
   const order = await getServerSideOrder(params.publicOrderId);
-  if (!order) return <main className="min-h-screen bg-[#0B0D14] flex items-center justify-center text-white"><div className="text-center"><h1 className="text-2xl font-black">Order not found</h1><p className="mt-2 text-gray-400">Check your order ID and try again.</p></div></main>;
+  if (!order) return <main className="min-h-screen bg-[#0B0D14] flex items-center justify-center text-white"><div className="text-center"><h1 className="text-2xl font-black">Order not found</h1><p className="mt-2 text-muted">Check your order ID and try again.</p></div></main>;
   return <main className="min-h-screen bg-[#0B0D14] px-4 py-10 text-white sm:px-6 lg:px-8">
-    <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 sm:p-8">
-      <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-verse-blue">Order Status</p>
+    <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5 sm:p-8">
+      <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#8FEAFF]">Order Status</p>
       <h1 className="mt-3 font-sora text-3xl font-black">{order.slug}</h1>
       <div className="mt-6 space-y-3">
         <Row label="Order ID" value={order.public_order_id} />
@@ -19,5 +19,5 @@ export default async function OrderStatusPage({ params }: { params: { publicOrde
   </main>;
 }
 function Row({ label, value }: { label: string; value: string }) {
-  return <div className="flex justify-between rounded-xl bg-black/20 p-3"><span className="text-gray-500">{label}</span><span className="font-mono text-white">{value}</span></div>;
+  return <div className="flex justify-between rounded-xl bg-[rgba(8,11,24,.42)] p-3"><span className="text-muted">{label}</span><span className="font-mono text-white">{value}</span></div>;
 }

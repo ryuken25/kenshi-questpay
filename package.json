@@ -6,13 +6,15 @@
     "dev": "next dev",
     "build": "node scripts/build.mjs",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "wallet:create": "tsx scripts/create-dev-wallet.ts",
     "wallet:balance": "tsx scripts/check-deployer-balance.ts",
     "deploy:contract": "echo \"Production uses direct Polygon transfers. Legacy testnet contract scripts are archived under scripts/legacy-testnet.\" && exit 1",
     "test": "node --test tests/**/*.test.mjs",
-    "qa": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "qa": "npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e",
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test qa/readability.spec.ts"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",
@@ -34,7 +36,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^20.14.0",
     "@types/nodemailer": "^8.0.1",
     "@types/qrcode": "^1.5.6",

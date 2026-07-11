@@ -13,7 +13,7 @@ interface Props {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-white/5 bg-base-lighter px-4 py-3 text-base text-white placeholder-gray-600 outline-none transition-colors focus:border-verse-purple/50";
+  "w-full rounded-xl border border-[var(--qp-border-soft)] bg-base-lighter px-4 py-3 text-base text-[var(--qp-text-primary)] placeholder:text-[var(--qp-text-subtle)] outline-none transition-colors focus:border-verse-purple/50";
 
 export default function CheckoutForm({ slug, serviceName, serviceUsd }: Props) {
   const router = useRouter();
@@ -147,7 +147,7 @@ export default function CheckoutForm({ slug, serviceName, serviceUsd }: Props) {
               className={`min-h-12 rounded-xl border px-2 text-sm font-black ${
                 token === t
                   ? "border-verse-blue bg-verse-blue/20 text-white"
-                  : "border-white/5 bg-base-lighter text-gray-400"
+                  : "border-[var(--qp-border-soft)] bg-base-lighter text-muted"
               }`}
             >
               {t}
@@ -204,7 +204,7 @@ export default function CheckoutForm({ slug, serviceName, serviceUsd }: Props) {
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-semibold text-gray-400">
+      <label className="mb-1 block text-sm font-semibold text-muted">
         {label} <span className="text-red-400">*</span>
       </label>
       {children}

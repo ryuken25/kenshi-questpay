@@ -31,7 +31,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
   if (loading) {
     return (
       <section className="px-4 py-20 text-center">
-        <Loader2 className="mx-auto animate-spin text-verse-blue" size={32} />
+        <Loader2 className="mx-auto animate-spin text-[#8FEAFF]" size={32} />
       </section>
     );
   }
@@ -50,7 +50,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
         >
           <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-400" />
           <h1 className="font-sora text-3xl font-bold text-white">Payment Verified</h1>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-muted">
             Your payment has been confirmed on Polygon mainnet. A confirmation email is on the way.
           </p>
 
@@ -60,10 +60,10 @@ export default function SuccessClient({ publicOrderId }: Props) {
               <Row label="Amount" value={`${order.amountHuman} ${order.tokenSymbol}`} />
               <Row label="Status" value={order.status} />
               {txHash && (
-                <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                  <p className="mb-2 text-xs uppercase tracking-wider text-gray-500">Tx Hash</p>
+                <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4">
+                  <p className="mb-2 text-xs uppercase tracking-wider text-muted">Tx Hash</p>
                   <div className="flex flex-wrap items-center gap-3">
-                    <code className="hash-chip text-sm text-verse-blue">{middle(txHash, 10, 8)}</code>
+                    <code className="hash-chip text-sm text-[#8FEAFF]">{middle(txHash, 10, 8)}</code>
                     <button onClick={() => navigator.clipboard.writeText(txHash)} className="rounded-xl bg-white/10 p-2">
                       <Copy className="h-4 w-4" />
                     </button>
@@ -82,7 +82,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
               <div className="flex flex-wrap gap-3 pt-4">
                 <a
                   href={`/orders/${publicOrderId}`}
-                  className="flex min-h-11 items-center justify-center rounded-2xl bg-white/5 px-5 font-bold text-gray-200"
+                  className="flex min-h-11 items-center justify-center rounded-2xl bg-[var(--qp-surface)] px-5 font-bold text-secondary"
                 >
                   View order →
                 </a>
@@ -112,8 +112,8 @@ export default function SuccessClient({ publicOrderId }: Props) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm text-gray-500">{label}</span>
+    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,11,24,.42)] p-3 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-sm text-muted">{label}</span>
       <span className="font-mono text-sm text-white">
         <span className="hash-chip">{value}</span>
       </span>

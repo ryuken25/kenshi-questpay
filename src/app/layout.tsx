@@ -20,15 +20,12 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const buildSha = process.env.NEXT_PUBLIC_BUILD_SHA || process.env.VERCEL_GIT_COMMIT_SHA || "unknown";
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#080b18] min-h-screen antialiased">
+      <body data-build-sha={buildSha} className="min-h-screen bg-[var(--qp-bg)] antialiased">
         {children}
-        <script
-          defer
-          data-domain="kenshi-questpay.vercel.app"
-          src="https://analytics.vgdh.io/js/script.js"
-        />
+        <script defer data-domain="kenshi-questpay.vercel.app" src="https://analytics.vgdh.io/js/script.js" />
       </body>
     </html>
   );

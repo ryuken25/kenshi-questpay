@@ -45,7 +45,7 @@ export default function Contact() {
           <h2 className="font-sora text-3xl sm:text-4xl font-bold text-white mb-4">
             Get in <span className="gradient-text">Touch</span>
           </h2>
-          <p className="text-gray-400 font-inter">Reach out via any channel</p>
+          <p className="text-muted font-inter">Reach out via any channel</p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -61,9 +61,9 @@ export default function Contact() {
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="glass-panel rounded-xl p-6 flex items-center gap-4 hover:border-verse-purple/30 transition-all group"
             >
-              <contact.icon className="w-6 h-6 text-verse-purple group-hover:text-verse-blue transition-colors" />
+              <contact.icon className="w-6 h-6 text-[#C1B6FF] group-hover:text-[#8FEAFF] transition-colors" />
               <div>
-                <p className="text-sm text-gray-500 font-inter">{contact.label}</p>
+                <p className="text-sm text-muted font-inter">{contact.label}</p>
                 <p className="text-sm text-white font-mono">{contact.value}</p>
               </div>
             </motion.a>

@@ -38,8 +38,8 @@ interface OrderResponse {
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
   pending: { label: "Pending payment", color: "text-yellow-400", icon: Clock },
   paid: { label: "Paid", color: "text-green-400", icon: CheckCircle2 },
-  delivered: { label: "Delivered", color: "text-verse-blue", icon: CheckCircle2 },
-  expired: { label: "Expired", color: "text-gray-500", icon: AlertCircle },
+  delivered: { label: "Delivered", color: "text-[#8FEAFF]", icon: CheckCircle2 },
+  expired: { label: "Expired", color: "text-muted", icon: AlertCircle },
   cancelled: { label: "Cancelled", color: "text-red-400", icon: AlertCircle },
 };
 
@@ -70,7 +70,7 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
   if (loading) {
     return (
       <section className="px-4 py-20 text-center">
-        <Loader2 className="mx-auto animate-spin text-verse-blue" size={32} />
+        <Loader2 className="mx-auto animate-spin text-[#8FEAFF]" size={32} />
       </section>
     );
   }
@@ -96,14 +96,14 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
     <section className="px-4 py-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <div className="text-center mb-8">
-          <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 bg-white/5 ${statusCfg.color}`}>
+          <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 bg-[var(--qp-surface)] ${statusCfg.color}`}>
             <StatusIcon size={18} />
             <span className="font-bold text-sm">{statusCfg.label}</span>
           </div>
           <h1 className="mt-4 font-sora text-2xl font-black text-white">
-            Order <span className="font-mono text-verse-blue text-lg">{order.publicOrderId}</span>
+            Order <span className="font-mono text-[#8FEAFF] text-lg">{order.publicOrderId}</span>
           </h1>
-          <p className="mt-2 text-sm text-gray-400">{order.serviceName} — ${order.serviceUsd}</p>
+          <p className="mt-2 text-sm text-muted">{order.serviceName} — ${order.serviceUsd}</p>
         </div>
 
         <div className="glass-panel-strong rounded-2xl p-5 sm:p-8 space-y-4">
@@ -112,7 +112,7 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
           <Row label="Token" value={order.tokenSymbol} />
           <Row label="Amount" value={`${order.amountHuman} ${order.tokenSymbol}`} />
           <Row label="Created" value={new Date(order.createdAt).toLocaleString()} />
-          <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-gray-400">Private brief and contact details are visible only inside the authenticated Creator Studio.</p>
+          <p className="rounded-2xl border border-white/10 bg-[var(--qp-surface)] p-4 text-sm leading-6 text-muted">Private brief and contact details are visible only inside the authenticated Creator Studio.</p>
 
           {order.payment && (
             <div className="rounded-2xl border border-green-400/30 bg-green-400/10 p-4">
@@ -161,8 +161,8 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm text-gray-500">{label}</span>
+    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,11,24,.42)] p-3 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-sm text-muted">{label}</span>
       <span className="font-mono text-sm text-white">
         <span className="hash-chip">{value}</span>
       </span>

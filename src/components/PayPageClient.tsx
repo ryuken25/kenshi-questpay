@@ -96,7 +96,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
         <div className="mx-auto max-w-lg text-center">
           <AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-400" />
           <h1 className="font-sora text-2xl font-bold text-white">Order not found</h1>
-          <p className="mt-2 text-gray-400">This order does not exist or has expired.</p>
+          <p className="mt-2 text-muted">This order does not exist or has expired.</p>
           <a href="/services" className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-verse-purple px-6 py-3 font-bold text-white">Browse Services</a>
         </div>
       </section>
@@ -109,7 +109,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
         <div className="mx-auto max-w-lg text-center">
           <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-400" />
           <h1 className="font-sora text-2xl font-bold text-white">Already paid</h1>
-          <p className="mt-2 text-gray-400">This order has been paid.</p>
+          <p className="mt-2 text-muted">This order has been paid.</p>
           <button onClick={() => router.push(`/orders/${publicOrderId}`)} className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-verse-blue px-6 py-3 font-bold text-black">View order</button>
         </div>
       </section>
@@ -134,9 +134,9 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
     <section className="px-4 py-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 text-center">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-verse-blue">Pay on Polygon Mainnet</p>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">Pay on Polygon Mainnet</p>
           <h1 className="mt-3 font-sora text-3xl font-black text-white">{serviceName || "Service"} — <span className="gradient-text">${order.usd_price}</span></h1>
-          <p className="mt-2 text-sm text-gray-400">Send <b className="text-white">{amountHuman} {tokenSymbol}</b> to the address below.</p>
+          <p className="mt-2 text-sm text-muted">Send <b className="text-white">{amountHuman} {tokenSymbol}</b> to the address below.</p>
         </div>
 
         <div className="glass-panel-strong space-y-6 rounded-2xl p-5 sm:p-8">
@@ -148,29 +148,29 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
             <div className="space-y-3 text-sm">
               <InfoRow label="Token" value={tokenSymbol} />
               <InfoRow label="Exact amount" value={`${amountHuman} ${tokenSymbol}`} />
-              <div className="rounded-2xl bg-white/[0.04] p-3">
-                <p className="text-xs uppercase tracking-wider text-gray-500">Receive address</p>
+              <div className="rounded-2xl bg-[var(--qp-surface)] p-3">
+                <p className="text-xs uppercase tracking-wider text-muted">Receive address</p>
                 <div className="mt-1 flex items-center gap-2 break-all font-mono text-sm text-white">
                   <span className="hash-chip">{receiveAddress}</span>
                   <button onClick={copyAddress} className="shrink-0 rounded-lg bg-white/10 p-2">{copied ? <CheckCircle2 size={14} className="text-green-400" /> : <Copy size={14} />}</button>
                 </div>
               </div>
-              <a href={`https://polygonscan.com/address/${receiveAddress}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-white/5 px-3 text-xs text-gray-400 hover:text-white">View on Polygonscan <ExternalLink size={12} /></a>
+              <a href={`https://polygonscan.com/address/${receiveAddress}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[var(--qp-surface)] px-3 text-xs text-muted hover:text-white">View on Polygonscan <ExternalLink size={12} /></a>
             </div>
           </div>
 
           <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">Payments are being upgraded. Do not send real funds until the production real-payment gate is PASS.</div>
           <button onClick={payWithWallet} disabled={busy || !REAL_PAYMENTS_ENABLED} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-verse-blue px-5 font-black text-black disabled:opacity-40"><Wallet size={18} />{REAL_PAYMENTS_ENABLED ? (busy ? "Processing..." : `Pay ${amountHuman} ${tokenSymbol} with Wallet`) : "Wallet payment temporarily disabled"}</button>
 
-          <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-            <p className="mb-2 text-sm font-bold text-gray-300">Already sent? Paste your tx hash:</p>
+          <div className="rounded-3xl border border-white/10 bg-[rgba(8,11,24,.42)] p-4">
+            <p className="mb-2 text-sm font-bold text-secondary">Already sent? Paste your tx hash:</p>
             <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-              <input className="w-full rounded-xl border border-white/5 bg-base-lighter px-4 py-3 text-base text-white placeholder-gray-600 outline-none focus:border-verse-purple/50" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="0x..." />
+              <input className="w-full rounded-xl border border-[var(--qp-border-soft)] bg-base-lighter px-4 py-3 text-base text-[var(--qp-text-primary)] placeholder:text-[var(--qp-text-subtle)] outline-none focus:border-verse-purple/50" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="0x..." />
               <button onClick={() => verifyPayment()} disabled={busy || !txHash} className="rounded-2xl bg-green-400 px-5 py-3 font-black text-black disabled:opacity-40">{busy ? <Loader2 className="animate-spin" /> : "Verify Tx"}</button>
             </div>
           </div>
 
-          {status && <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-gray-300">{status}</div>}
+          {status && <div className="rounded-2xl border border-white/10 bg-[var(--qp-surface)] p-4 text-sm text-secondary">{status}</div>}
         </div>
       </div>
     </section>
@@ -178,5 +178,5 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-2xl bg-white/[0.04] p-3"><p className="text-xs uppercase tracking-wider text-gray-500">{label}</p><p className="mt-1 font-mono text-sm text-white">{value}</p></div>;
+  return <div className="rounded-2xl bg-[var(--qp-surface)] p-3"><p className="text-xs uppercase tracking-wider text-muted">{label}</p><p className="mt-1 font-mono text-sm text-white">{value}</p></div>;
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Copy, ExternalLink, Loader2, XCircle, Search } from "lucide-react";
 import { middle } from "@/lib/payment-utils-client";
+import PublicShell from "@/components/PublicShell";
 
 interface VerifyResult {
   ok: boolean;
@@ -42,21 +43,22 @@ export default function VerifyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0D14] px-4 py-10 text-white sm:px-6 lg:px-8 lg:pt-24">
-      <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl sm:p-8">
-        <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-verse-blue">
+    <PublicShell>
+      <main className="min-screen-safe px-4 py-24 text-[var(--qp-text-primary)] sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5 shadow-2xl sm:p-8">
+        <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#8FEAFF]">
           QuestPay Public Verify
         </p>
         <h1 className="mt-3 font-sora text-3xl font-black tracking-[-0.05em] sm:text-5xl">
           On-chain payment proof
         </h1>
-        <p className="mt-3 text-sm leading-6 text-gray-400">
+        <p className="mt-3 text-sm leading-6 text-muted">
           This page is stateless. It re-checks Polygon mainnet live and verifies receiver, token, amount, status, and confirmations.
         </p>
 
         <form onSubmit={handleVerify} className="mt-6 flex gap-2">
           <input
-            className="w-full rounded-xl border border-white/5 bg-base-lighter px-4 py-3 text-base text-white placeholder-gray-600 outline-none focus:border-verse-purple/50"
+            className="w-full rounded-xl border border-[var(--qp-border-soft)] bg-base-lighter px-4 py-3 text-base text-[var(--qp-text-primary)] placeholder:text-[var(--qp-text-subtle)] outline-none focus:border-verse-purple/50"
             value={txHash}
             onChange={(e) => setTxHash(e.target.value)}
             placeholder="Paste Polygon tx hash: 0x..."
@@ -72,7 +74,7 @@ export default function VerifyPage() {
         </form>
 
         {loading && (
-          <div className="mt-8 flex items-center gap-3 rounded-2xl bg-white/5 p-5">
+          <div className="mt-8 flex items-center gap-3 rounded-2xl bg-[var(--qp-surface)] p-5">
             <Loader2 className="animate-spin" /> Verifying on Polygon...
           </div>
         )}
@@ -113,8 +115,8 @@ export default function VerifyPage() {
                 {result.order && (
                   <Row label="Order" value={result.order.public_order_id} />
                 )}
-                <div className="flex flex-wrap items-center gap-3 rounded-xl bg-black/20 p-3">
-                  <code className="hash-chip text-verse-blue">{middle(txHash, 10, 8)}</code>
+                <div className="flex flex-wrap items-center gap-3 rounded-xl bg-[rgba(8,11,24,.42)] p-3">
+                  <code className="hash-chip text-[#8FEAFF]">{middle(txHash, 10, 8)}</code>
                   <button
                     onClick={() => navigator.clipboard.writeText(txHash)}
                     className="rounded-lg bg-white/10 p-2"
@@ -134,14 +136,15 @@ export default function VerifyPage() {
           </div>
         )}
       </section>
-    </main>
+      </main>
+    </PublicShell>
   );
 }
 
 function Row({ label, value, raw }: { label: string; value: string; raw?: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-gray-500">{label}</span>
+    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,11,24,.42)] p-3 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-muted">{label}</span>
       <span className="flex min-w-0 items-center gap-2 font-mono text-white">
         <span className="hash-chip">{value}</span>
         {raw && (
