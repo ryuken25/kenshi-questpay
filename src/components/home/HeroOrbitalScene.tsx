@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-type OrbitTokenId = "usdt" | "btc" | "verse" | "pol";
-type TokenTone = "green" | "orange" | "violet" | "purple";
+type OrbitTokenId = "usdt" | "usdc" | "verse" | "pol";
+type TokenTone = "green" | "blue" | "violet" | "purple";
 
 type OrbitTokenConfig = {
   id: OrbitTokenId;
@@ -34,10 +34,10 @@ type Pose = {
 };
 
 const homeTokens: OrbitTokenConfig[] = [
-  { id: "usdt", label: "USDT", tone: "green", speed: 0.72, phase: 0.25, radiusX: 186, radiusY: 54, depthRadius: 112, verticalOffset: -18, baseScale: 1, direction: 1 },
-  { id: "btc", label: "BTC", tone: "orange", speed: 0.58, phase: 2.35, radiusX: 208, radiusY: 76, depthRadius: 126, verticalOffset: 34, baseScale: 1.04, direction: -1 },
-  { id: "verse", label: "VERSE", tone: "violet", speed: 0.48, phase: 4.3, radiusX: 230, radiusY: 64, depthRadius: 132, verticalOffset: 4, baseScale: 0.94, direction: 1 },
-  { id: "pol", label: "POL", tone: "purple", speed: 0.84, phase: 1.55, radiusX: 154, radiusY: 86, depthRadius: 96, verticalOffset: -6, baseScale: 0.88, direction: -1 },
+  { id: "usdt", label: "USDT", tone: "green", speed: 0.72, phase: 0.25, radiusX: 194, radiusY: 54, depthRadius: 138, verticalOffset: -18, baseScale: 1, direction: 1 },
+  { id: "usdc", label: "USDC", tone: "blue", speed: 0.58, phase: 2.35, radiusX: 216, radiusY: 76, depthRadius: 146, verticalOffset: 34, baseScale: 1.02, direction: -1 },
+  { id: "verse", label: "VERSE", tone: "violet", speed: 0.48, phase: 4.3, radiusX: 238, radiusY: 64, depthRadius: 152, verticalOffset: 4, baseScale: 0.94, direction: 1 },
+  { id: "pol", label: "POL", tone: "purple", speed: 0.84, phase: 1.55, radiusX: 162, radiusY: 86, depthRadius: 116, verticalOffset: -6, baseScale: 0.88, direction: -1 },
 ];
 
 const signinTokens: OrbitTokenConfig[] = [
@@ -65,7 +65,7 @@ function getPose(config: OrbitTokenConfig, elapsedSeconds: number): Pose {
     z,
     scale: config.baseScale * lerp(0.78, 1.1, depth01),
     opacity: lerp(0.58, 1, depth01),
-    isFront: z >= 8,
+    isFront: z >= 34,
     rotation: angle * 38,
   };
 }

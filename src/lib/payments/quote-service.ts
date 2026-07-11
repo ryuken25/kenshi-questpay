@@ -56,8 +56,8 @@ export async function createPaymentQuote(serviceSlug: string, tokenSymbol: Token
   if (!token?.enabled) throw new Error("token_disabled");
 
   let tokenUsdPrice = 1;
-  let source = "fixed:usdt-1usd";
-  if (tokenSymbol !== "USDT") {
+  let source = `fixed:${tokenSymbol.toLowerCase()}-1usd`;
+  if (!["USDT", "USDC"].includes(tokenSymbol)) {
     if (!token.coingeckoId) throw new Error("quote_source_missing");
     const quote = await fetchCoingeckoUsd(token.coingeckoId);
     tokenUsdPrice = quote.price;

@@ -16,7 +16,7 @@ export type BriefFormData = z.infer<typeof briefSchema>;
 
 export const createOrderSchema = z.object({
   slug: z.string().min(1),
-  tokenSymbol: z.enum(["USDT", "VERSE", "POL"]),
+  tokenSymbol: z.enum(["USDT", "USDC", "POL", "VERSE"]),
   brief: briefSchema,
 });
 

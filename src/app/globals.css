@@ -452,8 +452,8 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
 
 .qp-cube-core {
   border-radius: 24px;
-  background: rgba(8, 11, 24, .86);
-  box-shadow: 0 0 70px rgba(124,92,255,.18);
+  background: rgba(5, 6, 12, .97);
+  box-shadow: 0 0 92px rgba(124,92,255,.22);
   transform: translateZ(0);
 }
 
@@ -566,7 +566,7 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
 }
 
 .qp-token-green { background: radial-gradient(circle at 30% 22%, #c9fff0, #20b985 42%, #087456); }
-.qp-token-orange { background: radial-gradient(circle at 30% 22%, #ffe2a3, #f7931a 42%, #9b4a00); }
+.qp-token-blue { background: radial-gradient(circle at 30% 22%, #e5f2ff, #2775ca 42%, #0b3c76); }
 .qp-token-purple { background: radial-gradient(circle at 30% 22%, #e0d8ff, #8247e5 42%, #3a1987); }
 .qp-token-violet { background: radial-gradient(circle at 30% 22%, #eee8ff, #7c5cff 42%, #351771); }
 

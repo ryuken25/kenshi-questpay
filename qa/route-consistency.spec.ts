@@ -23,7 +23,7 @@ test('all routes share the same production shell', async ({ page }) => {
 
 test('premium hero is on root homepage', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(/clear brief/i);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(/creator services/i);
   await expect(page.getByTestId('hero-orbital-scene')).toBeVisible();
 });
 

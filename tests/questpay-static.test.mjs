@@ -62,10 +62,11 @@ test('unified auth infrastructure exists', () => {
 
 test('unified sign-in page exists and has no Creator Login copy', () => {
   const signin = read('src/app/sign-in/page.tsx');
-  assert.match(signin, /Continue with Google/);
-  assert.match(signin, /Connect Wallet/);
-  assert.match(signin, /Send secure link/);
-  assert.doesNotMatch(signin, /Creator Login|owner email|private creator workflow/);
+  const authPanel = read('src/components/auth/AuthPanel.tsx');
+  assert.match(authPanel, /Continue with Google/);
+  assert.match(authPanel, /Connect Wallet/);
+  assert.match(authPanel, /Send secure link/);
+  assert.doesNotMatch(signin + authPanel, /Creator Login|owner email|private creator workflow/);
 });
 
 test('auth migration has root bootstrap', () => {
@@ -85,6 +86,8 @@ test('auth migration has root bootstrap', () => {
 
 test('navbar uses Sign in not Creator Login', () => {
   const navbar = read('src/components/Navbar.tsx');
-  assert.match(navbar, /\/sign-in/);
+  assert.match(navbar, /Sign in/);
+  assert.match(navbar, /Connect Wallet/);
+  assert.match(navbar, /AuthModal/);
   assert.doesNotMatch(navbar, /Creator Login/);
 });

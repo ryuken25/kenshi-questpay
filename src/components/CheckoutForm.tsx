@@ -91,7 +91,7 @@ export default function CheckoutForm({ slug, serviceName, serviceUsd }: Props) {
   return (
     <form onSubmit={handleSubmit} className="glass-panel-strong space-y-5 rounded-2xl p-5 sm:p-8">
       <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
-        <b>Payment safety upgrade active:</b> You can draft an order and receive a locked Polygon quote. Real wallet payment stays disabled until the production gate passes.
+        <b>Payment safety gate:</b> Orders create locked, server-authoritative quotes. Polygon supports USDT, USDC, POL, and VERSE. BNB Chain support is staged behind the payment gate until verification is upgraded.
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -138,7 +138,7 @@ export default function CheckoutForm({ slug, serviceName, serviceUsd }: Props) {
       </Field>
 
       <Field label="Payment token">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {CHECKOUT_TOKENS.map((t) => (
             <button
               key={t}
