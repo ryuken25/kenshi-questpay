@@ -16,7 +16,12 @@ const navLinks = [
 
 const linkClass = "rounded-xl px-3 py-2 text-sm font-medium text-[var(--qp-text-secondary)] transition-colors hover:bg-[var(--qp-surface)] hover:text-white focus-visible:text-white";
 
-export default function Navbar() {
+type NavbarProps = {
+  /** Auth pages already contain wallet/google/email actions, so avoid duplicated wallet/sign-in CTA in the navbar. */
+  authPage?: boolean;
+};
+
+export default function Navbar({ authPage = false }: NavbarProps) {
   const [open, setOpen] = useState(false);
   return (
     <motion.nav
@@ -35,8 +40,10 @@ export default function Navbar() {
           </Link>
           <div className="hidden items-center gap-2 md:flex">
             {navLinks.map((link) => <Link key={link.href} href={link.href} className={linkClass}>{link.label}</Link>)}
-            <WalletButton />
-            <Link href="/sign-in" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-surface)] px-3 text-sm font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)]"><LayoutDashboard size={15} />Sign in</Link>
+            {!authPage ? <WalletButton /> : null}
+            {!authPage ? (
+              <Link href="/sign-in" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-surface)] px-3 text-sm font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)]"><LayoutDashboard size={15} />Sign in</Link>
+            ) : null}
             <Link href="/services" className="inline-flex min-h-10 items-center rounded-xl bg-[var(--qp-violet-strong)] px-4 py-2 text-sm font-bold text-white hover:bg-[var(--qp-violet)]">Start an Order</Link>
           </div>
           <button type="button" aria-label="Open menu" onClick={() => setOpen(!open)} className="rounded-xl border border-[var(--qp-border-soft)] p-2 text-[var(--qp-text-primary)] md:hidden">{open ? <X /> : <Menu />}</button>
@@ -44,8 +51,8 @@ export default function Navbar() {
         {open ? (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-2 border-t border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] py-4 md:hidden">
             {navLinks.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
-            <div className="px-3 py-2"><WalletButton /></div>
-            <Link href="/sign-in" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign in</Link>
+            {!authPage ? <div className="px-3 py-2"><WalletButton /></div> : null}
+            {!authPage ? <Link href="/sign-in" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign in</Link> : null}
             <Link href="/services" onClick={() => setOpen(false)} className="block rounded-xl bg-[var(--qp-violet-strong)] px-3 py-3 text-center text-base font-bold text-white">Start an Order</Link>
           </motion.div>
         ) : null}
