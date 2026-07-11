@@ -37,7 +37,7 @@ export default function HomeServicesPreview() {
               className="min-h-[190px] w-full rounded-[1.5rem] p-5 glass-panel hover:border-verse-purple/30 hover:bg-white/[0.04] transition-all duration-300"
             >
               <div className="flex items-start justify-between gap-3">
-                <span className="text-4xl">{svc.emoji}</span>
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-gray-300">{svc.delivery}</span>
                 <span className="rounded-full bg-verse-blue/10 px-3 py-1 font-mono text-xs font-bold text-verse-blue">
                   ${svc.usd}
                 </span>

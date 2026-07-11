@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import WalletButton from "@/components/wallet/WalletButton";
 import { brandAssets } from "@/data/brand-assets";
 import { SITE } from "@/lib/site";
 
@@ -19,53 +20,50 @@ export default function Hero() {
         <div className="grid gap-8 lg:grid-cols-[0.98fr_1.02fr] lg:items-center">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
             <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-verse-purple/20 bg-verse-purple/10 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-verse-purple">
-              <Image src={brandAssets.verseMark} alt="Verse mark" width={18} height={18} />
-              {SITE.edition}
+              <Image src={brandAssets.verseLogo} alt="VERSE community" width={64} height={16} className="h-4 w-auto" />
+              <span>{SITE.edition}</span>
             </div>
 
-            <h1 className="hero-title mt-5 font-sora font-black text-white">
-              QuestPay
+            <h1 className="hero-title mt-5 max-w-4xl font-sora font-black text-white">
+              Turn a clear brief into paid, trackable creator work.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-gray-300 sm:text-lg lg:text-xl">
-              A crypto checkout desk for small creator jobs: clear brief, fixed package, Polygon mainnet payment, and an on-chain verifiable receipt.
+              Choose a fixed service, send a structured request, pay directly on Polygon, and follow the work through delivery.
             </p>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
-              {SITE.disclaimer}
-            </p>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">{SITE.disclaimer}</p>
 
             <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
               <Link href="/services" className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-verse-purple px-6 py-3 text-center font-sora text-sm font-bold text-white shadow-[0_0_38px_rgba(124,92,255,.28)] transition hover:bg-verse-purple/80">
-                Start a Quest
+                Browse Services
               </Link>
               <Link href="/how-it-works" className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-center font-sora text-sm font-bold text-gray-200 transition hover:border-verse-blue/40 hover:bg-verse-blue/10">
                 See How It Works
               </Link>
-              <Link href="/demo" className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-yellow-400/20 bg-yellow-400/10 px-6 py-3 text-center font-sora text-sm font-bold text-yellow-300 transition hover:bg-yellow-400/15">
-                Try Free Demo
-              </Link>
+              <WalletButton />
             </div>
 
-            <div className="mt-6 grid grid-cols-3 gap-2 text-center text-[11px] font-bold text-gray-400 sm:max-w-xl">
-              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Real payments</span>Polygon mainnet</div>
-              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Free demo</span>Base Sepolia testnet</div>
-              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Private</span>brief</div>
+            <div className="mt-6 grid grid-cols-2 gap-2 text-center text-[11px] font-bold text-gray-400 sm:max-w-2xl sm:grid-cols-4">
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Direct-to-creator</span>payments</div>
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Polygon</span>verified</div>
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Private</span>briefs</div>
+              <div className="rounded-2xl border border-white/10 bg-white/[.04] p-3"><span className="block text-white">Trackable</span>delivery</div>
             </div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.08 }} className="mx-auto w-full max-w-md lg:max-w-lg">
-            <div className="relative rounded-[2rem] border border-white/10 bg-[#11131D]/85 p-4 shadow-[0_26px_90px_rgba(0,0,0,.5)] backdrop-blur-xl sm:p-5">
+            <div className="relative rounded-[2rem] border border-white/10 bg-[#11131D]/85 p-5 shadow-[0_26px_90px_rgba(0,0,0,.5)] backdrop-blur-xl">
               <div className="absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-verse-purple/20 to-verse-blue/10 blur-2xl" />
-              <Image src={brandAssets.questpayPass} alt="QuestPay pass" width={400} height={240} className="w-full rounded-[1.5rem]" priority />
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {["Brief", "Pay", "Receipt"].map((label, i) => (
-                  <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <p className="font-mono text-[10px] text-gray-500">0{i + 1}</p>
-                    <p className="mt-1 text-sm font-bold text-white">{label}</p>
+              <div className="flex items-center gap-3"><Image src={brandAssets.questpayMark} alt="QuestPay mark" width={44} height={44}/><div><p className="text-xs uppercase tracking-[0.2em] text-gray-500">Lifecycle</p><h2 className="font-sora text-2xl font-black text-white">Service to receipt</h2></div></div>
+              <div className="mt-6 grid gap-3">
+                {["Choose a scoped service", "Submit a private brief", "Receive a locked Polygon quote", "Track work and delivery", "Keep a public receipt"].map((label, i) => (
+                  <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-verse-purple/20 font-mono text-xs text-verse-blue">0{i + 1}</span>
+                    <p className="text-sm font-bold text-white">{label}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-3 rounded-2xl border border-verse-blue/20 bg-verse-blue/10 p-3">
-                <p className="hash-chip text-xs text-verse-blue">questpay:20260710:a3f8b2c1 → on-chain proof hash</p>
+              <div className="mt-4 rounded-2xl border border-verse-blue/20 bg-verse-blue/10 p-3">
+                <p className="hash-chip text-xs text-verse-blue">Payment verified on Polygon. Private scope fingerprint stored off-chain.</p>
               </div>
             </div>
           </motion.div>

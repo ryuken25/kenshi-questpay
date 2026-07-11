@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "wallet:create": "tsx scripts/create-dev-wallet.ts",
     "wallet:balance": "tsx scripts/check-deployer-balance.ts",
-    "deploy:contract": "npx hardhat run scripts/deploy-service-pass.ts --network baseSepolia"
+    "deploy:contract": "echo \"Production uses direct Polygon transfers. Legacy testnet contract scripts are archived under scripts/legacy-testnet.\" && exit 1",
+    "test": "node --test tests/**/*.test.mjs",
+    "qa": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",
@@ -39,6 +41,8 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
     "hardhat": "^2.22.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.6",

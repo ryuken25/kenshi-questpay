@@ -49,7 +49,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
           className="glass-panel-strong rounded-2xl p-5 sm:p-8 text-center"
         >
           <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-400" />
-          <h1 className="font-sora text-3xl font-bold text-white">Payment Verified ⚔️</h1>
+          <h1 className="font-sora text-3xl font-bold text-white">Payment Verified</h1>
           <p className="mt-2 text-gray-400">
             Your payment has been confirmed on Polygon mainnet. A confirmation email is on the way.
           </p>

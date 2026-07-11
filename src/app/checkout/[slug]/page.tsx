@@ -39,7 +39,7 @@ export default function CheckoutPage({ params }: Props) {
                 Checkout
               </p>
               <h1 className="mt-3 font-sora text-3xl font-black text-white">
-                {svc.emoji} {svc.name} — <span className="gradient-text">${svc.usd}</span>
+                {svc.name} — <span className="gradient-text">${svc.usd}</span>
               </h1>
               <p className="mt-2 text-sm text-gray-400">{svc.description}</p>
               <p className="mt-1 text-xs text-gray-600">{SITE.disclaimer}</p>
