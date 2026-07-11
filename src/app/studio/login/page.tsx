@@ -17,7 +17,7 @@ export default function StudioLogin({ searchParams }: { searchParams: { error?: 
             {searchParams.error && <p className="mt-5 rounded-2xl border border-red-300/30 bg-red-400/10 p-4 text-sm font-medium leading-6 text-red-100">Sign-in could not be completed. Check the Supabase provider configuration and try again.</p>}
             <a href="/api/auth/oauth" className="mt-6 flex min-h-12 items-center justify-center rounded-xl bg-white px-5 text-base font-black text-black">Continue with Google</a>
             <div className="my-5 flex items-center gap-3 text-sm text-[var(--qp-text-muted)]"><span className="h-px flex-1 bg-[var(--qp-border-soft)]" />or owner magic link<span className="h-px flex-1 bg-[var(--qp-border-soft)]" /></div>
-            <form action="/api/auth/magic-link" method="post" className="space-y-3">
+            <form action="/api/auth/studio-login" method="post" className="space-y-3">
               <label className="block text-sm font-semibold text-[var(--qp-text-primary)]">Owner email
                 <input name="email" type="email" required autoComplete="email" className="mt-2 min-h-12 w-full rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-bg-elevated)] px-4 text-base text-[var(--qp-text-primary)] placeholder:text-[var(--qp-text-subtle)] outline-none focus:border-[var(--qp-violet)] focus:ring-4 focus:ring-[var(--qp-focus-ring)]" />
               </label>

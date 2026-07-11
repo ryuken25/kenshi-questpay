@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { AlertCircle, Loader2, Mail, ShieldCheck, Wallet } from "lucide-react";
+import { useConnect, useConnectors, type Connector } from "wagmi";
+import WalletChooser from "@/components/wallet/WalletChooser";
+import { prepareWalletList, isUserRejection, type WalletConnectionState } from "@/lib/wallet-provider-manifest";
 
 const errorMessages: Record<string, string> = {
   provider_not_enabled: "Google sign-in is temporarily unavailable. Use your wallet or secure email link.",
@@ -14,13 +17,35 @@ const errorMessages: Record<string, string> = {
   no_wallet: "No wallet was detected. Install MetaMask, Rabby, OKX, Coinbase Wallet, or use WalletConnect.",
 };
 
+type MagicLinkState =
+  | "idle"
+  | "submitting"
+  | "accepted"
+  | "rate_limited"
+  | "configuration_error"
+  | "invalid_email"
+  | "network_error";
+
+const magicLinkMessages: Record<Exclude<MagicLinkState, "idle" | "submitting">, { tone: "success" | "error"; text: string }> = {
+  accepted: { tone: "success", text: "Check your inbox. If the address can receive a QuestPay sign-in link, it should arrive shortly." },
+  rate_limited: { tone: "error", text: "Too many requests. Please wait a moment before requesting another link." },
+  configuration_error: { tone: "error", text: "We couldn't send the link right now. Please try again shortly." },
+  invalid_email: { tone: "error", text: "Enter a valid email address." },
+  network_error: { tone: "error", text: "Network error. Check your connection and try again." },
+};
+
 export default function AuthPanel({ next, error, compact = false, intent = "signin" }: { next?: string | null; error?: string | null; compact?: boolean; intent?: "signin" | "wallet" | "creator" }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
-  const [walletLoading, setWalletLoading] = useState(false);
+  const [linkState, setLinkState] = useState<MagicLinkState>("idle");
   const [googleAvailable, setGoogleAvailable] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [walletPanelOpen, setWalletPanelOpen] = useState(intent === "wallet");
+  const [pendingUid, setPendingUid] = useState<string | null>(null);
+  const [walletState, setWalletState] = useState<WalletConnectionState>("idle");
+  const [walletError, setWalletError] = useState<string | null>(null);
+  const connectors = useConnectors();
+  const { connectAsync } = useConnect();
 
   useEffect(() => {
     fetch("/api/health/auth")
@@ -38,51 +63,80 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    setBusy(true);
+    const value = email.trim();
+    if (!value) return;
+    setLinkState("submitting");
     try {
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), next: safeNext }),
+        body: JSON.stringify({ email: value, next: safeNext, intent: intent === "creator" ? "creator" : "buyer" }),
       });
-      if (res.ok) setMagicLinkSent(true);
+      if (res.ok) {
+        setLinkState("accepted");
+      } else if (res.status === 429) {
+        setLinkState("rate_limited");
+      } else if (res.status === 400) {
+        setLinkState("invalid_email");
+      } else {
+        setLinkState("configuration_error");
+      }
     } catch {
-      setMagicLinkSent(true);
+      setLinkState("network_error");
     }
-    setBusy(false);
   };
 
-  const handleWalletSignIn = async () => {
-    setWalletLoading(true);
+  const hasInjectedProvider = typeof window !== "undefined" && Boolean((window as { ethereum?: unknown }).ethereum);
+  const { detected, walletConnect, installs } = prepareWalletList(connectors, hasInjectedProvider);
+
+  const handleWalletConnect = async (connector: Connector) => {
+    setPendingUid(connector.uid);
+    setWalletError(null);
+    setWalletState("opening");
     try {
-      if (!window.ethereum) {
-        router.push("/sign-in?error=no_wallet");
-        return;
-      }
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      if (!accounts?.length) return;
-      const address = accounts[0];
+      setWalletState("awaiting_approval");
+      const result = await connectAsync({ connector });
+      const address = result.accounts[0];
+      if (!address) throw new Error("no_account");
+      setWalletState("connected");
+
       const nonceRes = await fetch("/api/auth/wallet/nonce", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ address }),
       });
       const nonceData = await nonceRes.json();
-      if (!nonceData.ok) return;
-      const signature = await window.ethereum.request({ method: "personal_sign", params: [nonceData.message, address] });
+      if (!nonceData.ok) throw new Error("nonce_failed");
+
+      setWalletState("signature_requested");
+      const provider = (await connector.getProvider()) as {
+        request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+      };
+      const signature = await provider.request({ method: "personal_sign", params: [nonceData.message, address] });
+
+      setWalletState("verifying");
       const verifyRes = await fetch("/api/auth/wallet/verify", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ address, signature, nonce: nonceData.nonce, message: nonceData.message }),
       });
       const verifyData = await verifyRes.json();
-      if (verifyData.ok) router.push(safeNext || verifyData.redirectTo);
-    } catch {
-      // User rejected signature or wallet was unavailable.
+      if (!verifyData.ok) throw new Error("verify_failed");
+
+      setWalletState("success");
+      router.push(safeNext || verifyData.redirectTo);
+    } catch (err) {
+      setPendingUid(null);
+      if (isUserRejection(err)) {
+        setWalletState("rejected");
+      } else {
+        setWalletState("unsupported");
+        setWalletError(err instanceof Error ? err.message : "Wallet connection failed.");
+      }
     }
-    setWalletLoading(false);
   };
+
+  const magicMsg = linkState !== "idle" && linkState !== "submitting" ? magicLinkMessages[linkState] : null;
 
   return (
     <div className={`w-full ${compact ? "max-w-md" : "max-w-lg"} rounded-[1.5rem] border border-[#7c5cff]/22 bg-[#090d1b]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-6`}>
@@ -105,10 +159,35 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
       ) : null}
 
       <div className="mt-5 space-y-3">
-        <button type="button" onClick={handleWalletSignIn} disabled={busy || walletLoading} className="auth-option group" autoFocus={intent === "wallet"}>
-          <span className="auth-option-icon">{walletLoading ? <Loader2 className="animate-spin" size={23} /> : <Wallet size={23} />}</span>
-          <span className="text-left"><span className="block font-bold text-white">{walletLoading ? "Waiting for signature" : "Connect Wallet"}</span><span className="block text-sm text-[var(--qp-text-muted)]">Message signature only. No auth transaction.</span></span>
-        </button>
+        {!walletPanelOpen ? (
+          <button type="button" onClick={() => setWalletPanelOpen(true)} disabled={busy} className="auth-option group" autoFocus={intent === "wallet"}>
+            <span className="auth-option-icon"><Wallet size={23} /></span>
+            <span className="text-left"><span className="block font-bold text-white">Connect Wallet</span><span className="block text-sm text-[var(--qp-text-muted)]">Message signature only. No auth transaction.</span></span>
+          </button>
+        ) : (
+          <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(17,24,45,.72)] p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-bold text-white">Choose a wallet</span>
+              <button
+                type="button"
+                onClick={() => { setWalletPanelOpen(false); setWalletState("idle"); setWalletError(null); setPendingUid(null); }}
+                className="text-xs font-semibold text-[var(--qp-text-muted)] hover:text-white"
+              >
+                Cancel
+              </button>
+            </div>
+            <WalletChooser
+              detected={detected}
+              walletConnect={walletConnect}
+              installs={installs}
+              onConnect={handleWalletConnect}
+              pendingUid={pendingUid}
+              state={walletState}
+              error={walletError}
+              connectLabel="Sign in"
+            />
+          </div>
+        )}
         <button type="button" onClick={handleGoogle} disabled={busy || !googleAvailable} className="auth-option group disabled:cursor-not-allowed disabled:opacity-55">
           <span className="auth-option-icon bg-white"><GoogleIcon /></span>
           <span className="text-left"><span className="block font-bold text-white">{googleAvailable ? "Continue with Google" : "Google temporarily unavailable"}</span><span className="block text-sm text-[var(--qp-text-muted)]">Use wallet or secure email if Google is unavailable.</span></span>
@@ -116,10 +195,10 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
         <form onSubmit={handleMagicLink} className="rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(17,24,45,.72)] p-4">
           <label className="block text-sm font-semibold text-white">
             Email magic link
-            <input name="email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-bg-elevated)] px-4 text-base text-white placeholder:text-[var(--qp-text-subtle)] outline-none focus:border-[var(--qp-violet)] focus:ring-4 focus:ring-[var(--qp-focus-ring)]" placeholder="you@example.com" />
+            <input name="email" type="email" required autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); if (linkState !== "idle" && linkState !== "submitting") setLinkState("idle"); }} className="mt-2 min-h-12 w-full rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-bg-elevated)] px-4 text-base text-white placeholder:text-[var(--qp-text-subtle)] outline-none focus:border-[var(--qp-violet)] focus:ring-4 focus:ring-[var(--qp-focus-ring)]" placeholder="you@example.com" />
           </label>
-          {magicLinkSent ? <p aria-live="polite" className="mt-3 rounded-xl border border-green-300/30 bg-green-400/10 p-3 text-sm font-medium leading-6 text-green-100">If that email can receive a QuestPay sign-in link, it is on the way.</p> : null}
-          <button type="submit" disabled={busy} className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[rgba(124,92,255,.16)] px-5 text-base font-semibold text-white hover:bg-[rgba(124,92,255,.24)] disabled:opacity-50"><Mail size={18} /> Send secure link</button>
+          {magicMsg ? <p role={magicMsg.tone === "error" ? "alert" : undefined} aria-live="polite" className={`mt-3 rounded-xl border p-3 text-sm font-medium leading-6 ${magicMsg.tone === "success" ? "border-green-300/30 bg-green-400/10 text-green-100" : "border-red-300/30 bg-red-400/10 text-red-100"}`}>{magicMsg.text}</p> : null}
+          <button type="submit" disabled={busy || linkState === "submitting"} className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[rgba(124,92,255,.16)] px-5 text-base font-semibold text-white hover:bg-[rgba(124,92,255,.24)] disabled:opacity-50">{linkState === "submitting" ? <Loader2 className="animate-spin" size={18} /> : <Mail size={18} />} {linkState === "submitting" ? "Sending…" : "Send secure link"}</button>
         </form>
       </div>
 

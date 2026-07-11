@@ -5,17 +5,18 @@
 @tailwind utilities;
 
 :root {
-  --color-base: #080b18;
-  --color-base-light: #0d1224;
-  --color-base-lighter: #11182d;
+  --color-base: #05060a;
+  --color-base-light: #090b13;
+  --color-base-lighter: #12141f;
   --color-verse-purple: #8b72ff;
   --color-verse-blue: #42d7f5;
 
-  --qp-bg: #080b18;
-  --qp-bg-elevated: #0d1224;
-  --qp-surface: #11182d;
-  --qp-surface-raised: #17203a;
-  --qp-surface-hover: #1c2745;
+  --qp-bg: #05060a;
+  --qp-bg-deep: #020307;
+  --qp-bg-elevated: #090b13;
+  --qp-surface: #12141f;
+  --qp-surface-raised: #171826;
+  --qp-surface-hover: #1e2030;
   --qp-text-primary: #f7f8ff;
   --qp-text-secondary: #c5cbdd;
   --qp-text-muted: #9da7be;
@@ -35,6 +36,17 @@
   --qp-danger: #ff7088;
   --qp-info: #6aa8ff;
   --qp-focus-ring: rgba(139, 114, 255, 0.72);
+  --qp-violet-300: #c3b4ff;
+  --qp-violet-400: #a98cff;
+  --qp-violet-500: #8a5cff;
+  --qp-violet-600: #7445f2;
+  --qp-violet-700: #5c2fd0;
+  --qp-line: rgba(255, 255, 255, 0.075);
+  --qp-line-violet: rgba(140, 96, 255, 0.18);
+  --qp-line-violet-strong: rgba(157, 116, 255, 0.38);
+  --qp-shadow-card: 0 24px 80px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  --qp-shadow-primary: 0 14px 38px rgba(91, 45, 217, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  --qp-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --qp-text-xs: 0.75rem;
   --qp-text-sm: 0.875rem;
   --qp-text-base: 1rem;
@@ -68,7 +80,10 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--qp-bg);
+  background:
+    radial-gradient(circle at 71% 12%, rgba(113, 60, 255, 0.16), transparent 25%),
+    radial-gradient(circle at 91% 2%, rgba(48, 126, 210, 0.09), transparent 20%),
+    linear-gradient(180deg, #05060a 0%, #05060a 32%, #030408 100%);
   color: var(--qp-text-secondary);
   font-size: 16px;
   line-height: 1.6;

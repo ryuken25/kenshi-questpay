@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import crypto from "node:crypto";
+import { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } from "@/lib/server-config";
 
 export const SESSION_COOKIE = "qp_session";
 export const SESSION_TTL_SECONDS = 604800; // 7 days
@@ -22,10 +23,8 @@ export interface QuestPaySession {
 }
 
 function getServiceClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("supabase_not_configured");
-  return createClient(url, key, { auth: { persistSession: false } });
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) throw new Error("supabase_not_configured");
+  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
 }
 
 export function hashToken(token: string): string {
@@ -280,6 +279,19 @@ export async function findOrCreateAccountByWallet(walletAddress: string): Promis
   }
 
   return { accountId, identityId, isNew };
+}
+
+/**
+ * Return `next` only when it is a safe same-origin relative path, else null.
+ * Rejects absolute URLs, protocol-relative (`//`), backslash tricks (`/\`),
+ * schemes (`javascript:`), and any whitespace/control characters.
+ */
+export function sanitizeNextPath(next: string | null | undefined): string | null {
+  if (!next || typeof next !== "string") return null;
+  if (!next.startsWith("/")) return null;
+  if (next.startsWith("//") || next.startsWith("/\\")) return null;
+  if (/\s/.test(next)) return null;
+  return next;
 }
 
 export function redirectForRoles(roles: Role[], next?: string): string {

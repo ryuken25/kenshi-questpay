@@ -84,10 +84,11 @@ test('auth migration has root bootstrap', () => {
   assert.match(migration, /0xa111a8c806b1fac9d27650455344f5c2f144a743/);
 });
 
-test('navbar uses Sign in not Creator Login', () => {
+test('navbar uses Sign In and Start Selling, no persistent Connect Wallet, no Creator Login', () => {
   const navbar = read('src/components/Navbar.tsx');
-  assert.match(navbar, /Sign in/);
-  assert.match(navbar, /Connect Wallet/);
+  assert.match(navbar, /Sign In/);
+  assert.match(navbar, /Start Selling/);
   assert.match(navbar, /AuthModal/);
+  assert.doesNotMatch(navbar, /Connect Wallet/);
   assert.doesNotMatch(navbar, /Creator Login/);
 });

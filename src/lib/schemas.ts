@@ -25,3 +25,11 @@ export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export const verifyPaymentSchema = z.object({
   txHash: z.string().regex(/^0x[a-fA-F0-9]{64}$/, "Invalid tx hash"),
 });
+
+export const magicLinkSchema = z.object({
+  email: z.string().email(),
+  next: z.string().optional(),
+  intent: z.string().optional(),
+});
+
+export type MagicLinkInput = z.infer<typeof magicLinkSchema>;

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAuth } from "@/lib/supabase-auth";
 import { NEXT_PUBLIC_SITE_URL } from "@/lib/server-config";
-import { findOrCreateAccountByEmail, createSession, getActiveRoles, redirectForRoles } from "@/lib/auth";
+import { findOrCreateAccountByEmail, createSession, getActiveRoles, redirectForRoles, sanitizeNextPath } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     const roles = await getActiveRoles(accountId);
     const { token } = await createSession(accountId, "google", identityId);
 
-    const redirectTo = redirectForRoles(roles, next && !next.startsWith("//") ? next : undefined);
+    const redirectTo = redirectForRoles(roles, sanitizeNextPath(next) ?? undefined);
     const response = NextResponse.redirect(`${NEXT_PUBLIC_SITE_URL}${redirectTo}`);
     response.cookies.set("qp_session", token, {
       httpOnly: true,

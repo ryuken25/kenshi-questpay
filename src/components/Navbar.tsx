@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, Menu, Wallet, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import AuthModal, { type AuthIntent } from "@/components/auth/AuthModal";
 
 const navLinks = [
@@ -15,7 +15,9 @@ const navLinks = [
   { href: "/faq", label: "About" },
 ];
 
-const linkClass = "rounded-xl px-3 py-2 text-sm font-medium text-[var(--qp-text-secondary)] transition-colors hover:bg-[var(--qp-surface)] hover:text-white focus-visible:text-white";
+const linkClass = "text-[13px] font-medium tracking-[-.01em] text-[#b8b8c7] transition-colors hover:text-white focus-visible:text-white";
+const signInClass = "min-h-[42px] items-center rounded-[14px] border border-white/[.11] bg-white/[.03] px-[17px] text-[13px] font-semibold text-[#f5f4fa] transition-colors hover:border-[#a07aff]/40 hover:bg-white/[.06]";
+const startSellingClass = "min-h-[42px] items-center rounded-[14px] border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-[19px] text-[13px] font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)] transition-transform hover:-translate-y-px";
 
 type NavbarProps = {
   authPage?: boolean;
@@ -38,29 +40,34 @@ export default function Navbar({ authPage = false }: NavbarProps) {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="fixed left-0 right-0 top-0 z-50 border-b border-[var(--qp-border-soft)] bg-[rgba(5,6,10,.94)] backdrop-blur-md"
+        className="fixed left-0 right-0 top-0 z-50 border-b border-[rgba(130,98,255,.10)] bg-[rgba(5,6,10,.82)] backdrop-blur-[18px] backdrop-saturate-150"
         role="navigation"
         aria-label="Primary navigation"
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-3">
+        <div className="mx-auto w-[min(100%_-_40px,1440px)]">
+          <div className="grid h-[72px] grid-cols-[auto_1fr_auto] items-center gap-4 sm:gap-8">
             <Link href="/" className="flex items-center gap-2 font-sora text-xl font-bold text-white">
               <Image src="/brand/questpay/questpay-mark.svg" alt="QuestPay" width={28} height={28} />
               <span>QuestPay</span>
             </Link>
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center justify-center gap-[clamp(20px,2.1vw,34px)] md:flex">
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className={linkClass}>{link.label}</Link>)}
-              {!authPage ? <button type="button" onClick={() => openAuth("wallet")} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[var(--qp-violet-strong)] px-4 py-2 text-sm font-bold text-white shadow-[0_10px_28px_rgba(96,57,220,.34)] hover:bg-[var(--qp-violet)]"><Wallet size={15} /> Connect Wallet</button> : null}
-              {!authPage ? <button type="button" onClick={() => openAuth("signin")} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-surface)] px-3 text-sm font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)]"><LayoutDashboard size={15} /> Sign in</button> : null}
             </div>
-            <button type="button" aria-label="Open menu" onClick={() => setOpen(!open)} className="grid size-11 place-items-center rounded-xl border border-[var(--qp-border-soft)] text-[var(--qp-text-primary)] md:hidden">{open ? <X /> : <Menu />}</button>
+            <div className="flex items-center justify-self-end gap-2.5">
+              {!authPage ? (
+                <>
+                  <button type="button" onClick={() => openAuth("signin")} className={`hidden md:inline-flex ${signInClass}`}>Sign In</button>
+                  <button type="button" onClick={() => openAuth("creator")} className={`hidden md:inline-flex ${startSellingClass}`}>Start Selling</button>
+                </>
+              ) : null}
+              <button type="button" aria-label="Open menu" onClick={() => setOpen(!open)} className="grid size-11 place-items-center rounded-xl border border-[var(--qp-border-soft)] text-[var(--qp-text-primary)] md:hidden">{open ? <X /> : <Menu />}</button>
+            </div>
           </div>
           {open ? (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-2 border-t border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] py-4 md:hidden">
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
-              {!authPage ? <button type="button" onClick={() => openAuth("wallet")} className="block min-h-12 w-full rounded-xl bg-[var(--qp-violet-strong)] px-3 py-3 text-left text-base font-bold text-white">Connect Wallet</button> : null}
-              {!authPage ? <button type="button" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign in</button> : null}
-              <button type="button" onClick={() => openAuth("creator")} className="block min-h-12 w-full rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-surface)] px-3 py-3 text-left text-base font-bold text-white">Start Selling</button>
+              {!authPage ? <button type="button" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign In</button> : null}
+              {!authPage ? <button type="button" onClick={() => openAuth("creator")} className="block min-h-12 w-full rounded-xl border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-3 py-3 text-left text-base font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)]">Start Selling</button> : null}
             </motion.div>
           ) : null}
         </div>
