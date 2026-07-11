@@ -22,7 +22,7 @@ export default function Footer() {
             <Link href="/how-it-works" className="text-sm text-[var(--qp-text-muted)] hover:text-white">How It Works</Link>
             <Link href="/privacy" className="text-sm text-[var(--qp-text-muted)] hover:text-white">Privacy</Link>
             <Link href="/terms" className="text-sm text-[var(--qp-text-muted)] hover:text-white">Terms</Link>
-            <Link href="/studio/login" className="text-sm text-[var(--qp-text-muted)] hover:text-white">Creator Login</Link>
+            <Link href="/sign-in" className="text-sm text-[var(--qp-text-muted)] hover:text-white">Sign in</Link>
           </div>
         </div>
         <div className="mt-8 space-y-1 text-center">

@@ -8,6 +8,7 @@ const nextConfig = {
       { source: "/studio", destination: "/dashboard", permanent: false },
       { source: "/studio/orders", destination: "/dashboard/orders", permanent: false },
       { source: "/studio/settings", destination: "/dashboard/settings", permanent: false },
+      { source: "/studio/login", destination: "/sign-in?next=/dashboard", permanent: false },
       { source: "/demo", destination: "/services", permanent: false },
       { source: "/demo/base-sepolia", destination: "/services", permanent: false },
     ];
@@ -19,8 +20,8 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
       "font-src 'self' data:",
-      "connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co",
-      "frame-src 'self' https://verify.walletconnect.org https://verify.walletconnect.com",
+      "connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com",
+      "frame-src 'self' https://verify.walletconnect.org https://verify.walletconnect.com https://accounts.google.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",

@@ -36,7 +36,7 @@ export default function Navbar() {
           <div className="hidden items-center gap-2 md:flex">
             {navLinks.map((link) => <Link key={link.href} href={link.href} className={linkClass}>{link.label}</Link>)}
             <WalletButton />
-            <Link href="/studio/login" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-surface)] px-3 text-sm font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)]"><LayoutDashboard size={15} />Creator Login</Link>
+            <Link href="/sign-in" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-surface)] px-3 text-sm font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)]"><LayoutDashboard size={15} />Sign in</Link>
             <Link href="/services" className="inline-flex min-h-10 items-center rounded-xl bg-[var(--qp-violet-strong)] px-4 py-2 text-sm font-bold text-white hover:bg-[var(--qp-violet)]">Start an Order</Link>
           </div>
           <button type="button" aria-label="Open menu" onClick={() => setOpen(!open)} className="rounded-xl border border-[var(--qp-border-soft)] p-2 text-[var(--qp-text-primary)] md:hidden">{open ? <X /> : <Menu />}</button>
@@ -45,7 +45,7 @@ export default function Navbar() {
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-2 border-t border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] py-4 md:hidden">
             {navLinks.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
             <div className="px-3 py-2"><WalletButton /></div>
-            <Link href="/studio/login" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Creator Login</Link>
+            <Link href="/sign-in" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign in</Link>
             <Link href="/services" onClick={() => setOpen(false)} className="block rounded-xl bg-[var(--qp-violet-strong)] px-3 py-3 text-center text-base font-bold text-white">Start an Order</Link>
           </motion.div>
         ) : null}

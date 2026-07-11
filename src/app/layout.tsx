@@ -2,14 +2,25 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kenshi QuestPay — Creator Service Checkout on Polygon",
+  title: "Kenshi QuestPay — Creator Services on Polygon",
   description:
-    "Choose a fixed creator service, submit a clear private brief, pay directly on Polygon, track progress, and keep a verifiable receipt.",
+    "Choose a scoped creator service, pay on Polygon, track progress, and receive delivery with a verifiable receipt.",
   openGraph: {
-    title: "Kenshi QuestPay",
+    title: "Kenshi QuestPay — Creator Services on Polygon",
     description:
-      "Crypto-native service checkout and delivery workspace for small creator jobs on Polygon.",
+      "Choose a scoped creator service, pay on Polygon, track progress, and receive delivery with a verifiable receipt.",
     type: "website",
+    images: [{ url: "/questpay-og-1200x630.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kenshi QuestPay — Creator Services on Polygon",
+    description: "Choose a scoped creator service, pay on Polygon, track progress, and receive delivery with a verifiable receipt.",
+    images: ["/questpay-og-1200x630.png"],
+  },
+  icons: {
+    icon: "/icons/questpay-mark-512.png",
+    apple: "/icons/questpay-mark-512.png",
   },
 };
 

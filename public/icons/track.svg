@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-label="Track progress">
+<defs><linearGradient id="g" x1="40" y1="35" x2="212" y2="215"><stop stop-color="#22D3FF"/><stop offset=".5" stop-color="#7C5CFF"/><stop offset="1" stop-color="#D946EF"/></linearGradient></defs>
+<rect x="20" y="20" width="216" height="216" rx="64" fill="#0D1224"/>
+<rect x="21" y="21" width="214" height="214" rx="63" stroke="url(#g)" stroke-opacity=".35" stroke-width="2"/>
+<path d="M64 160c24-54 58-82 128-96 M162 58l30 6-8 30 M68 164h46" stroke="url(#g)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

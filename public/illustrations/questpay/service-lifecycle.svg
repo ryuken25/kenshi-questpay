@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" fill="none">
+<defs>
+  <linearGradient id="brand" x1="160" y1="120" x2="1240" y2="780" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#22D3FF"/><stop offset=".35" stop-color="#3978FF"/><stop offset=".68" stop-color="#7C5CFF"/><stop offset="1" stop-color="#D946EF"/>
+  </linearGradient>
+  <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(720 440) rotate(90) scale(420 620)">
+    <stop stop-color="#7C5CFF" stop-opacity=".22"/><stop offset="1" stop-color="#7C5CFF" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="40"/></filter>
+</defs>
+<rect width="1440" height="900" rx="56" fill="#080B18"/>
+<ellipse cx="720" cy="440" rx="620" ry="420" fill="url(#halo)"/>
+<path d="M190 458C340 270 490 650 640 436S930 254 1248 450" stroke="url(#brand)" stroke-opacity=".65" stroke-width="5" stroke-linecap="round"/>
+<g fill="#0F1730" stroke="#8C9CCB" stroke-opacity=".2">
+  <rect x="110" y="346" width="220" height="224" rx="32"/>
+  <rect x="380" y="262" width="220" height="224" rx="32"/>
+  <rect x="650" y="372" width="220" height="224" rx="32"/>
+  <rect x="920" y="250" width="220" height="224" rx="32"/>
+  <rect x="1190" y="362" width="140" height="224" rx="32"/>
+</g>
+<g font-family="Inter, Arial, sans-serif">
+  <text x="144" y="405" fill="#8DA0C8" font-size="22" font-weight="700">01</text>
+  <text x="144" y="456" fill="#F7F8FF" font-size="30" font-weight="800">Choose</text>
+  <text x="414" y="321" fill="#8DA0C8" font-size="22" font-weight="700">02</text>
+  <text x="414" y="372" fill="#F7F8FF" font-size="30" font-weight="800">Brief</text>
+  <text x="684" y="431" fill="#8DA0C8" font-size="22" font-weight="700">03</text>
+  <text x="684" y="482" fill="#F7F8FF" font-size="30" font-weight="800">Pay</text>
+  <text x="954" y="309" fill="#8DA0C8" font-size="22" font-weight="700">04</text>
+  <text x="954" y="360" fill="#F7F8FF" font-size="30" font-weight="800">Track</text>
+  <text x="1216" y="421" fill="#8DA0C8" font-size="22" font-weight="700">05</text>
+  <text x="1216" y="472" fill="#F7F8FF" font-size="27" font-weight="800">Receive</text>
+</g>
+<circle cx="220" cy="522" r="12" fill="#22D3FF"/>
+<circle cx="490" cy="438" r="12" fill="#3978FF"/>
+<circle cx="760" cy="548" r="12" fill="#7C5CFF"/>
+<circle cx="1030" cy="426" r="12" fill="#A855F7"/>
+<circle cx="1260" cy="538" r="12" fill="#D946EF"/>
+</svg>

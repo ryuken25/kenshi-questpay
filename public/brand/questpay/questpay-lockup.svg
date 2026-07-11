@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="240" viewBox="0 0 920 240" fill="none" role="img" aria-labelledby="title">
+<title id="title">QuestPay brand lockup</title>
+<defs>
+  <linearGradient id="g" x1="35" y1="28" x2="220" y2="214" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#22D3FF"/>
+    <stop offset=".35" stop-color="#3978FF"/>
+    <stop offset=".68" stop-color="#7C5CFF"/>
+    <stop offset="1" stop-color="#D946EF"/>
+  </linearGradient>
+</defs>
+<rect x="20" y="20" width="200" height="200" rx="62" fill="#0B1022"/>
+<rect x="21" y="21" width="198" height="198" rx="61" stroke="url(#g)" stroke-opacity=".5" stroke-width="2"/>
+<path d="M120 60c-39.8 0-72 30.4-72 68s32.2 68 72 68c13.2 0 25.5-3.3 36.1-9.2l22.4 22.4c4.3 4.3 11.4 4.3 15.7 0 4.3-4.3 4.3-11.4 0-15.7l-21-21c11.8-12.1 18.8-27.4 18.8-44.5 0-37.6-32.2-68-72-68Zm0 25c25.5 0 46 19.2 46 43s-20.5 43-46 43-46-19.2-46-43 20.5-43 46-43Z" fill="url(#g)"/>
+<path d="m98 127.5 17 17 31-34.5" stroke="#F8FAFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="264" y="132" fill="#F7F8FF" font-family="Inter, Arial, sans-serif" font-size="74" font-weight="800" letter-spacing="-2">QuestPay</text>
+<text x="268" y="175" fill="#AAB4CC" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="500" letter-spacing=".5">Brief. Pay. Track. Receive.</text>
+</svg>

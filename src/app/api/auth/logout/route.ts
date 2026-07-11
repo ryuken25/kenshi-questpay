@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getSupabaseAuth } from "@/lib/supabase-auth";
-import { NEXT_PUBLIC_SITE_URL } from "@/lib/server-config";
+import { destroySession } from "@/lib/auth";
 
 export async function POST() {
-  const auth = getSupabaseAuth();
-  await auth.auth.signOut();
-  return NextResponse.redirect(`${NEXT_PUBLIC_SITE_URL}/studio/login`, 303);
+  await destroySession();
+  const response = NextResponse.redirect(new URL("/sign-in", process.env.NEXT_PUBLIC_SITE_URL || "https://kenshi-questpay.vercel.app"), 303);
+  response.cookies.set("qp_session", "", { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 0 });
+  return response;
 }
