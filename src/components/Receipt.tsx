@@ -34,11 +34,11 @@ export default function Receipt({ receipt }: ReceiptProps) {
         <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="glass-panel-strong rounded-2xl p-5 glow-purple sm:p-8">
           <div className="mb-8 text-center">
             <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-400" />
-            <h2 className="font-sora mb-2 text-2xl font-bold text-white">Payment Verified ⚔️</h2>
+            <h2 className="font-sora mb-2 text-2xl font-bold text-white">Payment Verified</h2>
             <p className="text-gray-400">Save this receipt. The on-chain tx is the canonical proof.</p>
           </div>
           <div className="space-y-3">
-            <Row label="Package" value={`${pkg?.emoji || ''} ${pkg?.name || receipt.packageId}`} />
+            <Row label="Package" value={`${pkg?.name || receipt.packageId}`} />
             <Row label="Payment" value={`${receipt.amount || ''} ${receipt.token || ''}`.trim() || 'Verified'} />
             <Row label="Mode" value={receipt.mode || 'payment'} />
             <Row label="Buyer" value={middle(receipt.buyerAddress)} raw={receipt.buyerAddress} onCopy={copyToClipboard} />

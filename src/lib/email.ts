@@ -114,7 +114,7 @@ export async function sendOrderConfirmationEmail(order: EmailOrder): Promise<voi
 
   const html = `
     <div style="font-family: Inter, sans-serif; max-width: 560px; margin: 0 auto; background: #0B0D14; color: #e2e8f0; padding: 32px; border-radius: 16px;">
-      <h1 style="color: #39D0FF; font-size: 22px; margin: 0 0 16px;">⚔️ QuestPay Payment Confirmed</h1>
+      <h1 style="color: #39D0FF; font-size: 22px; margin: 0 0 16px;">QuestPay Payment Confirmed</h1>
       <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">
         Your payment for <strong style="color: #fff;">${escapeHtml(order.service.name)}</strong> has been verified on Polygon mainnet.
       </p>
@@ -182,7 +182,7 @@ export async function sendAdminNotificationEmail(order: EmailOrder): Promise<voi
   const subject = `New QuestPay order: ${order.service.name} — ${order.amountHuman} ${order.tokenSymbol}`;
   const html = `
     <div style="font-family: Inter, sans-serif; max-width: 560px; margin: 0 auto; background: #0B0D14; color: #e2e8f0; padding: 32px; border-radius: 16px;">
-      <h1 style="color: #7C5CFF; font-size: 22px; margin: 0 0 16px;">⚔️ New Paid Order</h1>
+      <h1 style="color: #7C5CFF; font-size: 22px; margin: 0 0 16px;">New Paid Order</h1>
       <table style="width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px;">
         <tr><td style="padding: 8px 0; color: #64748b;">Order ID</td><td style="padding: 8px 0; color: #fff; font-family: monospace;">${escapeHtml(order.publicOrderId)}</td></tr>
         <tr><td style="padding: 8px 0; color: #64748b;">Service</td><td style="padding: 8px 0; color: #fff;">${order.service.name} ($${order.service.usd})</td></tr>

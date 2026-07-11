@@ -3,13 +3,13 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kenshi QuestPay — Micro-Commission Checkout for Creators",
+  title: "Kenshi QuestPay — Creator Service Checkout on Polygon",
   description:
-    "Structured briefs, Polygon crypto checkout, and verifiable on-chain receipts for creator micro-commissions. Real payments on Polygon mainnet. Free evaluator demo on Base Sepolia.",
+    "Choose a fixed creator service, submit a clear private brief, pay directly on Polygon, track progress, and keep a verifiable receipt.",
   openGraph: {
     title: "Kenshi QuestPay",
     description:
-      "Micro-commission checkout for creators. Pay with USDT, VERSE, or POL on Polygon. Verify receipts on-chain.",
+      "Crypto-native service checkout and delivery workspace for small creator jobs on Polygon.",
     type: "website",
   },
 };
@@ -21,20 +21,16 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const hubImpactSrc = process.env.HUB_IMPACT_SCRIPT_SRC?.trim();
-  const hubSiteId = process.env.NEXT_PUBLIC_HUB_SITE_ID?.trim();
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#0B0D14] min-h-screen antialiased">
+      <body className="bg-[#080b18] min-h-screen antialiased">
         {children}
-        {hubImpactSrc ? (
-          <Script
-            defer
-            src={hubImpactSrc}
-            data-site-id={hubSiteId || undefined}
-            strategy="afterInteractive"
-          />
-        ) : null}
+        <Script
+          defer
+          data-domain="kenshi-questpay.vercel.app"
+          src="https://analytics.vgdh.io/js/script.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

@@ -1,10 +1,9 @@
 export const APP_CONFIG = {
   name: process.env.NEXT_PUBLIC_APP_NAME || "Kenshi QuestPay",
-  chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID || 84532),
-  chainName: process.env.NEXT_PUBLIC_CHAIN_NAME || "Base Sepolia",
-  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || "https://sepolia.base.org",
-  blockExplorer: process.env.NEXT_PUBLIC_BLOCK_EXPLORER || "https://sepolia.basescan.org",
-  contractAddress: (process.env.NEXT_PUBLIC_KENSHI_SERVICE_PASS_ADDRESS || "0x1e8d3843096C2f8A85e30C205B67e8eFfCB69029") as `0x${string}`,
+  chainId: 137,
+  chainName: "Polygon Mainnet",
+  rpcUrl: process.env.NEXT_PUBLIC_POLYGON_RPC_URL || process.env.NEXT_PUBLIC_RPC_URL || "https://polygon-rpc.com",
+  blockExplorer: "https://polygonscan.com",
   creator: {
     github: process.env.NEXT_PUBLIC_CREATOR_GITHUB || "",
     x: process.env.NEXT_PUBLIC_CREATOR_X || "",
@@ -14,43 +13,9 @@ export const APP_CONFIG = {
 } as const;
 
 export const PACKAGES = [
-  { id: 1, name: "Quick Fix Pass", price: "0.0001", priceWei: 100000000000000n, description: "Small UI fix, quick bug review, or tiny landing polish.", emoji: "⚡" },
-  { id: 2, name: "Mini Quest Pass", price: "0.0002", priceWei: 200000000000000n, description: "Small component, copy polish, or short design pass.", emoji: "🎯" },
-  { id: 3, name: "Standard Quest Pass", price: "0.0003", priceWei: 300000000000000n, description: "Medium page/feature build or Web3 wallet integration review.", emoji: "⚔️" },
-  { id: 4, name: "Boss Battle Pass", price: "0.0004", priceWei: 400000000000000n, description: "Complex bug, multi-section page, or deployment rescue.", emoji: "🐉" },
-  { id: 5, name: "Legendary Quest Pass", price: "0.0005", priceWei: 500000000000000n, description: "Large custom scoped request.", emoji: "👑" },
-] as const;
-
-export const CONTRACT_ABI = [
-  {
-    name: "buyPass",
-    type: "function",
-    stateMutability: "payable",
-    inputs: [
-      { name: "packageId", type: "uint256" },
-      { name: "briefHashOrCid", type: "string" },
-    ],
-    outputs: [],
-  },
-  {
-    name: "packages",
-    type: "function",
-    stateMutability: "view",
-    inputs: [{ name: "", type: "uint256" }],
-    outputs: [
-      { name: "priceWei", type: "uint256" },
-      { name: "active", type: "bool" },
-    ],
-  },
-  {
-    name: "ServicePassPurchased",
-    type: "event",
-    inputs: [
-      { name: "buyer", type: "address", indexed: true },
-      { name: "packageId", type: "uint256", indexed: true },
-      { name: "briefHashOrCid", type: "string", indexed: false },
-      { name: "priceWei", type: "uint256", indexed: false },
-      { name: "timestamp", type: "uint256", indexed: false },
-    ],
-  },
+  { id: 1, name: "UI Review", price: "3", priceWei: 0n, description: "A concise review of one screen or page." },
+  { id: 2, name: "Quick Fix", price: "8", priceWei: 0n, description: "One small frontend fix." },
+  { id: 3, name: "Component Build", price: "20", priceWei: 0n, description: "One focused responsive component." },
+  { id: 4, name: "Landing Page Polish", price: "45", priceWei: 0n, description: "Focused landing page polish." },
+  { id: 5, name: "Integration Sprint", price: "90", priceWei: 0n, description: "One scoped integration." },
 ] as const;

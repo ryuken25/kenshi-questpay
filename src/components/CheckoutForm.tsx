@@ -90,8 +90,8 @@ export default function CheckoutForm({ slug, serviceName, serviceUsd }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="glass-panel-strong space-y-5 rounded-2xl p-5 sm:p-8">
-      <div className="rounded-2xl border border-green-400/20 bg-green-400/10 p-4 text-sm leading-6 text-green-100">
-        <b>Real payment:</b> {serviceName} for ${serviceUsd} on Polygon mainnet. You'll get a payment address and QR code on the next step.
+      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
+        <b>Payment safety upgrade active:</b> You can draft an order and receive a locked Polygon quote. Real wallet payment stays disabled until the production gate passes.
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
