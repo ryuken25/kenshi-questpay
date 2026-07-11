@@ -17,9 +17,9 @@ const nextConfig = {
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' https://analytics.vgdh.io",
-      "style-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https:",
-      "font-src 'self' data:",
+      "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com",
       "frame-src 'self' https://verify.walletconnect.org https://verify.walletconnect.com https://accounts.google.com",
       "object-src 'none'",
