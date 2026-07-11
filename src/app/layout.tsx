@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,11 +24,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <body className="bg-[#080b18] min-h-screen antialiased">
         {children}
-        <Script
+        <script
           defer
           data-domain="kenshi-questpay.vercel.app"
           src="https://analytics.vgdh.io/js/script.js"
-          strategy="afterInteractive"
         />
       </body>
     </html>
