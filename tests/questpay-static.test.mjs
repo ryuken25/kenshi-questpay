@@ -63,7 +63,7 @@ test('unified auth infrastructure exists', () => {
 test('unified sign-in page exists and has no Creator Login copy', () => {
   const signin = read('src/app/sign-in/page.tsx');
   assert.match(signin, /Continue with Google/);
-  assert.match(signin, /Continue with Wallet/);
+  assert.match(signin, /Connect Wallet/);
   assert.match(signin, /Send secure link/);
   assert.doesNotMatch(signin, /Creator Login|owner email|private creator workflow/);
 });

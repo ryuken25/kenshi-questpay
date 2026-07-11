@@ -9,10 +9,7 @@ export default function HomeServicesPreview() {
     <section className="relative px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45 }}
+          initial={false}
           className="mb-8 text-center sm:mb-12"
         >
           <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">
@@ -27,13 +24,10 @@ export default function HomeServicesPreview() {
         </motion.div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {SERVICES.map((svc, i) => (
+          {SERVICES.map((svc) => (
             <motion.div
               key={svc.slug}
-              initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.35, delay: i * 0.04 }}
+              initial={false}
               className="min-h-[190px] w-full rounded-[1.5rem] p-5 glass-panel hover:border-verse-purple/30 hover:bg-[var(--qp-surface)] transition-all duration-300"
             >
               <div className="flex items-start justify-between gap-3">
