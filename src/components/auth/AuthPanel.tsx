@@ -34,7 +34,7 @@ const magicLinkMessages: Record<Exclude<MagicLinkState, "idle" | "submitting">, 
   network_error: { tone: "error", text: "Network error. Check your connection and try again." },
 };
 
-export default function AuthPanel({ next, error, compact = false, intent = "signin" }: { next?: string | null; error?: string | null; compact?: boolean; intent?: "signin" | "wallet" | "creator" | "checkout" }) {
+export default function AuthPanel({ next, error, compact = false, intent = "signin", onAuthenticated }: { next?: string | null; error?: string | null; compact?: boolean; intent?: "signin" | "wallet" | "creator" | "checkout"; onAuthenticated?: () => void | Promise<void> }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [linkState, setLinkState] = useState<MagicLinkState>("idle");
@@ -124,7 +124,12 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
       if (!verifyData.ok) throw new Error("verify_failed");
 
       setWalletState("success");
-      router.push(safeNext || verifyData.redirectTo);
+      window.dispatchEvent(new CustomEvent("questpay:auth-changed"));
+      if (onAuthenticated) {
+        await onAuthenticated();
+      } else {
+        router.push(safeNext || verifyData.redirectTo);
+      }
     } catch (err) {
       setPendingUid(null);
       if (isUserRejection(err)) {
@@ -165,7 +170,7 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
             <span className="text-left"><span className="block font-bold text-white">Connect Wallet</span><span className="block text-sm text-[var(--qp-text-muted)]">Message signature only. No auth transaction.</span></span>
           </button>
         ) : (
-          <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(17,24,45,.72)] p-4">
+          <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(8,8,14,.86)] p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-bold text-white">Choose a wallet</span>
               <button
@@ -192,7 +197,7 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
           <span className="auth-option-icon bg-white"><GoogleIcon /></span>
           <span className="text-left"><span className="block font-bold text-white">{googleAvailable ? "Continue with Google" : "Google temporarily unavailable"}</span><span className="block text-sm text-[var(--qp-text-muted)]">Use wallet or secure email if Google is unavailable.</span></span>
         </button>
-        <form onSubmit={handleMagicLink} className="rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(17,24,45,.72)] p-4">
+        <form onSubmit={handleMagicLink} className="rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(8,8,14,.86)] p-4">
           <label className="block text-sm font-semibold text-white">
             Email magic link
             <input name="email" type="email" required autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); if (linkState !== "idle" && linkState !== "submitting") setLinkState("idle"); }} className="mt-2 min-h-12 w-full rounded-xl border border-[var(--qp-border-default)] bg-[var(--qp-bg-elevated)] px-4 text-base text-white placeholder:text-[var(--qp-text-subtle)] outline-none focus:border-[var(--qp-violet)] focus:ring-4 focus:ring-[var(--qp-focus-ring)]" placeholder="you@example.com" />

@@ -632,3 +632,50 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
 @media (prefers-reduced-motion: reduce) {
   .qp-cube-world, .qp-token { animation: none !important; transition: none !important; }
 }
+
+.qp-auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(2, 2, 7, .78);
+  backdrop-filter: blur(16px) saturate(115%);
+  animation: qp-overlay-in 160ms ease-out both;
+}
+.qp-auth-dialog {
+  position: relative;
+  width: min(100%, 540px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(151,106,255,.24);
+  border-radius: 26px;
+  background: radial-gradient(circle at 85% 0%, rgba(119,66,255,.12), transparent 30%), linear-gradient(180deg, rgba(13,11,23,.985), rgba(6,6,12,.995));
+  box-shadow: 0 40px 120px rgba(0,0,0,.68), 0 0 90px rgba(106,50,222,.12), inset 0 1px 0 rgba(255,255,255,.05);
+  animation: qp-dialog-in 190ms cubic-bezier(.2,.8,.2,1) both;
+}
+.qp-auth-dialog__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 13px;
+  color: #d5d0dd;
+  background: rgba(255,255,255,.035);
+}
+@keyframes qp-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes qp-dialog-in { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+@media (max-width: 640px) {
+  .qp-auth-overlay { place-items: end center; padding: 0; }
+  .qp-auth-dialog { width: 100%; max-height: min(92dvh, 820px); border-right: 0; border-bottom: 0; border-left: 0; border-radius: 26px 26px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qp-auth-overlay, .qp-auth-dialog { animation: none; }
+}

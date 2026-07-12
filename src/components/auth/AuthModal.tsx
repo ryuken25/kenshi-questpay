@@ -1,29 +1,69 @@
 "use client";
 
-import { useEffect } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import AuthPanel from "@/components/auth/AuthPanel";
 
 export type AuthIntent = "signin" | "wallet" | "creator" | "checkout";
 
-export default function AuthModal({ open, onClose, intent = "signin", next }: { open: boolean; onClose: () => void; intent?: AuthIntent; next?: string }) {
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  onAuthenticated?: () => void | Promise<void>;
+  intent?: AuthIntent;
+  next?: string;
+  returnFocusRef?: RefObject<HTMLElement>;
+};
+
+export default function AuthModal({ open, onClose, onAuthenticated, intent = "signin", next, returnFocusRef }: Props) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousActiveRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
+    previousActiveRef.current = document.activeElement as HTMLElement | null;
+    const returnTarget = returnFocusRef?.current || previousActiveRef.current;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+
+    const focusTimer = window.setTimeout(() => {
+      const first = dialogRef.current?.querySelector<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      first?.focus();
+    }, 0);
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !dialogRef.current) return;
+      const focusable = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
     window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
-  }, [open, onClose]);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+      window.setTimeout(() => returnTarget?.focus(), 0);
+    };
+  }, [open, onClose, returnFocusRef]);
 
   if (!open || typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] grid place-items-center bg-black/78 px-4 py-6 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="QuestPay sign in">
-      <button aria-label="Close sign in" onClick={onClose} className="absolute right-4 top-4 grid size-11 place-items-center rounded-full border border-white/10 bg-white/5 text-white hover:bg-white/10"><X size={20} /></button>
-      <div className="max-h-[92svh] w-full max-w-lg overflow-y-auto rounded-[1.6rem]">
-        <AuthPanel compact intent={intent} next={next} />
+    <div className="qp-auth-overlay" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <div ref={dialogRef} className="qp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="questpay-auth-title">
+        <button type="button" aria-label="Close sign in" onClick={onClose} className="qp-auth-dialog__close"><X size={20} /></button>
+        <h2 id="questpay-auth-title" className="sr-only">QuestPay sign in</h2>
+        <AuthPanel compact intent={intent} next={next} onAuthenticated={onAuthenticated} />
       </div>
     </div>,
     document.body,
