@@ -171,7 +171,8 @@ export default function HeroOrbitalScene({ variant = "home", className = "" }: {
   const half = cubeSize / 2;
   const coreDistance = half - 10;
   const tokenDepth = half + 30;
-  const markSize = variant === "home" ? 104 : 76;
+  const markWidth = variant === "home" ? 92 : 66;
+  const markHeight = Math.round(markWidth * (64 / 74));
 
   const cubeContainerStyle: CSSProperties = {
     position: "absolute",
@@ -215,7 +216,7 @@ export default function HeroOrbitalScene({ variant = "home", className = "" }: {
             className="qp-cube-mark"
             style={{ position: "absolute", left: "50%", top: "50%", transform: `translate(-50%, -50%) translateZ(${half + 1}px)` }}
           >
-            <Image src="/brand/questpay/questpay-mark-mono.svg" alt="" width={markSize} height={markSize} priority={variant === "home"} />
+            <Image src="/brand/verse/verse-v-glow.svg" alt="" width={markWidth} height={markHeight} priority={variant === "home"} />
           </div>
           <div className="qp-orbit-front qp-orbit-ring qp-orbit-ring--front" style={ringStyle} />
           <TokenLayer poses={front} layer="front" depth={tokenDepth} />

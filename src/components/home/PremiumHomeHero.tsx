@@ -21,7 +21,7 @@ export default function PremiumHomeHero() {
       <div className="relative mx-auto grid max-w-7xl gap-8 lg:min-h-[calc(100svh-7rem)] lg:grid-cols-[.95fr_1.05fr] lg:items-center">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="order-1">
           <div className="event-badge inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-[rgba(179,164,255,.35)] bg-[rgba(124,92,255,.14)] px-3 py-2 text-xs font-bold uppercase text-[#C1B6FF]">
-            <Image src={brandAssets.verseLogo} alt="VERSE community" width={64} height={16} className="h-4 w-auto shrink-0" />
+            <Image src="/brand/verse/verse-v-glow.svg" alt="" width={14} height={12} className="h-3 w-auto shrink-0" />
             <span className="min-w-0 break-words">Powered by VERSE</span>
           </div>
 

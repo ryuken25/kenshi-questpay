@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="74" height="64" viewBox="0 0 74 64" role="img" aria-label="VERSE mark">
+  <defs>
+    <linearGradient id="v" x1="0" y1="0" x2="74" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5F1FF"/>
+      <stop offset="1" stop-color="#C9B2FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 0h18l19 49 19-49h18L46 64H28L0 0Z" fill="url(#v)"/>
+</svg>
