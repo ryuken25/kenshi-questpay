@@ -20,7 +20,7 @@ export default function WalletModal({ isOpen, onClose }: { isOpen: boolean; onCl
   }, [isOpen, onClose]);
   if (!isOpen || typeof document === "undefined") return null;
   return createPortal(<div className="fixed inset-0 z-[9999] flex items-end justify-center bg-black/70 p-0 backdrop-blur-lg sm:items-center sm:p-4" onClick={(e)=>{ if(e.target===e.currentTarget) onClose(); }}>
-    <div role="dialog" aria-modal="true" aria-label="Wallet connection" className="max-h-[88dvh] w-full overflow-y-auto rounded-t-3xl border border-white/10 bg-[#0d1224] p-5 text-white shadow-2xl sm:max-w-md sm:rounded-3xl sm:p-6">
+    <div role="dialog" aria-modal="true" aria-label="Wallet connection" className="max-h-[88dvh] w-full overflow-y-auto rounded-t-3xl border border-white/10 bg-[rgba(5,5,10,.99)] p-5 text-white shadow-2xl sm:max-w-md sm:rounded-3xl sm:p-6">
       <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">Polygon wallet</p><h2 className="mt-1 text-xl font-black">Connect Wallet</h2></div><button type="button" onClick={onClose} className="rounded-xl bg-white/10 p-2"><X size={18}/></button></div>
       <div className="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm text-emerald-100"><ShieldCheck className="mr-2 inline" size={16}/>QuestPay will never ask for your seed phrase. Payments run only on Polygon.</div>
       {isConnected && address ? <div className="mt-5 space-y-3">

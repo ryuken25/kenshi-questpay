@@ -38,6 +38,20 @@ export default function Navbar({ authPage = false }: NavbarProps) {
       .catch(() => setSession({ authenticated: false, roles: [] }));
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   const openAuth = (nextIntent: AuthIntent) => {
     setIntent(nextIntent);
     setOpen(false);
@@ -58,9 +72,8 @@ export default function Navbar({ authPage = false }: NavbarProps) {
       >
         <div className="mx-auto w-[min(100%_-_40px,1440px)]">
           <div className="grid h-[72px] grid-cols-[auto_1fr_auto] items-center gap-4 sm:gap-8">
-            <Link href="/" className="flex items-center gap-2 font-sora text-xl font-bold text-white">
-              <Image src="/brand/questpay/questpay-mark.svg" alt="QuestPay" width={28} height={28} />
-              <span>QuestPay</span>
+            <Link href="/" className="flex min-h-11 items-center" aria-label="QuestPay home">
+              <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={140} height={32} priority className="h-8 w-auto" />
             </Link>
             <div className="hidden items-center justify-center gap-[clamp(20px,2.1vw,34px)] md:flex">
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className={linkClass}>{link.label}</Link>)}

@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import AuthModal from "@/components/auth/AuthModal";
 import HeroOrbitalScene from "@/components/home/HeroOrbitalScene";
-import { brandAssets } from "@/data/brand-assets";
 import { SITE } from "@/lib/site";
 
 const trustItems = ["Direct-to-creator payments", "Private briefs", "Trackable delivery", "Public receipt proof"];
@@ -14,18 +13,18 @@ const trustItems = ["Direct-to-creator payments", "Private briefs", "Trackable d
 export default function PremiumHomeHero() {
   const [authOpen, setAuthOpen] = useState(false);
   return (
-    <section className="relative overflow-hidden px-4 pb-14 pt-24 sm:px-6 lg:px-8 lg:pb-20 lg:pt-28">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_68%_24%,rgba(124,92,255,.24),transparent_28%),radial-gradient(circle_at_82%_10%,rgba(70,180,255,.14),transparent_22%),linear-gradient(180deg,#05060A_0%,#070912_36%,#05060A_100%)]" />
+    <section className="qp-home-hero relative overflow-hidden px-4 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_68%_44%,rgba(107,39,219,.19),transparent_34%),linear-gradient(90deg,rgba(2,2,7,.98)_0%,rgba(2,2,7,.94)_42%,rgba(4,3,10,.80)_72%,rgba(2,2,7,.96)_100%)]" />
       <div className="pointer-events-none absolute inset-x-0 top-16 h-px bg-gradient-to-r from-transparent via-[#7c5cff]/60 to-transparent" />
 
-      <div className="relative mx-auto grid max-w-7xl gap-8 lg:min-h-[calc(100svh-7rem)] lg:grid-cols-[.95fr_1.05fr] lg:items-center">
+      <div className="qp-home-hero__grid relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[.92fr_1.08fr] lg:items-center">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="order-1">
           <div className="event-badge inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-[rgba(179,164,255,.35)] bg-[rgba(124,92,255,.14)] px-3 py-2 text-xs font-bold uppercase text-[#C1B6FF]">
             <Image src="/brand/verse/verse-v-glow.svg" alt="" width={14} height={12} className="h-3 w-auto shrink-0" />
             <span className="min-w-0 break-words">Powered by VERSE</span>
           </div>
 
-          <h1 className="mt-5 max-w-4xl font-sora text-[clamp(2.8rem,7.3vw,5.4rem)] font-black leading-[.94] tracking-[-.055em] text-white">
+          <h1 className="qp-hero-title mt-5 max-w-[570px]">
             Creator services.<br />Paid with crypto.<br /><span className="gradient-text">Built for clear delivery.</span>
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--qp-text-secondary)] sm:text-lg">

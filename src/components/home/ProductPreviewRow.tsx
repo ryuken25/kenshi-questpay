@@ -21,7 +21,7 @@ export default function ProductPreviewRow() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {previews.map((item, index) => (
             <article key={item.title} className="rounded-[1.4rem] border border-[#7c5cff]/16 bg-[rgba(10,12,20,.78)] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
-              <div className="mb-5 h-28 rounded-2xl border border-white/8 bg-[linear-gradient(135deg,rgba(124,92,255,.16),rgba(8,11,24,.9)),radial-gradient(circle_at_80%_10%,rgba(106,223,255,.15),transparent_38%)] p-3">
+              <div className="mb-5 h-28 rounded-2xl border border-white/8 bg-[linear-gradient(135deg,rgba(124,92,255,.16),rgba(8,11,24,.9)),radial-gradient(circle_at_80%_10%,rgba(139,77,255,.15),transparent_38%)] p-3">
                 <div className="h-3 w-20 rounded-full bg-[#7c5cff]/50" />
                 <div className="mt-4 h-3 w-full rounded-full bg-white/10" />
                 <div className="mt-2 h-3 w-2/3 rounded-full bg-white/8" />

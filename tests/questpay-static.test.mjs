@@ -108,6 +108,48 @@ test('navbar uses Sign In and Start Selling, no persistent Connect Wallet, no Cr
   assert.doesNotMatch(navbar, /Creator Login/);
 });
 
+test('reference parity palette stays near-black and violet without cyan headline branding', () => {
+  const css = read('src/app/globals.css');
+  assert.match(css, /--qp-bg-000:\s*#020207/);
+  assert.match(css, /--qp-violet-500:\s*#8b4dff/i);
+  const gradient = css.slice(css.indexOf('.gradient-text'), css.indexOf('.gradient-border'));
+  assert.match(gradient, /#8b4dff/i);
+  assert.doesNotMatch(gradient, /#67e3fa|#78a6ff/i);
+});
+
+test('public hero uses compact parity composition without blue or cyan backdrop', () => {
+  const hero = read('src/components/home/PremiumHomeHero.tsx');
+  assert.match(hero, /qp-home-hero/);
+  assert.match(hero, /qp-hero-title/);
+  assert.doesNotMatch(hero, /70,180,255|7\.3vw/);
+});
+
+test('orbital hero keeps four stable asset-backed token nodes and updates them without React frame renders', () => {
+  const scene = read('src/components/home/HeroOrbitalScene.tsx');
+  const css = read('src/app/globals.css');
+
+  assert.match(scene, /const TOKENS[\s\S]*usdt[\s\S]*usdc[\s\S]*verse[\s\S]*pol/);
+  assert.match(scene, /TOKENS\.map\(\(token\)/);
+  assert.match(scene, /tokenRefs\.current\[token\.id\]/);
+  assert.match(scene, /IntersectionObserver/);
+  assert.match(scene, /timeOffsetRef\.current \+= delta/);
+  assert.match(scene, /if \(z >= 18\)[\s\S]*if \(z <= -18\)/);
+  assert.doesNotMatch(scene, /setElapsed|poses\.filter|TokenLayer/);
+  for (const asset of ['/tokens/usdt.svg', '/tokens/usdc.svg', '/brand/verse/verse-icon-official.png', '/tokens/pol.svg']) {
+    assert.match(scene, new RegExp(asset.replaceAll('/', '\\/').replace('.', '\\.')));
+  }
+  assert.match(css, /\.qp-orbit-ring--rear/);
+  assert.match(css, /\.qp-orbit-ring--front/);
+  assert.match(css, /\.qp-cube-core-face[\s\S]*background:[^;]+/);
+  assert.match(css, /\.qp-cube-world[\s\S]*rotateX\(-14deg\) rotateY\(28deg\)/);
+});
+
+test('navbar uses supplied horizontal QuestPay logo and locks mobile page scroll', () => {
+  const navbar = read('src/components/Navbar.tsx');
+  assert.match(navbar, /questpay-logo-horizontal\.svg/);
+  assert.match(navbar, /document\.body\.style\.overflow/);
+});
+
 test('order creation API rejects unauthenticated and incomplete-profile requests before touching payment logic', () => {
   const route = read('src/app/api/orders/route.ts');
   assert.match(route, /getSession\(\)/);
