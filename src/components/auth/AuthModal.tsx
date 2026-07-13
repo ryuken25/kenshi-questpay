@@ -63,7 +63,7 @@ export default function AuthModal({ open, onClose, onAuthenticated, intent = "si
       <div ref={dialogRef} className="qp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="questpay-auth-title">
         <button type="button" aria-label="Close sign in" onClick={onClose} className="qp-auth-dialog__close"><X size={20} /></button>
         <h2 id="questpay-auth-title" className="sr-only">QuestPay sign in</h2>
-        <AuthPanel compact intent={intent} next={next} onAuthenticated={onAuthenticated} />
+        <AuthPanel compact bare intent={intent} next={next} onAuthenticated={onAuthenticated} />
       </div>
     </div>,
     document.body,

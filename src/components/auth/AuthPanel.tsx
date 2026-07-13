@@ -34,7 +34,7 @@ const magicLinkMessages: Record<Exclude<MagicLinkState, "idle" | "submitting">, 
   network_error: { tone: "error", text: "Network error. Check your connection and try again." },
 };
 
-export default function AuthPanel({ next, error, compact = false, intent = "signin", onAuthenticated }: { next?: string | null; error?: string | null; compact?: boolean; intent?: "signin" | "wallet" | "creator" | "checkout"; onAuthenticated?: () => void | Promise<void> }) {
+export default function AuthPanel({ next, error, compact = false, bare = false, intent = "signin", onAuthenticated }: { next?: string | null; error?: string | null; compact?: boolean; bare?: boolean; intent?: "signin" | "wallet" | "creator" | "checkout"; onAuthenticated?: () => void | Promise<void> }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [linkState, setLinkState] = useState<MagicLinkState>("idle");
@@ -144,7 +144,7 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
   const magicMsg = linkState !== "idle" && linkState !== "submitting" ? magicLinkMessages[linkState] : null;
 
   return (
-    <div className={`w-full rounded-[1.5rem] ${compact ? "max-w-none border-0 bg-transparent p-5 shadow-none sm:p-6" : "max-w-lg border border-[#7c5cff]/22 bg-[rgba(5,5,10,.98)] p-5 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-6"}`}>
+    <div className={`w-full rounded-[1.5rem] ${bare ? "max-w-none border-0 bg-transparent p-5 shadow-none sm:p-6" : `${compact ? "max-w-md" : "max-w-lg"} border border-[#7c5cff]/22 bg-[rgba(5,5,10,.98)] p-5 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-6`}`}>
       <div className="mb-5 flex items-center gap-3">
         <Image src="/brand/questpay/questpay-mark.svg" alt="QuestPay" width={42} height={42} />
         <div>

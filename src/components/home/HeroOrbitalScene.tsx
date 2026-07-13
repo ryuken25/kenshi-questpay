@@ -54,7 +54,7 @@ export default function HeroOrbitalScene({ variant = "home", className = "" }: {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const renderStatic = () => {
       const mobile = window.innerWidth < 768;
-      const sceneScale = (mobile ? 0.7 : 1) * (variant === "signin" ? 0.64 : 1);
+      const sceneScale = mobile ? 0.7 : 1;
       TOKENS.forEach((token) => {
         const pose = STATIC_POSES[token.id];
         const rear = rearRefs.current[token.id];
@@ -95,7 +95,7 @@ export default function HeroOrbitalScene({ variant = "home", className = "" }: {
       timeRef.current += dt;
 
       const mobile = window.innerWidth < 768;
-      const sceneScale = (mobile ? 0.7 : 1) * (variant === "signin" ? 0.64 : 1);
+      const sceneScale = mobile ? 0.7 : 1;
       for (const token of TOKENS) {
         const rear = rearRefs.current[token.id];
         const front = frontRefs.current[token.id];
