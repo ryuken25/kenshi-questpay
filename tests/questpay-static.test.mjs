@@ -213,4 +213,34 @@ test('logout always clears the canonical session cookie even if server-side revo
   assert.match(route, /try\s*\{\s*await destroySession\(\);\s*\}\s*catch/s);
   assert.match(route, /cookies\.set\(SESSION_COOKIE,\s*["']{2}/);
   assert.match(route, /Cache-Control["']?,\s*["']no-store/);
+  assert.match(route, /NextResponse\.redirect\(new URL\(["']\/["']/);
+});
+
+test('wallet authentication cancellation invalidates stale attempts and times out safely', () => {
+  const panel = read('src/components/auth/AuthPanel.tsx');
+  const manifest = read('src/lib/wallet-provider-manifest.ts');
+  assert.match(manifest, /"cancelled"/);
+  assert.match(manifest, /"timeout"/);
+  assert.match(panel, /walletAttempt\.current/);
+  assert.match(panel, /const isCurrent/);
+  assert.match(panel, /75_000/);
+  assert.match(panel, /disconnectAsync/);
+  assert.match(panel, /abandonIfStale/);
+  assert.match(panel, /walletAttempt\.current === attempt \+ 1/);
+});
+
+test('premium workflow uses kit assets, one active story panel, and real audience anchors', () => {
+  const story = read('src/components/home/ProductPreviewRow.tsx');
+  const benefits = read('src/components/home/BuyerCreatorBenefits.tsx');
+  const how = read('src/app/how-it-works/page.tsx');
+  assert.match(story, /AnimatePresence/);
+  assert.match(story, /key=\{current\.id\}/);
+  assert.match(story, /import\("gsap\/ScrollTrigger"\)/);
+  assert.match(benefits, /creator-flow-illustration\.svg/);
+  assert.match(benefits, /buyer-flow-illustration\.svg/);
+  assert.match(how, /creator-workflow/);
+  assert.match(how, /buyer-workflow/);
+  for (const asset of ['flow-01-service.svg', 'flow-02-brief.svg', 'flow-03-payment.svg', 'flow-04-tracking.svg', 'flow-05-receipt.svg', 'flow-06-dashboard.svg', 'creator-flow-illustration.svg', 'buyer-flow-illustration.svg', 'workflow-particle-field.svg']) {
+    assert.ok(existsSync(new URL(`public/assets/how-it-works/${asset}`, root)), asset);
+  }
 });

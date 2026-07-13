@@ -614,6 +614,16 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   .qp-auth-overlay { place-items: end center; padding: 0; }
   .qp-auth-dialog { width: 100%; max-height: min(92dvh, 820px); border-right: 0; border-bottom: 0; border-left: 0; border-radius: 26px 26px 0 0; padding-bottom: env(safe-area-inset-bottom); }
 }
+@keyframes qp-particle-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(8px, -10px, 0) scale(1.015); }
+}
+.qp-workflow-particles {
+  pointer-events: none;
+  animation: qp-particle-drift 22s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .qp-auth-overlay, .qp-auth-dialog { animation: none; }
+  .qp-workflow-particles { animation: none; }
 }

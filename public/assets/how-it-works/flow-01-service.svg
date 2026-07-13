@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 390" fill="none">
+<defs><radialGradient id="gl" cx="0" cy="0" r="1" gradientTransform="translate(430 90) rotate(145) scale(360 260)"><stop stop-color="#8B4DFF" stop-opacity=".22"/><stop offset="1" stop-color="#020207" stop-opacity="0"/></radialGradient></defs>
+<rect width="660" height="390" rx="32" fill="#05050B"/><rect width="660" height="390" rx="32" fill="url(#gl)"/>
+<text x="48" y="62" fill="#B886FF" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">01</text>
+<rect x="244" y="105" width="170" height="130" rx="22" fill="#0D0A19" stroke="#8B4DFF" stroke-opacity=".5"/><rect x="270" y="134" width="116" height="12" rx="6" fill="#B886FF"/><rect x="270" y="162" width="88" height="8" rx="4" fill="#fff" opacity=".14"/><rect x="270" y="183" width="104" height="8" rx="4" fill="#fff" opacity=".09"/><rect x="270" y="208" width="62" height="18" rx="9" fill="#8B4DFF" opacity=".28"/>
+<text x="48" y="318" fill="#F7F5FB" font-family="Arial, sans-serif" font-size="27" font-weight="700">Choose a service</text>
+<text x="48" y="350" fill="#9D96A8" font-family="Arial, sans-serif" font-size="15">Scope, price, turnaround, and requirements.</text>
+</svg>

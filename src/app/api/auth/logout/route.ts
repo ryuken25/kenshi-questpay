@@ -9,7 +9,7 @@ export async function POST() {
     console.error("[auth/logout] session revocation failed", error);
   }
 
-  const response = NextResponse.redirect(new URL("/sign-in", process.env.NEXT_PUBLIC_SITE_URL || "https://kenshi-questpay.vercel.app"), 303);
+  const response = NextResponse.redirect(new URL("/", process.env.NEXT_PUBLIC_SITE_URL || "https://kenshi-questpay.vercel.app"), 303);
   response.cookies.set(SESSION_COOKIE, "", { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 0 });
   response.headers.set("Cache-Control", "no-store");
   return response;

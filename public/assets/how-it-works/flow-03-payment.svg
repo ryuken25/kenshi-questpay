@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 390" fill="none">
+<defs><radialGradient id="gl" cx="0" cy="0" r="1" gradientTransform="translate(430 90) rotate(145) scale(360 260)"><stop stop-color="#8B4DFF" stop-opacity=".22"/><stop offset="1" stop-color="#020207" stop-opacity="0"/></radialGradient></defs>
+<rect width="660" height="390" rx="32" fill="#05050B"/><rect width="660" height="390" rx="32" fill="url(#gl)"/>
+<text x="48" y="62" fill="#B886FF" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">03</text>
+<circle cx="330" cy="170" r="78" fill="#0D0A19" stroke="#8B4DFF" stroke-opacity=".5"/><path d="M290 166h80M330 126v80" stroke="#B886FF" stroke-width="10" stroke-linecap="round"/><circle cx="412" cy="215" r="34" fill="#8B4DFF" opacity=".25"/><path d="M398 215l10 10 20-24" stroke="#D8C3FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="48" y="318" fill="#F7F5FB" font-family="Arial, sans-serif" font-size="27" font-weight="700">Lock and pay</text>
+<text x="48" y="350" fill="#9D96A8" font-family="Arial, sans-serif" font-size="15">Network, token, receiver, amount, and expiry.</text>
+</svg>

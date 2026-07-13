@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 390" fill="none">
+<defs><radialGradient id="gl" cx="0" cy="0" r="1" gradientTransform="translate(430 90) rotate(145) scale(360 260)"><stop stop-color="#8B4DFF" stop-opacity=".22"/><stop offset="1" stop-color="#020207" stop-opacity="0"/></radialGradient></defs>
+<rect width="660" height="390" rx="32" fill="#05050B"/><rect width="660" height="390" rx="32" fill="url(#gl)"/>
+<text x="48" y="62" fill="#B886FF" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">05</text>
+<rect x="258" y="86" width="148" height="184" rx="20" fill="#0D0A19" stroke="#8B4DFF" stroke-opacity=".5"/><rect x="284" y="122" width="96" height="10" rx="5" fill="#B886FF"/><rect x="284" y="150" width="78" height="8" rx="4" fill="#fff" opacity=".13"/><rect x="284" y="173" width="90" height="8" rx="4" fill="#fff" opacity=".09"/><path d="M289 220l13 13 28-33" stroke="#CDB2FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="48" y="318" fill="#F7F5FB" font-family="Arial, sans-serif" font-size="27" font-weight="700">Keep proof</text>
+<text x="48" y="350" fill="#9D96A8" font-family="Arial, sans-serif" font-size="15">Public transaction proof with private data redacted.</text>
+</svg>

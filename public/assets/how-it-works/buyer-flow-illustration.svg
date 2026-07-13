@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" fill="none">
+<defs>
+  <radialGradient id="bg" cx="0" cy="0" r="1" gradientTransform="translate(540 80) rotate(140) scale(430 310)">
+    <stop stop-color="#8B4DFF" stop-opacity=".22"/><stop offset="1" stop-color="#020207" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="720" height="440" rx="36" fill="#05050B"/>
+<rect width="720" height="440" rx="36" fill="url(#bg)"/>
+<circle cx="580" cy="80" r="75" fill="#8B4DFF" opacity=".12" filter="url(#glow)"/>
+
+        <rect x="108" y="122" width="250" height="190" rx="24" fill="#0B0914" stroke="#8B4DFF" stroke-opacity=".35"/>
+        <rect x="137" y="154" width="192" height="86" rx="18" fill="#100D1E"/>
+        <circle cx="174" cy="197" r="22" fill="#8B4DFF" opacity=".25"/>
+        <path d="M164 197l7 7 14-17" stroke="#D6BFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="211" y="180" width="90" height="10" rx="5" fill="#FFFFFF" opacity=".18"/>
+        <rect x="211" y="202" width="70" height="8" rx="4" fill="#FFFFFF" opacity=".09"/>
+        <path d="M360 215h100" stroke="#8B4DFF" stroke-width="3" stroke-dasharray="7 9" opacity=".55"/>
+        <circle cx="490" cy="215" r="44" fill="#0B0914" stroke="#8B4DFF" stroke-opacity=".45"/>
+        <path d="M471 215l13 13 26-32" stroke="#C9A7FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+<text x="60" y="365" fill="#F7F5FB" font-family="Arial, sans-serif" font-size="28" font-weight="700">Buyer workflow</text>
+<text x="60" y="398" fill="#9D96A8" font-family="Arial, sans-serif" font-size="15">Clear service, private brief, payment proof, and receipt.</text>
+</svg>

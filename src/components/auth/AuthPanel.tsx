@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { AlertCircle, Loader2, Mail, ShieldCheck, Wallet } from "lucide-react";
-import { useConnect, useConnectors, type Connector } from "wagmi";
+import { useConnect, useConnectors, useDisconnect, type Connector } from "wagmi";
 import WalletChooser from "@/components/wallet/WalletChooser";
 import { prepareWalletList, isUserRejection, type WalletConnectionState } from "@/lib/wallet-provider-manifest";
 
@@ -44,14 +44,22 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
   const [pendingUid, setPendingUid] = useState<string | null>(null);
   const [walletState, setWalletState] = useState<WalletConnectionState>("idle");
   const [walletError, setWalletError] = useState<string | null>(null);
+  const walletAttempt = useRef(0);
+  const walletTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const connectors = useConnectors();
   const { connectAsync } = useConnect();
+  const { disconnectAsync } = useDisconnect();
 
   useEffect(() => {
     fetch("/api/health/auth")
       .then((r) => r.json())
       .then((d) => setGoogleAvailable(d.providers?.googleConfigured ?? true))
       .catch(() => {});
+  }, []);
+
+  useEffect(() => () => {
+    walletAttempt.current += 1;
+    if (walletTimeout.current) clearTimeout(walletTimeout.current);
   }, []);
 
   const safeNext = intent === "creator" && !next ? "/studio" : next;
@@ -90,12 +98,30 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
   const { detected, walletConnect, installs } = prepareWalletList(connectors, hasInjectedProvider);
 
   const handleWalletConnect = async (connector: Connector) => {
+    const attempt = ++walletAttempt.current;
+    const isCurrent = () => walletAttempt.current === attempt;
+    const abandonIfStale = async () => {
+      if (isCurrent()) return false;
+      if (walletAttempt.current === attempt + 1) await disconnectAsync().catch(() => {});
+      return true;
+    };
+    if (walletTimeout.current) clearTimeout(walletTimeout.current);
     setPendingUid(connector.uid);
     setWalletError(null);
     setWalletState("opening");
+    walletTimeout.current = setTimeout(() => {
+      if (!isCurrent()) return;
+      walletAttempt.current += 1;
+      setPendingUid(null);
+      setWalletState("timeout");
+      setWalletError("The wallet did not respond. Retry when it is ready.");
+      void disconnectAsync().catch(() => {});
+    }, 75_000);
+
     try {
       setWalletState("awaiting_approval");
       const result = await connectAsync({ connector });
+      if (await abandonIfStale()) return;
       const address = result.accounts[0];
       if (!address) throw new Error("no_account");
       setWalletState("connected");
@@ -106,6 +132,7 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
         body: JSON.stringify({ address }),
       });
       const nonceData = await nonceRes.json();
+      if (await abandonIfStale()) return;
       if (!nonceData.ok) throw new Error("nonce_failed");
 
       setWalletState("signature_requested");
@@ -113,6 +140,7 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
         request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
       };
       const signature = await provider.request({ method: "personal_sign", params: [nonceData.message, address] });
+      if (await abandonIfStale()) return;
 
       setWalletState("verifying");
       const verifyRes = await fetch("/api/auth/wallet/verify", {
@@ -121,8 +149,11 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
         body: JSON.stringify({ address, signature, nonce: nonceData.nonce, message: nonceData.message }),
       });
       const verifyData = await verifyRes.json();
+      if (await abandonIfStale()) return;
       if (!verifyData.ok) throw new Error("verify_failed");
 
+      if (walletTimeout.current) clearTimeout(walletTimeout.current);
+      setPendingUid(null);
       setWalletState("success");
       window.dispatchEvent(new CustomEvent("questpay:auth-changed"));
       if (onAuthenticated) {
@@ -131,6 +162,8 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
         router.push(safeNext || verifyData.redirectTo);
       }
     } catch (err) {
+      if (!isCurrent()) return;
+      if (walletTimeout.current) clearTimeout(walletTimeout.current);
       setPendingUid(null);
       if (isUserRejection(err)) {
         setWalletState("rejected");
@@ -139,6 +172,16 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
         setWalletError(err instanceof Error ? err.message : "Wallet connection failed.");
       }
     }
+  };
+
+  const cancelWalletAttempt = (closePanel = false) => {
+    walletAttempt.current += 1;
+    if (walletTimeout.current) clearTimeout(walletTimeout.current);
+    setPendingUid(null);
+    setWalletError(null);
+    setWalletState("cancelled");
+    if (closePanel) setWalletPanelOpen(false);
+    void disconnectAsync().catch(() => {});
   };
 
   const magicMsg = linkState !== "idle" && linkState !== "submitting" ? magicLinkMessages[linkState] : null;
@@ -172,7 +215,7 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
               <span className="text-sm font-bold text-white">Choose a wallet</span>
               <button
                 type="button"
-                onClick={() => { setWalletPanelOpen(false); setWalletState("idle"); setWalletError(null); setPendingUid(null); }}
+                onClick={() => cancelWalletAttempt(true)}
                 className="text-xs font-semibold text-[var(--qp-text-muted)] hover:text-white"
               >
                 Cancel
@@ -188,6 +231,7 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
               error={walletError}
               connectLabel="Sign in"
             />
+            {walletState === "cancelled" || walletState === "timeout" ? <p role="status" aria-live="polite" className="mt-3 rounded-xl border border-amber-300/20 bg-amber-400/10 p-3 text-xs font-medium text-amber-100">{walletState === "timeout" ? "Wallet response timed out. Retry when it is ready." : "Wallet connection cancelled. No session was created."}</p> : null}
           </div>
         )}
         <button type="button" onClick={handleGoogle} disabled={busy || !googleAvailable} className="auth-option group disabled:cursor-not-allowed disabled:opacity-55">

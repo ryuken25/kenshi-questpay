@@ -79,6 +79,8 @@ export type WalletConnectionState =
   | "signature_requested"
   | "verifying"
   | "success"
+  | "cancelled"
+  | "timeout"
   | "rejected"
   | "wrong_chain"
   | "unsupported";
@@ -91,6 +93,8 @@ export const walletStateLabels: Record<WalletConnectionState, string> = {
   signature_requested: "Sign the message to continue",
   verifying: "Verifying signature…",
   success: "Signed in",
+  cancelled: "Connection cancelled",
+  timeout: "Wallet response timed out",
   rejected: "Request cancelled",
   wrong_chain: "Wrong network — switch to Polygon",
   unsupported: "This wallet isn't supported yet",

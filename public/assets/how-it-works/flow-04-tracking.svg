@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 390" fill="none">
+<defs><radialGradient id="gl" cx="0" cy="0" r="1" gradientTransform="translate(430 90) rotate(145) scale(360 260)"><stop stop-color="#8B4DFF" stop-opacity=".22"/><stop offset="1" stop-color="#020207" stop-opacity="0"/></radialGradient></defs>
+<rect width="660" height="390" rx="32" fill="#05050B"/><rect width="660" height="390" rx="32" fill="url(#gl)"/>
+<text x="48" y="62" fill="#B886FF" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">04</text>
+<path d="M218 170h224" stroke="#8B4DFF" stroke-width="4" opacity=".45"/><circle cx="238" cy="170" r="18" fill="#8B4DFF"/><circle cx="306" cy="170" r="18" fill="#0D0A19" stroke="#B886FF"/><circle cx="374" cy="170" r="18" fill="#0D0A19" stroke="#B886FF"/><circle cx="442" cy="170" r="18" fill="#0D0A19" stroke="#B886FF"/><rect x="220" y="224" width="238" height="24" rx="12" fill="#0D0A19"/><rect x="220" y="224" width="118" height="24" rx="12" fill="#8B4DFF" opacity=".45"/>
+<text x="48" y="318" fill="#F7F5FB" font-family="Arial, sans-serif" font-size="27" font-weight="700">Track progress</text>
+<text x="48" y="350" fill="#9D96A8" font-family="Arial, sans-serif" font-size="15">Payment and delivery states share one timeline.</text>
+</svg>
