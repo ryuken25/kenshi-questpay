@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { CircleCheck, FileLock2, ReceiptText } from "lucide-react";
-import AuthModal from "@/components/auth/AuthModal";
+import CreatorIntentButton from "@/components/CreatorIntentButton";
 import HeroOrbitalScene from "@/components/home/HeroOrbitalScene";
 import { SITE } from "@/lib/site";
 
@@ -16,7 +15,6 @@ const trustItems = [
 ];
 
 export default function PremiumHomeHero() {
-  const [authOpen, setAuthOpen] = useState(false);
   return (
     <section className="qp-home-hero">
       <div className="qp-home-hero__light" />
@@ -38,7 +36,7 @@ export default function PremiumHomeHero() {
 
           <div className="qp-hero-actions">
             <Link href="/services" className="qp-button qp-button--primary">Explore Services</Link>
-            <button type="button" onClick={() => setAuthOpen(true)} className="qp-button qp-button--secondary">Start Selling</button>
+            <CreatorIntentButton className="qp-button qp-button--secondary" />
           </div>
 
           <div className="qp-hero-trust">
@@ -60,7 +58,6 @@ export default function PremiumHomeHero() {
           {SITE.disclaimer}
         </p>
       </div>
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} intent="creator" next="/studio" />
     </section>
   );
 }

@@ -59,6 +59,9 @@ export default function Navbar({ authPage = false }: NavbarProps) {
   };
 
   const isAuthenticated = session?.authenticated ?? false;
+  const isCreator = session?.roles.includes("creator") ?? false;
+  const creatorDestination = isCreator ? "/studio" : "/onboarding?next=/studio";
+  const creatorLabel = isCreator ? "Creator Studio" : "Start Selling";
 
   return (
     <>
@@ -81,14 +84,15 @@ export default function Navbar({ authPage = false }: NavbarProps) {
             <div className="flex items-center justify-self-end gap-2.5">
               {!authPage && !isAuthenticated ? (
                 <>
-                  <button type="button" onClick={() => openAuth("signin")} className={`hidden md:inline-flex ${signInClass}`}>Sign In</button>
-                  <button type="button" onClick={() => openAuth("creator")} className={`hidden md:inline-flex ${startSellingClass}`}>Start Selling</button>
+                  <button type="button" aria-haspopup="dialog" onClick={() => openAuth("signin")} className={`hidden md:inline-flex ${signInClass}`}>Sign In</button>
+                  <button type="button" aria-haspopup="dialog" onClick={() => openAuth("creator")} className={`hidden md:inline-flex ${startSellingClass}`}>Start Selling</button>
                 </>
               ) : null}
               {!authPage && isAuthenticated ? (
-                <Link href="/account" className={`hidden md:inline-flex items-center gap-2 ${signInClass}`}>
-                  <User size={15} /> Account
-                </Link>
+                <>
+                  <Link href="/account" className={`hidden md:inline-flex items-center gap-2 ${signInClass}`}><User size={15} /> Account</Link>
+                  <Link href={creatorDestination} className={`hidden md:inline-flex ${startSellingClass}`}>{creatorLabel}</Link>
+                </>
               ) : null}
               <button type="button" aria-label="Open menu" onClick={() => setOpen(!open)} className="grid size-11 place-items-center rounded-xl border border-[var(--qp-border-soft)] text-[var(--qp-text-primary)] md:hidden">{open ? <X /> : <Menu />}</button>
             </div>
@@ -98,12 +102,15 @@ export default function Navbar({ authPage = false }: NavbarProps) {
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
               {!authPage && !isAuthenticated ? (
                 <>
-                  <button type="button" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign In</button>
-                  <button type="button" onClick={() => openAuth("creator")} className="block min-h-12 w-full rounded-xl border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-3 py-3 text-left text-base font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)]">Start Selling</button>
+                  <button type="button" aria-haspopup="dialog" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign In</button>
+                  <button type="button" aria-haspopup="dialog" onClick={() => openAuth("creator")} className="block min-h-12 w-full rounded-xl border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-3 py-3 text-left text-base font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)]">Start Selling</button>
                 </>
               ) : null}
               {!authPage && isAuthenticated ? (
-                <Link href="/account" onClick={() => setOpen(false)} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)]">Account</Link>
+                <>
+                  <Link href="/account" onClick={() => setOpen(false)} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)]">Account</Link>
+                  <Link href={creatorDestination} onClick={() => setOpen(false)} className="block min-h-12 w-full rounded-xl border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-3 py-3 text-left text-base font-bold text-white">{creatorLabel}</Link>
+                </>
               ) : null}
             </motion.div>
           ) : null}

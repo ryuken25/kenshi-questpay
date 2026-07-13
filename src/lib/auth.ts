@@ -291,11 +291,14 @@ export function sanitizeNextPath(next: string | null | undefined): string | null
   if (!next.startsWith("/")) return null;
   if (next.startsWith("//") || next.startsWith("/\\")) return null;
   if (/\s/.test(next)) return null;
-  return next;
+  const pathname = next.split(/[?#]/, 1)[0];
+  const exact = new Set(["/", "/account", "/my-orders", "/dashboard", "/studio", "/onboarding", "/services", "/verify", "/sign-in"]);
+  const prefixes = ["/services/", "/checkout/", "/orders/", "/pay/", "/verify/", "/dashboard/", "/studio/", "/admin/"];
+  return exact.has(pathname) || prefixes.some((prefix) => pathname.startsWith(prefix)) ? next : null;
 }
 
 export function redirectForRoles(roles: Role[], next?: string): string {
-  const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
+  const safeNext = sanitizeNextPath(next);
   if (safeNext) return safeNext;
   if (roles.includes("super_admin")) return "/admin";
   if (roles.includes("creator")) return "/dashboard";

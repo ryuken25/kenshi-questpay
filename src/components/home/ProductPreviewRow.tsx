@@ -68,8 +68,10 @@ export default function ProductPreviewRow() {
   const rangeRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLElement[]>([]);
+  const tabRefs = useRef<HTMLButtonElement[]>([]);
   const progressRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [motionManaged, setMotionManaged] = useState(false);
 
   useEffect(() => {
     const range = rangeRef.current;
@@ -77,6 +79,8 @@ export default function ProductPreviewRow() {
     const cards = cardRefs.current.filter(Boolean);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!range || !stage || cards.length !== previews.length || reduced || window.innerWidth < 1024) return;
+
+    setMotionManaged(true);
 
     const context = gsap.context(() => {
       gsap.set(cards, { autoAlpha: 0, yPercent: 16, xPercent: 7, scale: .92 });
@@ -120,6 +124,18 @@ export default function ProductPreviewRow() {
 
   const current = previews[active];
 
+  const activate = (index: number, focus = false) => {
+    const next = (index + previews.length) % previews.length;
+    const trigger = ScrollTrigger.getById("questpay-inside-story");
+    if (trigger) {
+      const target = trigger.start + (trigger.end - trigger.start) * (next / (previews.length - 1));
+      window.scrollTo({ top: target, behavior: "smooth" });
+    } else {
+      setActive(next);
+    }
+    if (focus) tabRefs.current[next]?.focus();
+  };
+
   return (
     <section id="inside-questpay" className="relative border-y border-white/[.055] bg-[rgba(3,3,9,.72)]">
       <div ref={rangeRef} className="relative hidden overflow-visible lg:block">
@@ -130,13 +146,13 @@ export default function ProductPreviewRow() {
               <h2 className="mt-3 max-w-xl font-sora text-[clamp(2.5rem,4vw,4.5rem)] font-black leading-[.98] tracking-[-.055em] text-white">A closer look at the complete flow.</h2>
               <p className="mt-5 max-w-xl text-base leading-7 text-[var(--qp-text-secondary)]">Follow one paid creator order from a clear service page to verified payment, delivery, and a privacy-safe receipt.</p>
 
-              <div className="mt-8 space-y-2">
+              <div role="tablist" aria-label="QuestPay workflow stages" className="mt-8 space-y-2">
                 {previews.map((item, index) => (
-                  <button key={item.id} type="button" onClick={() => {
-                    const trigger = ScrollTrigger.getById("questpay-inside-story");
-                    if (!trigger) return;
-                    const target = trigger.start + (trigger.end - trigger.start) * (index / (previews.length - 1));
-                    window.scrollTo({ top: target, behavior: "smooth" });
+                  <button key={item.id} ref={(node) => { if (node) tabRefs.current[index] = node; }} id={`workflow-tab-${item.id}`} role="tab" aria-controls={`workflow-panel-${item.id}`} aria-selected={active === index} tabIndex={active === index ? 0 : -1} type="button" onClick={() => activate(index)} onKeyDown={(event) => {
+                    if (event.key === "ArrowDown" || event.key === "ArrowRight") { event.preventDefault(); activate(index + 1, true); }
+                    if (event.key === "ArrowUp" || event.key === "ArrowLeft") { event.preventDefault(); activate(index - 1, true); }
+                    if (event.key === "Home") { event.preventDefault(); activate(0, true); }
+                    if (event.key === "End") { event.preventDefault(); activate(previews.length - 1, true); }
                   }} className={`flex min-h-11 w-full items-center gap-3 rounded-xl border px-4 py-2 text-left transition ${active === index ? "border-[var(--qp-line-4)] bg-[rgba(139,77,255,.10)] text-white" : "border-transparent text-[var(--qp-text-muted)] hover:border-[var(--qp-line-2)] hover:text-white"}`}>
                     <span className="font-mono text-xs text-[var(--qp-violet-300)]">{item.number}</span>
                     <span className="font-sora text-sm font-bold">{item.title}</span>
@@ -151,7 +167,7 @@ export default function ProductPreviewRow() {
               {previews.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <article key={item.id} ref={(node) => { if (node) cardRefs.current[index] = node; }} className="absolute inset-0 flex flex-col justify-between p-9 xl:p-12">
+                  <article key={item.id} id={`workflow-panel-${item.id}`} role="tabpanel" aria-labelledby={`workflow-tab-${item.id}`} aria-hidden={active !== index} ref={(node) => { if (node) cardRefs.current[index] = node; }} style={motionManaged ? undefined : { opacity: active === index ? 1 : 0, visibility: active === index ? "visible" : "hidden" }} className="absolute inset-0 flex flex-col justify-between p-9 xl:p-12">
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="grid h-14 w-14 place-items-center rounded-2xl border border-[var(--qp-line-3)] bg-[rgba(139,77,255,.10)] text-[var(--qp-violet-300)]"><Icon size={27} /></span>

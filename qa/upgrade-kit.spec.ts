@@ -22,14 +22,35 @@ test("public navigation destinations are real", async ({ page }) => {
 test("signed-out selling CTAs open creator auth", async ({ page }) => {
   await page.route("**/api/auth/session", (route) => route.fulfill({ json: { authenticated: false, roles: [] } }));
   await page.goto("/");
-  await page.getByRole("button", { name: "Start Selling", exact: true }).first().click();
+  const trigger = page.getByRole("button", { name: "Start Selling", exact: true }).first();
+  await expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
+  await trigger.click();
   await expect(page.getByRole("dialog", { name: /questpay sign in/i })).toBeVisible();
 });
 
-test("signed-in navbar exposes account destination", async ({ page }) => {
-  await page.route("**/api/auth/session", (route) => route.fulfill({ json: { authenticated: true, roles: ["buyer"] } }));
+test("signed-in shell exposes account and creator destinations", async ({ page }) => {
+  await page.route("**/api/auth/session", (route) => route.fulfill({ json: { authenticated: true, roles: ["creator"] } }));
   await page.goto("/");
   await expect(page.getByRole("link", { name: /account/i }).first()).toHaveAttribute("href", "/account");
+  await expect(page.getByRole("link", { name: "Creator Studio", exact: true }).first()).toHaveAttribute("href", "/studio");
+  await expect(page.getByRole("contentinfo").getByRole("link", { name: "Account", exact: true })).toHaveAttribute("href", "/account");
+});
+
+test("workflow tabs remain keyboard-operable with reduced motion", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await page.goto("/");
+  const tabs = page.getByRole("tab");
+  await expect(tabs).toHaveCount(6);
+  await tabs.first().focus();
+  await tabs.first().press("End");
+  await expect(tabs.last()).toBeFocused();
+  await expect(tabs.last()).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator('[role="tabpanel"]:visible')).toHaveCount(1);
+  await tabs.last().press("Home");
+  await expect(tabs.first()).toBeFocused();
+  await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
+  await context.close();
 });
 
 test("deep how-it-works anchors and actions exist", async ({ page }) => {

@@ -54,7 +54,7 @@ const steps = [
     icon: ClipboardList,
     title: "Receive a locked quote",
     text: "QuestPay creates the quote server-side. The browser cannot override the receive address, amount, token contract, chain ID, expiry, or order reference.",
-    bullets: ["Service price", "Exact token amount", "Creator receive address", "Chain ID and expiry"],
+    bullets: ["Service price", "Exact token amount", "Configured receive address", "Chain ID and expiry"],
   },
   {
     id: "payment",
@@ -78,15 +78,15 @@ const steps = [
     icon: CircleDollarSign,
     title: "Track the work",
     text: "Payment, progress, delivery, and receipt share one order reference from awaiting payment through completion.",
-    bullets: ["Awaiting or verifying payment", "Paid and in progress", "Waiting for buyer or revision", "Delivered, completed, late, or cancelled"],
+    bullets: ["Pending or awaiting payment", "Paid, reviewing, accepted, or in progress", "Delivered or completed", "Expired or cancelled"],
   },
   {
     id: "delivery",
     number: "08",
     icon: Truck,
     title: "Receive the output",
-    text: "A creator can attach a delivery message, secure link, version label, timestamp, fingerprint where used, and revision note without detaching the result from its original brief.",
-    bullets: ["Delivery message", "Secure output link", "Version and timestamp", "Revision context"],
+    text: "After providing the agreed output through the established delivery channel, a creator can mark the connected order delivered. QuestPay records the status and delivery timestamp without claiming to host private files.",
+    bullets: ["Connected order reference", "Delivered status", "Delivery timestamp", "Completion path"],
   },
   {
     id: "receipt",
@@ -105,14 +105,14 @@ const failures = [
   ["Transaction pending", "Keep the order in payment verification until the confirmation policy is met."],
   ["Wrong receiver or amount", "Reject verification with a clear reason and do not attach the transfer."],
   ["Duplicate transaction", "Reject reuse: one transaction hash can prove only one order."],
-  ["Creator is late", "Show the late state, last update, and a real support path without inventing automatic refunds."],
+  ["Delivery target missed", "Keep the real current order status visible and use the available contact or support path; QuestPay does not invent automatic refunds."],
 ] as const;
 
 const faqs = [
   ["Does connecting a wallet charge gas?", "No. Authentication uses a message signature. A blockchain transaction is requested only when the buyer confirms payment."],
   ["Can I use Google or email?", "Yes for account access. A compatible wallet is still required for an on-chain crypto payment."],
   ["Which assets are supported?", "QuestPay displays only combinations enabled by the server. Current direction is USDT, USDC, POL, and VERSE, with Polygon live."],
-  ["Does QuestPay hold the money?", "No. Payment goes directly to the configured creator receive address."],
+  ["Does QuestPay hold the money?", "No. The verified transfer goes to the receive address configured by the server; QuestPay does not custody the payment."],
   ["Is my brief public?", "No. Public receipts redact private briefs, contact details, references, and sensitive delivery data."],
   ["Can one transaction be reused?", "No. Transaction uniqueness protection rejects reuse across orders."],
 ] as const;
@@ -183,7 +183,7 @@ export default function HowItWorksPage() {
 
         <section id="failures" className="scroll-mt-28 px-4 py-14 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl"><p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Failure handling</p><h2 className="mt-3 font-sora text-3xl font-black text-white sm:text-4xl">What happens when something goes wrong?</h2><div className="mt-7 grid gap-4 md:grid-cols-2">{failures.map(([title, text]) => <article key={title} className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-5"><h3 className="font-sora text-lg font-bold text-white">{title}</h3><p className="mt-2 text-sm leading-7 text-[var(--qp-text-muted)]">{text}</p></article>)}</div></div></section>
 
-        <section id="security" className="scroll-mt-28 px-4 py-14 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl rounded-[2rem] border border-[var(--qp-violet-500)]/25 bg-[var(--qp-violet-600)]/10 p-6 sm:p-10"><div className="flex items-center gap-3"><ShieldCheck className="text-[var(--qp-violet-300)]" size={30} /><h2 className="font-sora text-3xl font-black text-white">Privacy and security boundaries</h2></div><div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{["Direct-to-creator, non-custodial transfer", "Server-side quote and verification", "No seed phrase collection", "Private briefs remain off-chain", "Public receipts are sanitized", "RLS and server authorization protect private records"].map((item) => <p key={item} className="rounded-xl border border-white/10 bg-black/15 p-4 text-sm leading-6 text-[var(--qp-text-secondary)]">• {item}</p>)}</div></div></section>
+        <section id="security" className="scroll-mt-28 px-4 py-14 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl rounded-[2rem] border border-[var(--qp-violet-500)]/25 bg-[var(--qp-violet-600)]/10 p-6 sm:p-10"><div className="flex items-center gap-3"><ShieldCheck className="text-[var(--qp-violet-300)]" size={30} /><h2 className="font-sora text-3xl font-black text-white">Privacy and security boundaries</h2></div><div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{["Direct, non-custodial configured transfer", "Server-side quote and verification", "No seed phrase collection", "Private briefs remain off-chain", "Public receipts are sanitized", "RLS and server authorization protect private records"].map((item) => <p key={item} className="rounded-xl border border-white/10 bg-black/15 p-4 text-sm leading-6 text-[var(--qp-text-secondary)]">• {item}</p>)}</div></div></section>
 
         <section id="faq" className="scroll-mt-28 px-4 py-14 sm:px-6 lg:px-8"><div className="mx-auto max-w-4xl"><p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-[var(--qp-violet-300)]">FAQ</p><h2 className="mt-3 font-sora text-3xl font-black text-white sm:text-4xl">Practical answers before checkout.</h2><div className="mt-7 space-y-3">{faqs.map(([question, answer]) => <details key={question} className="group rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-5"><summary className="cursor-pointer list-none font-sora text-base font-bold text-white">{question}</summary><p className="mt-3 text-sm leading-7 text-[var(--qp-text-muted)]">{answer}</p></details>)}</div></div></section>
 
