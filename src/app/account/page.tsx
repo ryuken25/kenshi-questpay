@@ -58,7 +58,9 @@ export default async function AccountPage() {
           </div>
 
           <div className="mt-8">
-            <a href="/api/auth/logout" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-red-300/35 bg-red-400/15 px-5 text-base font-bold text-red-100 hover:bg-red-400/25">Sign out</a>
+            <form action="/api/auth/logout" method="post">
+              <button type="submit" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-red-300/35 bg-red-400/15 px-5 text-base font-bold text-red-100 hover:bg-red-400/25">Sign out</button>
+            </form>
           </div>
         </section>
         <Footer />

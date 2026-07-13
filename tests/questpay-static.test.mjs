@@ -185,3 +185,22 @@ test('profile migration and APIs never trust a client-supplied account_id', () =
     assert.doesNotMatch(src, /body\.accountId|req\.accountId/, file);
   }
 });
+
+test('every logout control submits POST instead of navigating to the POST-only endpoint', () => {
+  const account = read('src/app/account/page.tsx');
+  const studioShell = read('src/components/StudioShell.tsx');
+  const accessDenied = read('src/app/studio/access-denied/page.tsx');
+
+  for (const source of [account, studioShell, accessDenied]) {
+    assert.match(source, /<form[^>]+action=["']\/api\/auth\/logout["'][^>]+method=["']post["']/i);
+    assert.doesNotMatch(source, /<a[^>]+href=["']\/api\/auth\/logout["']/i);
+  }
+});
+
+test('logout always clears the canonical session cookie even if server-side revocation fails', () => {
+  const route = read('src/app/api/auth/logout/route.ts');
+  assert.match(route, /import\s*\{[^}]*SESSION_COOKIE[^}]*destroySession|import\s*\{[^}]*destroySession[^}]*SESSION_COOKIE/);
+  assert.match(route, /try\s*\{\s*await destroySession\(\);\s*\}\s*catch/s);
+  assert.match(route, /cookies\.set\(SESSION_COOKIE,\s*["']{2}/);
+  assert.match(route, /Cache-Control["']?,\s*["']no-store/);
+});
