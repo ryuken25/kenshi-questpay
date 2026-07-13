@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="540" viewBox="90 110 580 540" fill="none">
+  <defs>
+    <linearGradient id="top" x1="130" y1="165" x2="630" y2="375" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#401076" stop-opacity=".72"/><stop offset=".52" stop-color="#18092B" stop-opacity=".94"/><stop offset="1" stop-color="#08060D"/>
+    </linearGradient>
+    <linearGradient id="left" x1="130" y1="285" x2="380" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#64209B" stop-opacity=".46"/><stop offset="1" stop-color="#09070F" stop-opacity=".98"/>
+    </linearGradient>
+    <linearGradient id="right" x1="380" y1="375" x2="630" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#32114D" stop-opacity=".82"/><stop offset="1" stop-color="#060509"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="130" y1="165" x2="630" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E0A3FF"/><stop offset=".45" stop-color="#9753FF"/><stop offset="1" stop-color="#4C1AB8"/>
+    </linearGradient>
+    <radialGradient id="ambient"><stop stop-color="#863AFF" stop-opacity=".25"/><stop offset="1" stop-color="#1A082F" stop-opacity="0"/></radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="32" stdDeviation="28" flood-color="#000" flood-opacity=".78"/></filter>
+  </defs>
+  <ellipse cx="382" cy="384" rx="320" ry="255" fill="url(#ambient)"/>
+  <g filter="url(#shadow)">
+    <path d="M130 285 380 150 630 285 380 420Z" fill="url(#top)" stroke="url(#edge)" stroke-width="2.2"/>
+    <path d="M130 285 380 420 380 620 130 480Z" fill="url(#left)" stroke="url(#edge)" stroke-width="2.2"/>
+    <path d="M380 420 630 285 630 480 380 620Z" fill="url(#right)" stroke="url(#edge)" stroke-width="2.2"/>
+    <path d="M158 301 380 181 602 301" stroke="#F1CBFF" stroke-opacity=".22" stroke-width="1.4"/>
+    <path d="M380 420V596" stroke="#C084FF" stroke-opacity=".34"/>
+    <path d="M156 315V462L358 574" stroke="#E3B9FF" stroke-opacity=".12"/>
+  </g>
+</svg>

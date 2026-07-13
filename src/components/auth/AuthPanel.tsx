@@ -144,7 +144,7 @@ export default function AuthPanel({ next, error, compact = false, intent = "sign
   const magicMsg = linkState !== "idle" && linkState !== "submitting" ? magicLinkMessages[linkState] : null;
 
   return (
-    <div className={`w-full ${compact ? "max-w-md" : "max-w-lg"} rounded-[1.5rem] border border-[#7c5cff]/22 bg-[rgba(5,5,10,.98)] p-5 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-6`}>
+    <div className={`w-full rounded-[1.5rem] ${compact ? "max-w-none border-0 bg-transparent p-5 shadow-none sm:p-6" : "max-w-lg border border-[#7c5cff]/22 bg-[rgba(5,5,10,.98)] p-5 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-6"}`}>
       <div className="mb-5 flex items-center gap-3">
         <Image src="/brand/questpay/questpay-mark.svg" alt="QuestPay" width={42} height={42} />
         <div>

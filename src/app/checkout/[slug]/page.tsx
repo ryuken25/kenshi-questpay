@@ -49,7 +49,7 @@ export default async function CheckoutPage({ params }: Props) {
           ) : (
             <div className="mx-auto max-w-2xl">
               <div className="text-center mb-8">
-                <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">
                   Checkout
                 </p>
                 <h1 className="mt-3 font-sora text-3xl font-black text-white">

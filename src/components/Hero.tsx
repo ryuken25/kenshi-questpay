@@ -44,18 +44,18 @@ export default function Hero() {
 
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.08 }} className="mx-auto w-full max-w-md lg:max-w-lg">
             <div className="relative rounded-[2rem] border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-5 shadow-[0_26px_90px_rgba(0,0,0,.5)]">
-              <div className="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-verse-purple/20 to-verse-blue/10 blur-2xl" />
+              <div className="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-verse-purple/20 to-transparent blur-2xl" />
               <div className="flex items-center gap-3"><Image src={brandAssets.questpayMark} alt="QuestPay mark" width={44} height={44} /><div><p className="text-xs uppercase tracking-[0.12em] text-[var(--qp-text-muted)]">Lifecycle</p><h2 className="font-sora text-2xl font-black text-white">Service to receipt</h2></div></div>
               <div className="mt-6 grid gap-3">
                 {["Choose a scoped service", "Submit a private brief", "Receive a locked Polygon quote", "Track work and delivery", "Keep a public receipt"].map((label, i) => (
-                  <div key={label} className="flex items-center gap-3 rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(8,11,24,.42)] p-3">
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-verse-purple/20 font-mono text-xs text-[#8FEAFF]">0{i + 1}</span>
+                  <div key={label} className="flex items-center gap-3 rounded-2xl border border-[var(--qp-border-soft)] bg-[rgba(8,8,14,.72)] p-3">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-verse-purple/20 font-mono text-xs text-[var(--qp-violet-300)]">0{i + 1}</span>
                     <p className="text-sm font-bold text-white">{label}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl border border-verse-blue/20 bg-verse-blue/10 p-3">
-                <p className="text-sm leading-6 text-[#8FEAFF]">Payment verified on Polygon. Private scope fingerprint stored off-chain.</p>
+              <div className="mt-4 rounded-2xl border border-[#8752ff]/20 bg-[#8752ff]/10 p-3">
+                <p className="text-sm leading-6 text-[var(--qp-violet-300)]">Payment verified on Polygon. Private scope fingerprint stored off-chain.</p>
               </div>
             </div>
           </motion.div>

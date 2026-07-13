@@ -23,7 +23,7 @@ export default function BuyerCreatorBenefits() {
           <BenefitCard title="For buyers" body="Start with a clear scope, pay on Polygon, track progress, and keep a safe receipt." items={buyerBenefits} />
         </div>
         <div className="mt-5 rounded-[1.5rem] border border-[#42d7f5]/20 bg-[#42d7f5]/10 p-5">
-          <p className="font-sora text-sm font-bold uppercase tracking-[0.12em] text-[#8FEAFF]">Polygon payment model</p>
+          <p className="font-sora text-sm font-bold uppercase tracking-[0.12em] text-[var(--qp-violet-300)]">Polygon payment model</p>
           <p className="mt-2 max-w-4xl text-base leading-7 text-[var(--qp-text-secondary)]">QuestPay verifies token transfers on Polygon and keeps private briefs off-chain. Receipts can show public transaction proof without leaking contact details or private scope.</p>
         </div>
       </div>

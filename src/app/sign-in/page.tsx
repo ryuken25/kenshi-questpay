@@ -28,7 +28,7 @@ function SignInContent() {
       <main className="min-h-screen overflow-hidden bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
         <Navbar authPage />
         <section className="relative px-4 pb-14 pt-24 sm:px-6 lg:px-8 lg:pt-28">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_26%_20%,rgba(124,92,255,.22),transparent_28%),radial-gradient(circle_at_80%_16%,rgba(66,215,245,.10),transparent_22%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_26%_20%,rgba(124,92,255,.22),transparent_28%),radial-gradient(circle_at_80%_16%,rgba(135,82,255,.07),transparent_22%)]" />
           <div className="relative mx-auto grid max-w-6xl gap-7 lg:grid-cols-[.9fr_1fr] lg:items-center">
             <div className="hidden lg:block">
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#8b72ff]/30 bg-[#7c5cff]/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#cfc7ff]">

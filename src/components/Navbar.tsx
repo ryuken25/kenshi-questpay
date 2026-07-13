@@ -15,9 +15,9 @@ const navLinks = [
   { href: "/faq", label: "About" },
 ];
 
-const linkClass = "text-[13px] font-medium tracking-[-.01em] text-[#b8b8c7] transition-colors hover:text-white focus-visible:text-white";
-const signInClass = "min-h-[42px] items-center rounded-[14px] border border-white/[.11] bg-white/[.03] px-[17px] text-[13px] font-semibold text-[#f5f4fa] transition-colors hover:border-[#a07aff]/40 hover:bg-white/[.06]";
-const startSellingClass = "min-h-[42px] items-center rounded-[14px] border border-[#b89eff]/25 bg-[linear-gradient(180deg,#8a5cff_0%,#6c3ee8_100%)] px-[19px] text-[13px] font-bold text-white shadow-[0_10px_28px_rgba(100,56,220,.30),inset_0_1px_0_rgba(255,255,255,.18)] transition-transform hover:-translate-y-px";
+const linkClass = "qp-navbar__link";
+const signInClass = "qp-button-nav-secondary";
+const startSellingClass = "qp-button-nav-primary";
 
 type NavbarProps = {
   authPage?: boolean;
@@ -66,16 +66,16 @@ export default function Navbar({ authPage = false }: NavbarProps) {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="fixed left-0 right-0 top-0 z-50 border-b border-[rgba(130,98,255,.10)] bg-[rgba(5,6,10,.82)] backdrop-blur-[18px] backdrop-saturate-150"
+        className="qp-navbar"
         role="navigation"
         aria-label="Primary navigation"
       >
-        <div className="mx-auto w-[min(100%_-_40px,1440px)]">
-          <div className="grid h-[72px] grid-cols-[auto_1fr_auto] items-center gap-4 sm:gap-8">
+        <div className="qp-navbar__inner">
+          <div className="contents">
             <Link href="/" className="flex min-h-11 items-center" aria-label="QuestPay home">
-              <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={140} height={32} priority className="h-8 w-auto" />
+              <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={124} height={28} priority className="h-7 w-auto" />
             </Link>
-            <div className="hidden items-center justify-center gap-[clamp(20px,2.1vw,34px)] md:flex">
+            <div className="qp-navbar__links hidden md:flex">
               {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className={linkClass}>{link.label}</Link>)}
             </div>
             <div className="flex items-center justify-self-end gap-2.5">

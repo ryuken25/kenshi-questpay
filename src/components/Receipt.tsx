@@ -47,7 +47,7 @@ export default function Receipt({ receipt }: ReceiptProps) {
             <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4">
               <p className="mb-2 text-xs uppercase tracking-wider text-muted">Tx Hash</p>
               <div className="flex flex-wrap items-center gap-3">
-                <code className="hash-chip text-sm text-[#8FEAFF]">{middle(receipt.txHash, 10, 8)}</code>
+                <code className="hash-chip text-sm text-[var(--qp-violet-300)]">{middle(receipt.txHash, 10, 8)}</code>
                 <button onClick={() => copyToClipboard(receipt.txHash)} className="rounded-xl bg-white/10 p-2"><Copy className="h-4 w-4" /></button>
                 <a href={explorer} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black">Explorer <ExternalLink className="h-4 w-4" /></a>
               </div>

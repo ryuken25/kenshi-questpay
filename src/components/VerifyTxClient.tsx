@@ -49,7 +49,7 @@ export default function VerifyTxClient({ txHash }: Props) {
       <Navbar />
       <section className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8 lg:pt-24">
         <div className="rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5 shadow-2xl sm:p-8">
-          <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#8FEAFF]">
+          <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[var(--qp-violet-300)]">
             QuestPay Public Verify
           </p>
           <h1 className="mt-3 font-sora text-3xl font-black tracking-[-0.05em] sm:text-5xl">
@@ -59,8 +59,8 @@ export default function VerifyTxClient({ txHash }: Props) {
             Verifying transaction on Polygon mainnet.
           </p>
 
-          <div className="mt-4 rounded-xl bg-[rgba(8,11,24,.42)] p-3">
-            <code className="hash-chip text-sm text-[#8FEAFF]">{txHash}</code>
+          <div className="mt-4 rounded-xl bg-[rgba(8,8,14,.72)] p-3">
+            <code className="hash-chip text-sm text-[var(--qp-violet-300)]">{txHash}</code>
           </div>
 
           {loading && (
@@ -112,8 +112,8 @@ export default function VerifyTxClient({ txHash }: Props) {
                       </Link>
                     </div>
                   )}
-                  <div className="flex flex-wrap items-center gap-3 rounded-xl bg-[rgba(8,11,24,.42)] p-3">
-                    <code className="hash-chip text-[#8FEAFF]">{middle(txHash, 10, 8)}</code>
+                  <div className="flex flex-wrap items-center gap-3 rounded-xl bg-[rgba(8,8,14,.72)] p-3">
+                    <code className="hash-chip text-[var(--qp-violet-300)]">{middle(txHash, 10, 8)}</code>
                     <button
                       onClick={() => navigator.clipboard.writeText(txHash)}
                       className="rounded-lg bg-white/10 p-2"
@@ -146,7 +146,7 @@ export default function VerifyTxClient({ txHash }: Props) {
 
 function Row({ label, value, raw }: { label: string; value: string; raw?: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,11,24,.42)] p-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,8,14,.72)] p-3 sm:flex-row sm:items-center sm:justify-between">
       <span className="text-muted">{label}</span>
       <span className="flex min-w-0 items-center gap-2 font-mono text-white">
         <span className="hash-chip">{value}</span>

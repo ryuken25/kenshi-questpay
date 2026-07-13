@@ -31,7 +31,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
   if (loading) {
     return (
       <section className="px-4 py-20 text-center">
-        <Loader2 className="mx-auto animate-spin text-[#8FEAFF]" size={32} />
+        <Loader2 className="mx-auto animate-spin text-[var(--qp-violet-300)]" size={32} />
       </section>
     );
   }
@@ -63,7 +63,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
                 <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4">
                   <p className="mb-2 text-xs uppercase tracking-wider text-muted">Tx Hash</p>
                   <div className="flex flex-wrap items-center gap-3">
-                    <code className="hash-chip text-sm text-[#8FEAFF]">{middle(txHash, 10, 8)}</code>
+                    <code className="hash-chip text-sm text-[var(--qp-violet-300)]">{middle(txHash, 10, 8)}</code>
                     <button onClick={() => navigator.clipboard.writeText(txHash)} className="rounded-xl bg-white/10 p-2">
                       <Copy className="h-4 w-4" />
                     </button>
@@ -112,7 +112,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,11,24,.42)] p-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,8,14,.72)] p-3 sm:flex-row sm:items-center sm:justify-between">
       <span className="text-sm text-muted">{label}</span>
       <span className="font-mono text-sm text-white">
         <span className="hash-chip">{value}</span>
@@ -120,4 +120,3 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-

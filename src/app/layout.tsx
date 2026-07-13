@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./parity.css";
 
 export const metadata: Metadata = {
   title: "Kenshi QuestPay — Creator Services on Polygon",

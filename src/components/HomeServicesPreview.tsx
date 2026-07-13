@@ -9,7 +9,7 @@ export default function HomeServicesPreview() {
     <section id="pricing" className="relative px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto w-full max-w-7xl">
         <motion.div initial={false} className="mb-8 text-center sm:mb-12">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">
             Real payment ladder • Polygon live • BNB Chain payment-gated
           </p>
           <h2 className="section-title mt-3 font-sora font-black text-white">
@@ -25,7 +25,7 @@ export default function HomeServicesPreview() {
             <motion.div key={svc.slug} initial={false} className="min-h-[205px] w-full rounded-[1.5rem] p-5 glass-panel hover:border-verse-purple/30 hover:bg-[var(--qp-surface)] transition-all duration-300">
               <div className="flex items-start justify-between gap-3">
                 <span className="rounded-full border border-white/10 bg-[var(--qp-surface)] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-secondary">{svc.delivery}</span>
-                <span className="rounded-full bg-verse-blue/10 px-3 py-1 font-mono text-xs font-bold text-[#8FEAFF]">${svc.usd}</span>
+                <span className="rounded-full bg-verse-blue/10 px-3 py-1 font-mono text-xs font-bold text-[var(--qp-violet-300)]">${svc.usd}</span>
               </div>
               <h3 className="mt-4 font-sora text-lg font-black text-white">{svc.name}</h3>
               <p className="mt-3 text-sm leading-6 text-muted">{svc.description}</p>

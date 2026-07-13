@@ -20,7 +20,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: {
       <main className="min-h-screen bg-[var(--qp-bg)] pt-24 pb-16 text-[var(--qp-text-secondary)]">
         <section className="mx-auto max-w-xl px-4 sm:px-6">
           <div className="mb-6 text-center">
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#8FEAFF]">Almost there</p>
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">Almost there</p>
             <h1 className="mt-3 font-sora text-3xl font-black text-white">Set up your QuestPay profile</h1>
             <p className="mt-2 text-sm text-[var(--qp-text-muted)]">
               A few reusable details so checkout is one click next time. You can edit these later from your account.

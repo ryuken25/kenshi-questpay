@@ -38,7 +38,7 @@ interface OrderResponse {
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
   pending: { label: "Pending payment", color: "text-yellow-400", icon: Clock },
   paid: { label: "Paid", color: "text-green-400", icon: CheckCircle2 },
-  delivered: { label: "Delivered", color: "text-[#8FEAFF]", icon: CheckCircle2 },
+  delivered: { label: "Delivered", color: "text-[var(--qp-violet-300)]", icon: CheckCircle2 },
   expired: { label: "Expired", color: "text-muted", icon: AlertCircle },
   cancelled: { label: "Cancelled", color: "text-red-400", icon: AlertCircle },
 };
@@ -70,7 +70,7 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
   if (loading) {
     return (
       <section className="px-4 py-20 text-center">
-        <Loader2 className="mx-auto animate-spin text-[#8FEAFF]" size={32} />
+        <Loader2 className="mx-auto animate-spin text-[var(--qp-violet-300)]" size={32} />
       </section>
     );
   }
@@ -101,7 +101,7 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
             <span className="font-bold text-sm">{statusCfg.label}</span>
           </div>
           <h1 className="mt-4 font-sora text-2xl font-black text-white">
-            Order <span className="font-mono text-[#8FEAFF] text-lg">{order.publicOrderId}</span>
+            Order <span className="font-mono text-[var(--qp-violet-300)] text-lg">{order.publicOrderId}</span>
           </h1>
           <p className="mt-2 text-sm text-muted">{order.serviceName} — ${order.serviceUsd}</p>
         </div>
@@ -161,7 +161,7 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,11,24,.42)] p-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,8,14,.72)] p-3 sm:flex-row sm:items-center sm:justify-between">
       <span className="text-sm text-muted">{label}</span>
       <span className="font-mono text-sm text-white">
         <span className="hash-chip">{value}</span>

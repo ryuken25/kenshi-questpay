@@ -110,8 +110,8 @@ test('navbar uses Sign In and Start Selling, no persistent Connect Wallet, no Cr
 
 test('reference parity palette stays near-black and violet without cyan headline branding', () => {
   const css = read('src/app/globals.css');
-  assert.match(css, /--qp-bg-000:\s*#020207/);
-  assert.match(css, /--qp-violet-500:\s*#8b4dff/i);
+  assert.match(css, /--qp-black-000:\s*#010104/);
+  assert.match(css, /--qp-violet-500:\s*#8752ff/i);
   const gradient = css.slice(css.indexOf('.gradient-text'), css.indexOf('.gradient-border'));
   assert.match(gradient, /#8b4dff/i);
   assert.doesNotMatch(gradient, /#67e3fa|#78a6ff/i);
@@ -124,24 +124,25 @@ test('public hero uses compact parity composition without blue or cyan backdrop'
   assert.doesNotMatch(hero, /70,180,255|7\.3vw/);
 });
 
-test('orbital hero keeps four stable asset-backed token nodes and updates them without React frame renders', () => {
+test('orbital hero keeps permanent rear/front token copies and updates them without React frame renders', () => {
   const scene = read('src/components/home/HeroOrbitalScene.tsx');
   const css = read('src/app/globals.css');
 
-  assert.match(scene, /const TOKENS[\s\S]*usdt[\s\S]*usdc[\s\S]*verse[\s\S]*pol/);
+  assert.match(scene, /const TOKENS[\s\S]*verse[\s\S]*usdt[\s\S]*usdc[\s\S]*pol/);
   assert.match(scene, /TOKENS\.map\(\(token\)/);
-  assert.match(scene, /tokenRefs\.current\[token\.id\]/);
+  assert.match(scene, /rearRefs\.current\[token\.id\]/);
+  assert.match(scene, /frontRefs\.current\[token\.id\]/);
   assert.match(scene, /IntersectionObserver/);
-  assert.match(scene, /timeOffsetRef\.current \+= delta/);
-  assert.match(scene, /if \(z >= 18\)[\s\S]*if \(z <= -18\)/);
-  assert.doesNotMatch(scene, /setElapsed|poses\.filter|TokenLayer/);
+  assert.match(scene, /timeRef\.current \+= dt/);
+  assert.match(scene, /smoothstep\(-0\.16, 0\.16, z\)/);
+  assert.doesNotMatch(scene, /style\.zIndex|dataset\.depth|setElapsed|poses\.filter/);
   for (const asset of ['/tokens/usdt.svg', '/tokens/usdc.svg', '/brand/verse/verse-icon-official.png', '/tokens/pol.svg']) {
     assert.match(scene, new RegExp(asset.replaceAll('/', '\\/').replace('.', '\\.')));
   }
   assert.match(css, /\.qp-orbit-ring--rear/);
   assert.match(css, /\.qp-orbit-ring--front/);
-  assert.match(css, /\.qp-cube-core-face[\s\S]*background:[^;]+/);
-  assert.match(css, /\.qp-cube-world[\s\S]*rotateX\(-14deg\) rotateY\(28deg\)/);
+  assert.match(css, /\.qp-cube-asset/);
+  assert.doesNotMatch(css, /rotateY\(360deg\)/);
 });
 
 test('navbar uses supplied horizontal QuestPay logo and locks mobile page scroll', () => {
