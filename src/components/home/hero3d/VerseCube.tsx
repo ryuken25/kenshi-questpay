@@ -38,14 +38,23 @@ function TopFacets() {
 export default function VerseCube({ reducedMotion = false }: { reducedMotion?: boolean }) {
   const group = useRef<THREE.Group>(null);
   const localTime = useRef(0);
-  const texture = useTexture("/brand/verse/questpay-cube-front-verse.webp");
+  const [albedoMap, emissiveMap, roughnessMap] = useTexture([
+    "/brand/verse/cube-front-verse-albedo.png",
+    "/brand/verse/cube-front-verse-emissive.png",
+    "/brand/verse/cube-front-verse-roughness.png",
+  ]);
   const { gl } = useThree();
 
   useEffect(() => {
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
-    texture.needsUpdate = true;
-  }, [gl, texture]);
+    const anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
+    albedoMap.colorSpace = THREE.SRGBColorSpace;
+    emissiveMap.colorSpace = THREE.SRGBColorSpace;
+    roughnessMap.colorSpace = THREE.NoColorSpace;
+    [albedoMap, emissiveMap, roughnessMap].forEach((texture) => {
+      texture.anisotropy = anisotropy;
+      texture.needsUpdate = true;
+    });
+  }, [albedoMap, emissiveMap, gl, roughnessMap]);
 
   useFrame((_, delta) => {
     const node = group.current;
@@ -93,12 +102,13 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
         ))}
         <meshStandardMaterial
           attach="material-4"
-          map={texture}
-          emissiveMap={texture}
-          emissive="#5d1eaa"
-          emissiveIntensity={.30}
-          color="#d7c9eb"
-          roughness={.30}
+          map={albedoMap}
+          emissiveMap={emissiveMap}
+          roughnessMap={roughnessMap}
+          emissive="#a85cff"
+          emissiveIntensity={.34}
+          color="#efe8f7"
+          roughness={.42}
           metalness={.10}
         />
         <Edges threshold={15} color="#a969ff" lineWidth={1.1} />

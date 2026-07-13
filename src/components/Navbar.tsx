@@ -9,10 +9,10 @@ import AuthModal, { type AuthIntent } from "@/components/auth/AuthModal";
 
 const navLinks = [
   { href: "/services", label: "Products" },
-  { href: "/how-it-works", label: "How It Works" },
+  { href: "/how-it-works#overview", label: "How It Works" },
   { href: "/#for-creators", label: "For Creators" },
-  { href: "/services", label: "Pricing" },
-  { href: "/faq", label: "About" },
+  { href: "/services#pricing", label: "Pricing" },
+  { href: "/#about", label: "About" },
 ];
 
 const linkClass = "qp-navbar__link";

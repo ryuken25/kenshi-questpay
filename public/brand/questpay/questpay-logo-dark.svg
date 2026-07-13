@@ -1,0 +1,7 @@
+<svg width="960" height="240" viewBox="0 0 960 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="g" x1="22" y1="18" x2="208" y2="220" gradientUnits="userSpaceOnUse"><stop stop-color="#A977FF"/><stop offset="1" stop-color="#5C2CCE"/></linearGradient></defs>
+  <circle cx="112" cy="108" r="61" stroke="#191421" stroke-width="16"/>
+  <path d="M151 148L194 191" stroke="url(#g)" stroke-width="20" stroke-linecap="round"/>
+  <path d="M78 108L102 132L148 86" stroke="url(#g)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="264" y="151" fill="#111015" font-family="Inter, Arial, sans-serif" font-size="108" font-weight="750" letter-spacing="-5">QuestPay</text>
+</svg>

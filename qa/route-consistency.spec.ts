@@ -6,7 +6,7 @@ test('all routes share the same production shell', async ({ page }) => {
   const builds = new Set<string>();
   for (const route of routes) {
     await page.goto(route, { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('navigation')).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
     await expect(page.getByRole('contentinfo')).toBeVisible();
     const sha = await page.locator('body').getAttribute('data-build-sha');
     expect(sha).toBeTruthy();

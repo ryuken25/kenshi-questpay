@@ -16,13 +16,13 @@ const buyerBenefits = [
 
 export default function BuyerCreatorBenefits() {
   return (
-    <section className="px-4 py-16 sm:px-6 lg:px-8">
+    <section id="for-creators" className="scroll-mt-28 px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-4 lg:grid-cols-2">
           <BenefitCard title="For creators" body="Turn scattered DMs into structured work with payment proof, order status, and delivery links." items={creatorBenefits} />
           <BenefitCard title="For buyers" body="Start with a clear scope, pay on Polygon, track progress, and keep a safe receipt." items={buyerBenefits} />
         </div>
-        <div className="mt-5 rounded-[1.5rem] border border-[#42d7f5]/20 bg-[#42d7f5]/10 p-5">
+        <div className="mt-5 rounded-[1.5rem] border border-[var(--qp-violet-500)]/20 bg-[var(--qp-violet-600)]/10 p-5">
           <p className="font-sora text-sm font-bold uppercase tracking-[0.12em] text-[var(--qp-violet-300)]">Polygon payment model</p>
           <p className="mt-2 max-w-4xl text-base leading-7 text-[var(--qp-text-secondary)]">QuestPay verifies token transfers on Polygon and keeps private briefs off-chain. Receipts can show public transaction proof without leaking contact details or private scope.</p>
         </div>

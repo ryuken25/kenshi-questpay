@@ -4,17 +4,19 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { seeded } from "./hero3d.config";
+import type { HeroQuality } from "./hero3d.config";
 
-export default function EnergyShards({ mobile = false, reducedMotion = false }: { mobile?: boolean; reducedMotion?: boolean }) {
+export default function EnergyShards({ mobile = false, reducedMotion = false, quality = "high" }: { mobile?: boolean; reducedMotion?: boolean; quality?: HeroQuality }) {
   const refs = useRef<Array<THREE.Mesh | null>>([]);
   const localTime = useRef(0);
-  const shards = useMemo(() => Array.from({ length: mobile ? 3 : 5 }, (_, index) => ({
+  const count = quality === "low" ? (mobile ? 2 : 3) : mobile ? 3 : 5;
+  const shards = useMemo(() => Array.from({ length: count }, (_, index) => ({
     x: (seeded(index, 31) < .5 ? -1 : 1) * (2.15 + seeded(index, 32) * 1.7),
     y: (seeded(index, 33) - .5) * 2.8,
     z: (seeded(index, 34) - .5) * 2.6,
     phase: seeded(index, 35) * Math.PI * 2,
     scale: .055 + seeded(index, 36) * .07,
-  })), [mobile]);
+  })), [count]);
 
   useFrame((_, delta) => {
     if (!reducedMotion) localTime.current += Math.min(delta, 1 / 20);

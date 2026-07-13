@@ -1,10 +1,12 @@
 "use client";
 
-import { Component, type ErrorInfo, type ReactNode, useEffect, useRef, useState } from "react";
+import { Component, type ErrorInfo, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import Hero3DFallback from "./Hero3DFallback";
 import QuestPayScene from "./QuestPayScene";
+import type { HeroQuality } from "./hero3d.config";
 import { usePageVisibility, useReducedMotion } from "./usePageVisibility";
 
 type Variant = "home" | "signin";
@@ -32,6 +34,13 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
   const [inView, setInView] = useState(true);
   const [mobile, setMobile] = useState(false);
   const [webgl, setWebgl] = useState<boolean | null>(null);
+  const [quality, setQuality] = useState<HeroQuality>("high");
+  const camera = useMemo(() => {
+    if (variant === "signin") return { position: [0.1, .12, 7.7] as [number, number, number], fov: 37, near: .1, far: 40 };
+    return mobile
+      ? { position: [0.1, .12, 7.7] as [number, number, number], fov: 37, near: .1, far: 40 }
+      : { position: [.18, .18, 7.2] as [number, number, number], fov: 34, near: .1, far: 40 };
+  }, [mobile, variant]);
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px)");
@@ -66,6 +75,7 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
       data-hero3d-active={active ? "true" : "false"}
       data-hero3d-reduced-motion={reducedMotion ? "true" : "false"}
       data-hero3d-token-count="4"
+      data-hero3d-quality={quality}
       aria-label="Animated 3D QuestPay cube with orbiting crypto medallions"
       role="img"
     >
@@ -74,7 +84,7 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
           className="pointer-events-none"
           style={{ pointerEvents: "none" }}
           dpr={mobile ? [1, 1.25] : [1, 1.5]}
-          camera={{ position: [0.18, .18, 7.2], fov: 34, near: .1, far: 40 }}
+          camera={camera}
           gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
           performance={{ min: .5 }}
           frameloop={active ? "always" : "demand"}
@@ -83,7 +93,13 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
             gl.outputColorSpace = THREE.SRGBColorSpace;
           }}
         >
-          <QuestPayScene mobile={mobile} reducedMotion={reducedMotion} variant={variant} />
+          <AdaptiveDpr pixelated />
+          <PerformanceMonitor
+            flipflops={2}
+            onDecline={() => setQuality("low")}
+            onIncline={() => setQuality("high")}
+          />
+          <QuestPayScene mobile={mobile} reducedMotion={reducedMotion} variant={variant} quality={quality} />
         </Canvas>
       </CanvasErrorBoundary>
     </div>

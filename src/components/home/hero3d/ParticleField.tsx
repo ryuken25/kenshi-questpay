@@ -4,11 +4,12 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { seeded } from "./hero3d.config";
+import type { HeroQuality } from "./hero3d.config";
 
 const PARTICLE_COLORS = [new THREE.Color("#b47aff"), new THREE.Color("#7d43d4"), new THREE.Color("#c9a4ff")];
 
-export default function ParticleField({ mobile = false, reducedMotion = false }: { mobile?: boolean; reducedMotion?: boolean }) {
-  const count = mobile ? 24 : 48;
+export default function ParticleField({ mobile = false, reducedMotion = false, quality = "high" }: { mobile?: boolean; reducedMotion?: boolean; quality?: HeroQuality }) {
+  const count = quality === "low" ? (mobile ? 14 : 28) : mobile ? 24 : 48;
   const points = useRef<THREE.Points>(null);
   const motes = useRef<Array<THREE.Mesh | null>>([]);
   const localTime = useRef(0);
@@ -28,7 +29,8 @@ export default function ParticleField({ mobile = false, reducedMotion = false }:
     const nextGeometry = new THREE.BufferGeometry();
     nextGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     nextGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-    const nextBases = Array.from({ length: mobile ? 8 : 11 }, (_, index) => ({
+    const moteCount = quality === "low" ? (mobile ? 4 : 7) : mobile ? 8 : 11;
+    const nextBases = Array.from({ length: moteCount }, (_, index) => ({
       x: (seeded(index, 11) - .5) * 5.7,
       y: (seeded(index, 12) - .5) * 2.9,
       z: (seeded(index, 13) - .5) * 3.4,
@@ -37,7 +39,7 @@ export default function ParticleField({ mobile = false, reducedMotion = false }:
       size: .018 + seeded(index, 16) * .025,
     }));
     return { geometry: nextGeometry, bases: nextBases };
-  }, [count, mobile]);
+  }, [count, mobile, quality]);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
 

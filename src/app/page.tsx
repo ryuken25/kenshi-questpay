@@ -25,7 +25,7 @@ export default function HomePage() {
         <ProductPreviewRow />
         <UnifiedAccessSection />
         <BuyerCreatorBenefits />
-        <section className="relative px-4 py-20 sm:px-6 lg:px-8">
+        <section id="about" className="scroll-mt-28 relative px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <div className="glass-panel-strong rounded-[1.5rem] p-8">
               <h2 className="font-sora text-2xl font-bold text-white sm:text-3xl">Ready to start with a <span className="gradient-text">clear scope</span>?</h2>

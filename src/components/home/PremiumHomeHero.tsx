@@ -46,7 +46,7 @@ export default function PremiumHomeHero() {
               <span key={label} className="qp-hero-trust__item"><Icon className="qp-hero-trust__icon" aria-hidden="true" />{label}</span>
             ))}
           </div>
-          <p className="qp-community-note">
+          <p className="qp-community-note qp-community-note--desktop">
             <span className="qp-network-note">Polygon live · BNB Chain staged behind payment gate · USDT, USDC, VERSE &amp; POL</span><br />
             {SITE.disclaimer}
           </p>
@@ -55,6 +55,10 @@ export default function PremiumHomeHero() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.55 }} className="qp-home-hero__visual">
           <HeroOrbitalScene variant="home" />
         </motion.div>
+        <p className="qp-community-note qp-community-note--mobile">
+          <span className="qp-network-note">Polygon live · BNB Chain staged behind payment gate · USDT, USDC, VERSE &amp; POL</span><br />
+          {SITE.disclaimer}
+        </p>
       </div>
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} intent="creator" next="/studio" />
     </section>

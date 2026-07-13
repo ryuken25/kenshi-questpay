@@ -19,12 +19,12 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
   useFrame((_, delta) => {
     const node = spinGroup.current;
     if (!node || reducedMotion) return;
-    const safeDelta = Math.min(delta, 1 / 20);
+    const safeDelta = delta > .15 ? 0 : Math.min(delta, 1 / 12);
     localTime.current += safeDelta;
     const t = localTime.current + config.phase;
-    node.rotation.x += safeDelta * (config.spin[0] + Math.sin(t * .81) * .018);
+    node.rotation.x = .08 + config.phase * .018 + Math.sin(t * (.72 + config.spin[0])) * (.08 + config.spin[0] * .22);
     node.rotation.y += safeDelta * config.spin[1];
-    node.rotation.z += safeDelta * (config.spin[2] + Math.cos(t * .63) * .016);
+    node.rotation.z = -.04 + Math.cos(t * (.58 + config.spin[2])) * (.07 + config.spin[2] * .24);
   });
 
   const thickness = .10;

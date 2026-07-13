@@ -145,12 +145,9 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
 
   return (
     <div className={`w-full rounded-[1.5rem] ${bare ? "max-w-none border-0 bg-transparent p-5 shadow-none sm:p-6" : `${compact ? "max-w-md" : "max-w-lg"} border border-[#7c5cff]/22 bg-[rgba(5,5,10,.98)] p-5 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-6`}`}>
-      <div className="mb-5 flex items-center gap-3">
-        <Image src="/brand/questpay/questpay-mark.svg" alt="QuestPay" width={42} height={42} />
-        <div>
-          <p className="font-sora text-xl font-black text-white">QuestPay</p>
-          <p className="text-sm text-[var(--qp-text-muted)]">One secure account for orders, receipts, and creator work.</p>
-        </div>
+      <div className="mb-5">
+        <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={148} height={34} className="h-8 w-auto" />
+        <p className="mt-2 text-sm text-[var(--qp-text-muted)]">One secure account for orders, receipts, and creator work.</p>
       </div>
 
       <h1 className="font-sora text-3xl font-black tracking-[-.03em] text-white">Sign in</h1>
