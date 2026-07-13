@@ -31,10 +31,10 @@ type ParticleConfig = {
 };
 
 const TOKENS: readonly TokenConfig[] = [
-  { id: "verse", asset: "/brand/verse/verse-icon-official.png", radiusX: 226, radiusY: 68, offsetY: -6, phase: 4.2, speed: 0.218, direction: 1, baseScale: 0.82, frontDrift: -180 },
+  { id: "verse", asset: "/brand/verse/verse-icon-official.png", radiusX: 226, radiusY: 68, offsetY: -6, phase: 4.2, speed: 0.218, direction: 1, baseScale: 0.82, frontDrift: -240 },
   { id: "usdt", asset: "/tokens/usdt.svg", radiusX: 196, radiusY: 58, offsetY: 12, phase: 0.25, speed: 0.276, direction: 1, baseScale: 0.88, frontDrift: 150 },
   { id: "usdc", asset: "/tokens/usdc.svg", radiusX: 215, radiusY: 72, offsetY: 26, phase: 2.2, speed: 0.237, direction: -1, baseScale: 0.82, frontDrift: 150 },
-  { id: "pol", asset: "/tokens/pol.svg", radiusX: 168, radiusY: 82, offsetY: -2, phase: 1.5, speed: 0.304, direction: -1, baseScale: 0.76, frontDrift: -240 },
+  { id: "pol", asset: "/tokens/pol.svg", radiusX: 168, radiusY: 82, offsetY: -2, phase: 1.5, speed: 0.304, direction: -1, baseScale: 0.76, frontDrift: -380 },
 ];
 
 const STATIC_POSES: Record<TokenId, { x: number; y: number; front: boolean; scale: number }> = {

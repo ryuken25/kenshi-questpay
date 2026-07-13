@@ -196,14 +196,14 @@ input:focus, select:focus, textarea:focus { border-color: rgba(162,124,255,.56) 
   opacity: .9;
 }
 .qp-cube-mark-wrap {
-  left: 69.2%;
-  top: 68.4%;
+  left: 25%;
+  top: 60%;
   width: 78px;
   height: 68px;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  transform: translate(-50%,-50%) skewY(-7deg) rotate(-.5deg);
+  transform: translate(-50%,-50%) skewY(7deg) rotate(.5deg);
 }
 .qp-cube-mark-wrap::before {
   content: "";
