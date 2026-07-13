@@ -20,9 +20,9 @@ function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
   return (
     <mesh geometry={built.geometry}>
       <meshBasicMaterial
-        color={tokenId === "usdt" ? "#65439b" : "#8450d4"}
+        color={tokenId === "usdt" ? "#8c55c9" : "#a260f2"}
         transparent
-        opacity={tokenId === "verse" ? .22 : .14}
+        opacity={tokenId === "verse" ? .28 : .20}
         depthTest
         depthWrite={false}
         blending={THREE.AdditiveBlending}
@@ -33,7 +33,7 @@ function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
 }
 
 export default function OrbitSystem({ mobile = false, reducedMotion = false }: { mobile?: boolean; reducedMotion?: boolean }) {
-  const radiusScale = mobile ? .78 : 1;
+  const radiusScale = mobile ? .82 : 1;
   const groups = useRef<Array<THREE.Group | null>>([]);
   const progresses = useRef(ORBITS.map((config) => ((config.phase / (Math.PI * 2)) % 1 + 1) % 1));
   const points = useMemo(() => ORBITS.map(() => new THREE.Vector3()), []);
@@ -87,7 +87,7 @@ export default function OrbitSystem({ mobile = false, reducedMotion = false }: {
 
   return (
     <group>
-      {builtOrbits.slice(0, 3).map((built, index) => (
+      {builtOrbits.slice(0, 2).map((built, index) => (
         <OrbitRing key={`ring-${ORBITS[index].id}`} built={built} tokenId={ORBITS[index].id} />
       ))}
       {ORBITS.map((config, index) => (

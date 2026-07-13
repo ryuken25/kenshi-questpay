@@ -140,9 +140,8 @@ test('hero uses one true-3D R3F scene with physical depth, XYZ medallions and fa
   assert.match(canvas, /AdaptiveDpr/);
   assert.match(cube, /colorWrite=\{false\}/);
   assert.match(cube, /meshPhysicalMaterial/);
-  assert.match(cube, /cube-front-verse-albedo\.png/);
-  assert.match(cube, /cube-front-verse-emissive\.png/);
-  assert.match(cube, /cube-front-verse-roughness\.png/);
+  assert.match(cube, /verse-mark-purple-512\.png/);
+  assert.match(cube, /SurfaceFractures/);
   assert.match(curve, /CatmullRomCurve3[\s\S]*arcLengthDivisions[\s\S]*updateArcLengths/);
   assert.match(orbits, /getPointAt[\s\S]*position\.copy/);
   assert.match(medallion, /cylinderGeometry/);
@@ -153,6 +152,22 @@ test('hero uses one true-3D R3F scene with physical depth, XYZ medallions and fa
   assert.match(css, /\.qp-hero3d/);
   assert.doesNotMatch(css, /\.qp-orbit-token-layer|\.qp-orbit-ring--front|\.qp-cube-mark-wrap/);
   for (const asset of ['public/brand/verse/cube-front-verse-albedo.png', 'public/brand/verse/cube-front-verse-emissive.png', 'public/brand/verse/cube-front-verse-roughness.png', 'public/hero/questpay-hero-fallback.webp', 'public/tokens/hero/pol-dark.png', 'public/tokens/hero/usdt-dark.png', 'public/tokens/hero/verse-dark.png', 'public/tokens/hero/usdc-dark.png']) assert.ok(existsSync(new URL(asset, root)), asset);
+});
+
+test('hero reference repair keeps a compact obsidian core, exterior orbits, and dense responsive particles', () => {
+  const config = read('src/components/home/hero3d/hero3d.config.ts');
+  const cube = read('src/components/home/hero3d/VerseCube.tsx');
+  const particles = read('src/components/home/hero3d/ParticleField.tsx');
+  const scene = read('src/components/home/hero3d/QuestPayScene.tsx');
+
+  assert.match(config, /CUBE_SIZE[^=]*= \[2\.6, 1\.75, 2\.05\]/);
+  assert.match(config, /radius: \[2\.55, 1\.18, 1\.58\]/);
+  assert.match(config, /size: \.24/);
+  assert.match(cube, /verse-mark-purple-512\.png/);
+  assert.match(cube, /SurfaceFractures/);
+  assert.doesNotMatch(cube, /cube-front-verse-albedo/);
+  assert.match(particles, /mobile \? 42 : 96/);
+  assert.match(scene, /mobile \? \.92 : \.86/);
 });
 
 test('navbar uses supplied horizontal QuestPay logo and locks mobile page scroll', () => {

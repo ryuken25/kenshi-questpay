@@ -32,19 +32,27 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
     <group ref={spinGroup} rotation={[.08 + config.phase * .018, config.phase * .07, -.04]}>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[config.size, config.size, thickness, 48]} />
-        <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.24} metalness={.48} roughness={.27} />
+        <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.34} metalness={.58} roughness={.22} />
       </mesh>
       <mesh position={[0, 0, thickness / 2 + .003]}>
         <circleGeometry args={[config.size * .88, 48]} />
-        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.26} roughness={.32} metalness={.12} />
+        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.38} roughness={.28} metalness={.16} />
       </mesh>
       <mesh position={[0, 0, -thickness / 2 - .003]} rotation={[0, Math.PI, 0]}>
         <circleGeometry args={[config.size * .88, 48]} />
-        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.18} roughness={.36} metalness={.12} />
+        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.28} roughness={.30} metalness={.16} />
       </mesh>
       <mesh>
         <torusGeometry args={[config.size * .965, .018, 8, 48]} />
-        <meshBasicMaterial color={config.rim} transparent opacity={.72} toneMapped={false} />
+        <meshBasicMaterial color={config.rim} transparent opacity={.88} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 0, -.058]} scale={1.26}>
+        <circleGeometry args={[config.size, 40]} />
+        <meshBasicMaterial color={config.rim} transparent opacity={.12} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 0, -.062]} scale={1.48}>
+        <circleGeometry args={[config.size, 40]} />
+        <meshBasicMaterial color={config.emissive} transparent opacity={.055} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>
   );
