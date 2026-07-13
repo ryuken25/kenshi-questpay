@@ -2,8 +2,8 @@ import { expect, test } from "@playwright/test";
 
 const navLinks = [
   ["Products", "/services"],
-  ["How It Works", "/how-it-works#overview"],
-  ["For Creators", "/#for-creators"],
+  ["How It Works", "/how-it-works"],
+  ["For Creators", "/for-creators"],
   ["Pricing", "/services#pricing"],
   ["About", "/#about"],
 ] as const;

@@ -9,7 +9,7 @@ import SceneLights from "./SceneLights";
 import type { HeroQuality } from "./hero3d.config";
 
 export default function QuestPayScene({ mobile = false, reducedMotion = false, variant = "home", quality = "high" }: { mobile?: boolean; reducedMotion?: boolean; variant?: "home" | "signin"; quality?: HeroQuality }) {
-  const scale = variant === "signin" ? .72 : mobile ? .92 : .86;
+  const scale = variant === "signin" ? .72 : mobile ? .92 : .84;
   const compact = mobile || variant === "signin";
   return (
     <Suspense fallback={null}>

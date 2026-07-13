@@ -16,9 +16,9 @@ test("deep workflow detail actions disclose real content", async ({ page }) => {
   await expect(page.locator("#detail-service")).toBeVisible();
 });
 
-test("homepage workflow detail actions reach authoritative anchors", async ({ page }) => {
+test("homepage audience detail actions reach authoritative routes", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "View creator details" })).toHaveAttribute("href", "/how-it-works#creator-workflow");
+  await expect(page.getByRole("link", { name: "Learn about becoming a QuestPay creator" })).toHaveAttribute("href", "/for-creators");
   await expect(page.getByRole("link", { name: "View buyer details" })).toHaveAttribute("href", "/how-it-works#buyer-workflow");
 });
 

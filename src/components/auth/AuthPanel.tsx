@@ -7,6 +7,7 @@ import Image from "next/image";
 import { AlertCircle, Loader2, Mail, ShieldCheck, Wallet } from "lucide-react";
 import { useConnect, useConnectors, useDisconnect, type Connector } from "wagmi";
 import WalletChooser from "@/components/wallet/WalletChooser";
+import TermsModalLink from "@/components/legal/TermsModalLink";
 import { prepareWalletList, isUserRejection, type WalletConnectionState } from "@/lib/wallet-provider-manifest";
 
 const errorMessages: Record<string, string> = {
@@ -251,7 +252,7 @@ export default function AuthPanel({ next, error, compact = false, bare = false, 
       <div className="mt-5 rounded-2xl border border-[#7c5cff]/20 bg-[#7c5cff]/10 p-4 text-sm leading-6 text-[var(--qp-text-muted)]">
         <ShieldCheck className="mr-2 inline text-[#c1b6ff]" size={17} /> Verified identities can link to one account. QuestPay never asks for seed phrases.
       </div>
-      <p className="mt-4 text-center text-xs leading-5 text-[var(--qp-text-subtle)]">By continuing, use QuestPay according to the <Link href="/terms" className="text-[#c1b6ff] hover:text-white">Terms</Link> and <Link href="/privacy" className="text-[#c1b6ff] hover:text-white">Privacy Policy</Link>.</p>
+      <p className="mt-4 text-center text-xs leading-5 text-[var(--qp-text-subtle)]">By continuing, use QuestPay according to the <TermsModalLink className="text-[#c1b6ff] hover:text-white">Terms</TermsModalLink> and <Link href="/privacy" className="text-[#c1b6ff] hover:text-white">Privacy Policy</Link>.</p>
     </div>
   );
 }

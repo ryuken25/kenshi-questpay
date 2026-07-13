@@ -22,14 +22,14 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
     const safeDelta = delta > .15 ? 0 : Math.min(delta, 1 / 12);
     localTime.current += safeDelta;
     const t = localTime.current + config.phase;
-    node.rotation.x = .08 + config.phase * .018 + Math.sin(t * (.72 + config.spin[0])) * (.08 + config.spin[0] * .22);
-    node.rotation.y += safeDelta * config.spin[1];
-    node.rotation.z = -.04 + Math.cos(t * (.58 + config.spin[2])) * (.07 + config.spin[2] * .24);
+    node.rotation.x = .05 + Math.sin(t * (.58 + config.spin[0])) * (.10 + config.spin[0] * .18);
+    node.rotation.y = -.15 + Math.cos(t * (.46 + config.spin[1])) * (.14 + config.spin[1] * .14);
+    node.rotation.z = .02 + Math.sin(t * (.67 + config.spin[2])) * (.08 + config.spin[2] * .16);
   });
 
   const thickness = .10;
   return (
-    <group ref={spinGroup} rotation={[.08 + config.phase * .018, config.phase * .07, -.04]}>
+    <group ref={spinGroup} rotation={[.05, -.15, .02]}>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[config.size, config.size, thickness, 48]} />
         <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.34} metalness={.58} roughness={.22} />

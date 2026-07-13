@@ -36,6 +36,7 @@ body {
 .qp-navbar__link {
   position: relative;
   min-height: 44px;
+  min-width: 44px;
   display: inline-flex;
   align-items: center;
   color: #bbb6c4;

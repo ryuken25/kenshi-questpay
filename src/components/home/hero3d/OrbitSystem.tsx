@@ -33,7 +33,7 @@ function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
 }
 
 export default function OrbitSystem({ mobile = false, reducedMotion = false }: { mobile?: boolean; reducedMotion?: boolean }) {
-  const radiusScale = mobile ? .82 : 1;
+  const radiusScale = mobile ? .68 : 1;
   const groups = useRef<Array<THREE.Group | null>>([]);
   const progresses = useRef(ORBITS.map((config) => ((config.phase / (Math.PI * 2)) % 1 + 1) % 1));
   const points = useMemo(() => ORBITS.map(() => new THREE.Vector3()), []);

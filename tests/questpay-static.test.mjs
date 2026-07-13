@@ -161,13 +161,50 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   const scene = read('src/components/home/hero3d/QuestPayScene.tsx');
 
   assert.match(config, /CUBE_SIZE[^=]*= \[2\.6, 1\.75, 2\.05\]/);
-  assert.match(config, /radius: \[2\.55, 1\.18, 1\.58\]/);
+  assert.match(config, /CUBE_BASE_ROTATION[^=]*= \[-0\.20, -0\.261799, 0\.012\]/);
+  assert.match(config, /id: "pol"[\s\S]*phase: Math\.PI/);
+  assert.match(config, /id: "usdt"[\s\S]*phase: 0/);
+  assert.match(config, /id: "verse"[\s\S]*phase: Math\.PI \/ 2/);
+  assert.match(config, /id: "usdc"[\s\S]*phase: \(3 \* Math\.PI\) \/ 2/);
+  assert.match(config, /radius: \[2\.45, 1\.18, 1\.58\]/);
   assert.match(config, /size: \.24/);
   assert.match(cube, /verse-mark-purple-512\.png/);
   assert.match(cube, /SurfaceFractures/);
   assert.doesNotMatch(cube, /cube-front-verse-albedo/);
   assert.match(particles, /mobile \? 42 : 96/);
-  assert.match(scene, /mobile \? \.92 : \.86/);
+  assert.match(scene, /mobile \? \.92 : \.84/);
+  assert.match(read('src/components/home/hero3d/OrbitSystem.tsx'), /mobile \? \.68 : 1/);
+  const medallion = read('src/components/home/hero3d/TokenMedallion.tsx');
+  assert.doesNotMatch(medallion, /rotation\.y \+=/);
+  assert.match(medallion, /rotation\.x[\s\S]*rotation\.y[\s\S]*rotation\.z/);
+});
+
+test('how-it-works removes the section chip rail and creator/legal/footer routes stay explicit', () => {
+  const how = read('src/app/how-it-works/page.tsx');
+  const navbar = read('src/components/Navbar.tsx');
+  const creators = read('src/app/for-creators/page.tsx');
+  const footer = read('src/components/Footer.tsx');
+  const terms = read('src/components/legal/TermsModalLink.tsx');
+  const servicesPreview = read('src/components/HomeServicesPreview.tsx');
+
+  assert.doesNotMatch(how, /How QuestPay works sections/);
+  assert.doesNotMatch(how, /\["overview", "service", "brief"/);
+  assert.match(navbar, /href: "\/how-it-works", label: "How It Works"/);
+  assert.match(navbar, /window\.scrollTo\(\{ top: 0/);
+  assert.match(navbar, /href: "\/for-creators", label: "For Creators"/);
+  assert.match(creators, /How to become a creator/);
+  assert.match(creators, /Creator features/);
+  assert.match(creators, /What creators get/);
+  assert.match(footer, /https:\/\/t\.me\/kenshi25/);
+  assert.match(footer, /© \{new Date\(\)\.getFullYear\(\)\} ryuken25/);
+  assert.doesNotMatch(footer, /Build \{buildSha\}|SITE\.disclaimer|How It Works|Pricing|Services<\/Link>/);
+  assert.match(terms, /createPortal/);
+  assert.match(terms, /role="dialog"/);
+  assert.match(servicesPreview, /trustItems/);
+  assert.match(servicesPreview, /Service packages/);
+  assert.match(servicesPreview, /actually sell\./);
+  assert.match(servicesPreview, /lg:grid-cols-3/);
+  assert.match(servicesPreview, /CardArtwork/);
 });
 
 test('navbar uses supplied horizontal QuestPay logo and locks mobile page scroll', () => {

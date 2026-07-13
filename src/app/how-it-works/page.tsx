@@ -61,12 +61,6 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        <nav aria-label="How QuestPay works sections" className="sticky top-20 z-20 border-b border-white/[.055] bg-[#05050b]/90 px-4 py-3 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-6xl snap-x gap-2 overflow-x-auto lg:flex-wrap lg:justify-center lg:overflow-visible">
-            {["overview", "service", "brief", "quote", "payment", "tracking", "receipt", "creator-workflow", "buyer-workflow", "failures", "security", "faq"].map((id) => <a key={id} href={`#${id}`} className="min-h-11 shrink-0 snap-start rounded-full border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] px-4 py-3 text-xs font-bold capitalize text-[var(--qp-text-secondary)] hover:text-white">{id.replaceAll("-", " ")}</a>)}
-          </div>
-        </nav>
-
         <section id="overview" className="scroll-mt-40 px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <div className="mx-auto max-w-6xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[linear-gradient(180deg,rgba(18,16,29,.92),rgba(7,7,13,.97))] p-6 sm:p-10">
             <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--qp-violet-300)]">Why the workflow exists</p>
@@ -84,7 +78,7 @@ export default function HowItWorksPage() {
           <div className="mx-auto max-w-6xl rounded-[2rem] border border-[var(--qp-violet-500)]/25 bg-[var(--qp-violet-600)]/10 p-6 sm:p-10">
             <div className="flex items-center gap-3"><BadgeCheck className="text-[var(--qp-violet-300)]" size={30} aria-hidden="true" /><h2 className="font-sora text-3xl font-black text-white">Payment proof, step by step.</h2></div>
             <div className="mt-7 grid gap-3 md:grid-cols-3 lg:grid-cols-6">{["Order total", "Network + token", "Locked receiver + amount", "Transaction hash", "Server verification", "Public receipt"].map((item, index) => <div key={item} className="rounded-xl border border-white/10 bg-black/20 p-4"><span className="font-mono text-xs text-[var(--qp-violet-300)]">0{index + 1}</span><p className="mt-2 text-sm font-bold text-white">{item}</p></div>)}</div>
-            <Link href="/verify" className="mt-7 inline-flex font-bold text-[var(--qp-violet-300)] hover:text-white">Open receipt verifier →</Link>
+            <Link href="/verify" className="mt-7 inline-flex min-h-11 items-center font-bold text-[var(--qp-violet-300)] hover:text-white">Open receipt verifier →</Link>
           </div>
         </section>
 

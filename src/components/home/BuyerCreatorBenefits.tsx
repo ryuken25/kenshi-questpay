@@ -51,7 +51,7 @@ export default function BuyerCreatorBenefits() {
               {creatorBenefits.map((item, index) => <motion.li key={item} variants={reduced ? undefined : { hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0, transition: { delay: index * .08 } } }} className="rounded-xl border border-[var(--qp-border-soft)] bg-black/20 px-4 py-3"><span className="mr-2 text-[var(--qp-violet-300)]">•</span>{item}</motion.li>)}
             </motion.ul>
             <div className="mt-7 flex flex-col gap-3 min-[370px]:flex-row">
-              <Link href="/how-it-works#creator-workflow" aria-label="View creator details" className={secondaryAction}>View details</Link>
+              <Link href="/for-creators" aria-label="Learn about becoming a QuestPay creator" className={secondaryAction}>Learn more</Link>
               <CreatorIntentButton className={primaryAction} />
             </div>
           </motion.article>

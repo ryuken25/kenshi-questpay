@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,8 +9,8 @@ import AuthModal, { type AuthIntent } from "@/components/auth/AuthModal";
 
 const navLinks = [
   { href: "/services", label: "Products" },
-  { href: "/how-it-works#overview", label: "How It Works" },
-  { href: "/#for-creators", label: "For Creators" },
+  { href: "/how-it-works", label: "How It Works" },
+  { href: "/for-creators", label: "For Creators" },
   { href: "/services#pricing", label: "Pricing" },
   { href: "/#about", label: "About" },
 ];
@@ -58,6 +58,14 @@ export default function Navbar({ authPage = false }: NavbarProps) {
     setAuthOpen(true);
   };
 
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    setOpen(false);
+    if (href !== "/how-it-works" || window.location.pathname !== "/how-it-works") return;
+    event.preventDefault();
+    window.history.replaceState(null, "", "/how-it-works");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const isAuthenticated = session?.authenticated ?? false;
   const isCreator = session?.roles.includes("creator") ?? false;
   const creatorDestination = isCreator ? "/studio" : "/onboarding?next=/studio";
@@ -79,7 +87,7 @@ export default function Navbar({ authPage = false }: NavbarProps) {
               <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={124} height={28} priority className="h-7 w-auto" />
             </Link>
             <div className="qp-navbar__links hidden md:flex">
-              {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className={linkClass}>{link.label}</Link>)}
+              {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} scroll onClick={(event) => handleNavClick(event, link.href)} className={linkClass}>{link.label}</Link>)}
             </div>
             <div className="flex items-center justify-self-end gap-2.5">
               {!authPage && !isAuthenticated ? (
@@ -99,7 +107,7 @@ export default function Navbar({ authPage = false }: NavbarProps) {
           </div>
           {open ? (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="qp-navbar__mobile-menu space-y-2 border-t border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] py-4 md:hidden">
-              {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
+              {navLinks.map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} scroll onClick={(event) => handleNavClick(event, link.href)} className="block min-h-12 rounded-xl px-3 py-3 text-base font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">{link.label}</Link>)}
               {!authPage && !isAuthenticated ? (
                 <>
                   <button type="button" aria-haspopup="dialog" onClick={() => openAuth("signin")} className="block min-h-12 w-full rounded-xl border border-white/[.11] bg-white/[.03] px-3 py-3 text-left text-base font-semibold text-[var(--qp-text-primary)] hover:bg-[var(--qp-surface-hover)] hover:text-white">Sign In</button>
