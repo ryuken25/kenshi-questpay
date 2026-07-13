@@ -124,25 +124,30 @@ test('public hero uses compact parity composition without blue or cyan backdrop'
   assert.doesNotMatch(hero, /70,180,255|7\.3vw/);
 });
 
-test('orbital hero keeps permanent rear/front token copies and updates them without React frame renders', () => {
-  const scene = read('src/components/home/HeroOrbitalScene.tsx');
-  const css = read('src/app/globals.css');
+test('hero uses one true-3D R3F scene with physical depth, XYZ medallions and fallback', () => {
+  const pkg = JSON.parse(read('package.json'));
+  const wrapper = read('src/components/home/HeroOrbitalScene.tsx');
+  const canvas = read('src/components/home/hero3d/QuestPayHeroCanvas.tsx');
+  const cube = read('src/components/home/hero3d/VerseCube.tsx');
+  const orbits = read('src/components/home/hero3d/OrbitSystem.tsx');
+  const medallion = read('src/components/home/hero3d/TokenMedallion.tsx');
+  const css = read('src/app/globals.css') + read('src/app/parity.css');
 
-  assert.match(scene, /const TOKENS[\s\S]*verse[\s\S]*usdt[\s\S]*usdc[\s\S]*pol/);
-  assert.match(scene, /TOKENS\.map\(\(token\)/);
-  assert.match(scene, /rearRefs\.current\[token\.id\]/);
-  assert.match(scene, /frontRefs\.current\[token\.id\]/);
-  assert.match(scene, /IntersectionObserver/);
-  assert.match(scene, /timeRef\.current \+= dt/);
-  assert.match(scene, /smoothstep\(-0\.16, 0\.16, z\)/);
-  assert.doesNotMatch(scene, /style\.zIndex|dataset\.depth|setElapsed|poses\.filter/);
-  for (const asset of ['/tokens/usdt.svg', '/tokens/usdc.svg', '/brand/verse/verse-icon-official.png', '/tokens/pol.svg']) {
-    assert.match(scene, new RegExp(asset.replaceAll('/', '\\/').replace('.', '\\.')));
-  }
-  assert.match(css, /\.qp-orbit-ring--rear/);
-  assert.match(css, /\.qp-orbit-ring--front/);
-  assert.match(css, /\.qp-cube-asset/);
-  assert.doesNotMatch(css, /rotateY\(360deg\)/);
+  for (const dep of ['three', '@react-three/fiber', '@react-three/drei']) assert.ok(pkg.dependencies[dep], dep);
+  assert.match(wrapper, /dynamic\([\s\S]*ssr:\s*false[\s\S]*Hero3DFallback/);
+  assert.match(canvas, /<Canvas[\s\S]*dpr=[\s\S]*frameloop=[\s\S]*QuestPayScene/);
+  assert.match(cube, /colorWrite=\{false\}/);
+  assert.match(cube, /meshPhysicalMaterial/);
+  assert.match(cube, /questpay-cube-front-verse\.webp/);
+  assert.match(orbits, /new THREE\.Vector3[\s\S]*applyEuler[\s\S]*position\.copy/);
+  assert.match(medallion, /cylinderGeometry/);
+  assert.match(medallion, /rotation\.x/);
+  assert.match(medallion, /rotation\.y/);
+  assert.match(medallion, /rotation\.z/);
+  assert.doesNotMatch(wrapper + orbits + medallion, /style\.zIndex|dataset\.depth|translate3d\(x,\s*y,\s*0\)/);
+  assert.match(css, /\.qp-hero3d/);
+  assert.doesNotMatch(css, /\.qp-orbit-token-layer|\.qp-orbit-ring--front|\.qp-cube-mark-wrap/);
+  for (const asset of ['public/brand/verse/questpay-cube-front-verse.webp', 'public/hero/questpay-hero-fallback.webp', 'public/tokens/hero/pol-dark.webp', 'public/tokens/hero/usdt-dark.webp', 'public/tokens/hero/verse-dark.webp', 'public/tokens/hero/usdc-dark.webp']) assert.ok(existsSync(new URL(asset, root)), asset);
 });
 
 test('navbar uses supplied horizontal QuestPay logo and locks mobile page scroll', () => {
