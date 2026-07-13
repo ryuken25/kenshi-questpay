@@ -4,6 +4,7 @@ import type { OrbitConfig } from "./hero3d.config";
 export type BuiltOrbit = {
   curve: THREE.CatmullRomCurve3;
   geometry: THREE.TubeGeometry;
+  haloGeometry: THREE.TubeGeometry;
 };
 
 export function createOrbitCurve(config: OrbitConfig, radiusScale: number): BuiltOrbit {
@@ -19,5 +20,9 @@ export function createOrbitCurve(config: OrbitConfig, radiusScale: number): Buil
   const curve = new THREE.CatmullRomCurve3(points, true, "centripetal");
   curve.arcLengthDivisions = 384;
   curve.updateArcLengths();
-  return { curve, geometry: new THREE.TubeGeometry(curve, 192, 0.008, 5, true) };
+  return {
+    curve,
+    geometry: new THREE.TubeGeometry(curve, 192, 0.008, 5, true),
+    haloGeometry: new THREE.TubeGeometry(curve, 192, 0.024, 6, true),
+  };
 }

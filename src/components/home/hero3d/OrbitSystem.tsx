@@ -17,23 +17,29 @@ declare global {
 }
 
 function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
+  const coreColor = tokenId === "usdt" ? "#a66ce0" : "#b476ff";
   return (
-    <mesh geometry={built.geometry}>
-      <meshBasicMaterial
-        color={tokenId === "usdt" ? "#8c55c9" : "#a260f2"}
-        transparent
-        opacity={tokenId === "verse" ? .28 : .20}
-        depthTest
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-        toneMapped={false}
-      />
-    </mesh>
+    <group>
+      <mesh geometry={built.haloGeometry}>
+        <meshBasicMaterial color={coreColor} transparent opacity={.055} depthTest depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
+      <mesh geometry={built.geometry}>
+        <meshBasicMaterial
+          color={coreColor}
+          transparent
+          opacity={tokenId === "verse" ? .38 : .28}
+          depthTest
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </mesh>
+    </group>
   );
 }
 
 export default function OrbitSystem({ mobile = false, reducedMotion = false }: { mobile?: boolean; reducedMotion?: boolean }) {
-  const radiusScale = mobile ? .68 : 1;
+  const radiusScale = mobile ? .88 : 1.15;
   const groups = useRef<Array<THREE.Group | null>>([]);
   const progresses = useRef(ORBITS.map((config) => ((config.phase / (Math.PI * 2)) % 1 + 1) % 1));
   const points = useMemo(() => ORBITS.map(() => new THREE.Vector3()), []);
@@ -47,7 +53,10 @@ export default function OrbitSystem({ mobile = false, reducedMotion = false }: {
   });
   const builtOrbits = useMemo(() => ORBITS.map((config) => createOrbitCurve(config, radiusScale)), [radiusScale]);
 
-  useEffect(() => () => builtOrbits.forEach(({ geometry }) => geometry.dispose()), [builtOrbits]);
+  useEffect(() => () => builtOrbits.forEach(({ geometry, haloGeometry }) => {
+    geometry.dispose();
+    haloGeometry.dispose();
+  }), [builtOrbits]);
 
   useEffect(() => {
     const debug = debugState.current;

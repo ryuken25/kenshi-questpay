@@ -16,7 +16,7 @@ export type OrbitConfig = {
   spin: [number, number, number];
 };
 
-export const CUBE_SIZE: [number, number, number] = [2.18, 2.18, 2.18];
+export const CUBE_SIZE: [number, number, number] = [2.04, 1.8768, 1.7748];
 export const CUBE_BASE_ROTATION: [number, number, number] = [0.366519, -0.488692, 0];
 
 export const ORBITS: OrbitConfig[] = [

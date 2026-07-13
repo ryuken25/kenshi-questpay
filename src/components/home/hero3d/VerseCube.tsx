@@ -1,12 +1,31 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { RoundedBox, useTexture } from "@react-three/drei";
+import { Line, RoundedBox, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { CUBE_BASE_ROTATION, CUBE_SIZE } from "./hero3d.config";
 
 const HALF = { x: CUBE_SIZE[0] / 2, y: CUBE_SIZE[1] / 2, z: CUBE_SIZE[2] / 2 };
+
+function GlassPanels() {
+  const thickness = .047;
+  const pad = .07;
+  const common = { transparent: true, transmission: .28, roughness: .21, metalness: .13, ior: 1.45, thickness: .62, depthWrite: false } as const;
+  return (
+    <group renderOrder={2}>
+      <RoundedBox args={[CUBE_SIZE[0] - pad, CUBE_SIZE[1] - pad, thickness]} radius={.025} smoothness={2} bevelSegments={1} position={[0, 0, HALF.z + .018]}>
+        <meshPhysicalMaterial {...common} color="#19062f" opacity={.34} />
+      </RoundedBox>
+      <RoundedBox args={[CUBE_SIZE[0] - pad, CUBE_SIZE[2] - pad, thickness]} radius={.025} smoothness={2} bevelSegments={1} position={[0, HALF.y + .018, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshPhysicalMaterial {...common} color="#220744" opacity={.28} />
+      </RoundedBox>
+      <RoundedBox args={[CUBE_SIZE[2] - pad, CUBE_SIZE[1] - pad, thickness]} radius={.025} smoothness={2} bevelSegments={1} position={[HALF.x + .018, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <meshPhysicalMaterial {...common} color="#0e041b" opacity={.38} />
+      </RoundedBox>
+    </group>
+  );
+}
 
 function SurfaceFractures() {
   const geometry = useMemo(() => {
@@ -76,42 +95,39 @@ function TopFacets() {
 }
 
 function VisibleEdgeGlow() {
-  const geometries = useMemo(() => {
-    const inset = .035;
+  const { bright, structural } = useMemo(() => {
+    const inset = .03;
     const left = -HALF.x + inset;
     const right = HALF.x - inset;
     const top = HALF.y - inset;
     const bottom = -HALF.y + inset;
-    const front = HALF.z + .012;
+    const front = HALF.z + .014;
     const back = -HALF.z + inset;
-    const bright = [
-      [left, top, front, right, top, front],
-      [right, top, front, right, bottom, front],
-      [right, bottom, front, left, bottom, front],
-      [left, bottom, front, left, top, front],
-    ];
-    const structural = [
-      [left, top, front, left, top, back],
-      [right, top, front, right, top, back],
-      [right, bottom, front, right, bottom, back],
-      [left, top, back, right, top, back],
-      [right, top, back, right, bottom, back],
-    ];
-    return [bright, structural].map((segments) => {
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute("position", new THREE.Float32BufferAttribute(segments.flat(), 3));
-      return geometry;
-    });
+    const toPoints = (segments: number[][]) => segments.flatMap(([x1, y1, z1, x2, y2, z2]) => [[x1, y1, z1], [x2, y2, z2]] as [number, number, number][]);
+    return {
+      bright: toPoints([
+        [left, top, front, right, top, front],
+        [right, top, front, right, bottom, front],
+        [right, bottom, front, left, bottom, front],
+        [left, bottom, front, left, top, front],
+      ]),
+      structural: toPoints([
+        [left, top, front, left, top, back],
+        [right, top, front, right, top, back],
+        [right, bottom, front, right, bottom, back],
+        [left, top, back, right, top, back],
+        [right, top, back, right, bottom, back],
+      ]),
+    };
   }, []);
-  useEffect(() => () => geometries.forEach((geometry) => geometry.dispose()), [geometries]);
+
   return (
-    <group renderOrder={5}>
-      <lineSegments geometry={geometries[0]}>
-        <lineBasicMaterial color="#e09aff" transparent opacity={.92} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
-      </lineSegments>
-      <lineSegments geometry={geometries[1]}>
-        <lineBasicMaterial color="#a958e8" transparent opacity={.50} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
-      </lineSegments>
+    <group renderOrder={6}>
+      <Line points={bright} segments lineWidth={7} color="#b952ff" transparent opacity={.16} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={bright} segments lineWidth={3.2} color="#cf70ff" transparent opacity={.45} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={bright} segments lineWidth={1.7} color="#f3c9ff" transparent={false} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={structural} segments lineWidth={4.5} color="#8f36dd" transparent opacity={.08} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={structural} segments lineWidth={1} color="#bd65f0" transparent opacity={.48} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
     </group>
   );
 }
@@ -142,23 +158,23 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
   return (
     <group ref={group} rotation={CUBE_BASE_ROTATION}>
       {/* Dense rounded obsidian core keeps the form solid, never wireframe-like. */}
-      <RoundedBox args={CUBE_SIZE} radius={.04} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.955, .955, .955]} renderOrder={-2}>
+      <RoundedBox args={CUBE_SIZE} radius={.055} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.955, .955, .955]} renderOrder={-2}>
         <meshStandardMaterial color="#0d0316" emissive="#31064a" emissiveIntensity={.28} roughness={.28} metalness={.18} />
       </RoundedBox>
 
       {/* Depth-only body preserves natural front/rear token occlusion. */}
-      <RoundedBox args={CUBE_SIZE} radius={.04} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.985, .985, .985]} renderOrder={-1}>
+      <RoundedBox args={CUBE_SIZE} radius={.055} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.985, .985, .985]} renderOrder={-1}>
         <meshBasicMaterial colorWrite={false} depthWrite depthTest />
       </RoundedBox>
 
       {/* Solid dark-glass shell: beveled silhouette, no transparent back-edge cage. */}
-      <RoundedBox args={CUBE_SIZE} radius={.04} smoothness={2} bevelSegments={2} creaseAngle={.18} renderOrder={1}>
+      <RoundedBox args={CUBE_SIZE} radius={.055} smoothness={2} bevelSegments={2} creaseAngle={.18} renderOrder={1}>
         <meshPhysicalMaterial
           color="#220735"
           emissive="#520d7d"
           emissiveIntensity={.31}
           transparent
-          opacity={.91}
+          opacity={.76}
           roughness={.18}
           metalness={.14}
           transmission={0}
@@ -169,6 +185,7 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
         />
         <VisibleEdgeGlow />
       </RoundedBox>
+      <GlassPanels />
 
       {/* Transparent Verse mark sits directly on the physical front face. */}
       <mesh position={[0, 0, HALF.z + .012]} renderOrder={4}>

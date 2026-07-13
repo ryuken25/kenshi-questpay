@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import VerseCube from "./VerseCube";
 import OrbitSystem from "./OrbitSystem";
 import ParticleField from "./ParticleField";
@@ -20,6 +21,11 @@ export default function QuestPayScene({ mobile = false, reducedMotion = false, v
         <VerseCube reducedMotion={reducedMotion} />
         <EnergyShards mobile={compact} reducedMotion={reducedMotion} quality={quality} />
       </group>
+      {quality !== "low" ? (
+        <EffectComposer multisampling={0} enableNormalPass={false}>
+          <Bloom intensity={1.35} luminanceThreshold={.46} luminanceSmoothing={.2} mipmapBlur />
+        </EffectComposer>
+      ) : null}
     </Suspense>
   );
 }
