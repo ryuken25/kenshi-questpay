@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="112" viewBox="0 0 128 112" fill="none" role="img" aria-label="VERSE mark">
+  <defs>
+    <linearGradient id="verse-neon" x1="13" y1="8" x2="103" y2="105" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B07BFF"/>
+      <stop offset="0.46" stop-color="#9A63FF"/>
+      <stop offset="1" stop-color="#7C39F5"/>
+    </linearGradient>
+    <filter id="verse-bloom" x="-60%" y="-60%" width="220%" height="240%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="2.4" result="soft"/>
+      <feFlood flood-color="#A86BFF" flood-opacity=".72"/>
+      <feComposite in2="soft" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M12 11h21l31 69 31-69h21L75 103H53L12 11Z" fill="url(#verse-neon)" filter="url(#verse-bloom)"/>
+  <path d="M27 26 58 92" stroke="#D4B4FF" stroke-width="2" stroke-linecap="round" opacity=".42"/>
+  <path d="m101 23-32 68" stroke="#C59CFF" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+</svg>
