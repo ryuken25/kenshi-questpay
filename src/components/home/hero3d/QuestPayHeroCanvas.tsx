@@ -36,10 +36,10 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
   const [webgl, setWebgl] = useState<boolean | null>(null);
   const [quality, setQuality] = useState<HeroQuality>("high");
   const camera = useMemo(() => {
-    if (variant === "signin") return { position: [0.1, .12, 7.7] as [number, number, number], fov: 37, near: .1, far: 40 };
+    if (variant === "signin") return { position: [0, 0, 7.8] as [number, number, number], fov: 35, near: .1, far: 40 };
     return mobile
-      ? { position: [0.1, .12, 7.7] as [number, number, number], fov: 37, near: .1, far: 40 }
-      : { position: [.18, .18, 7.2] as [number, number, number], fov: 34, near: .1, far: 40 };
+      ? { position: [0, 0, 7.8] as [number, number, number], fov: 35, near: .1, far: 40 }
+      : { position: [0, 0, 7.2] as [number, number, number], fov: 35, near: .1, far: 40 };
   }, [mobile, variant]);
 
   useEffect(() => {

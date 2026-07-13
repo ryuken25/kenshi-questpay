@@ -160,8 +160,8 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   const particles = read('src/components/home/hero3d/ParticleField.tsx');
   const scene = read('src/components/home/hero3d/QuestPayScene.tsx');
 
-  assert.match(config, /CUBE_SIZE[^=]*= \[2\.6, 1\.75, 2\.05\]/);
-  assert.match(config, /CUBE_BASE_ROTATION[^=]*= \[-0\.20, -0\.261799, 0\.012\]/);
+  assert.match(config, /CUBE_SIZE[^=]*= \[2\.18, 2\.18, 2\.18\]/);
+  assert.match(config, /CUBE_BASE_ROTATION[^=]*= \[0\.366519, -0\.488692, 0\]/);
   assert.match(config, /id: "pol"[\s\S]*phase: Math\.PI/);
   assert.match(config, /id: "usdt"[\s\S]*phase: 0/);
   assert.match(config, /id: "verse"[\s\S]*phase: Math\.PI \/ 2/);
@@ -169,6 +169,12 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   assert.match(config, /radius: \[2\.45, 1\.18, 1\.58\]/);
   assert.match(config, /size: \.24/);
   assert.match(cube, /verse-mark-purple-512\.png/);
+  assert.match(cube, /RoundedBox/);
+  assert.match(cube, /radius=\{\.04\}/);
+  assert.match(cube, /bevelSegments=\{2\}/);
+  assert.match(cube, /VisibleEdgeGlow/);
+  assert.doesNotMatch(cube, /<Edges/);
+  assert.match(cube, /depthWrite/);
   assert.match(cube, /SurfaceFractures/);
   assert.doesNotMatch(cube, /cube-front-verse-albedo/);
   assert.match(particles, /mobile \? 42 : 96/);

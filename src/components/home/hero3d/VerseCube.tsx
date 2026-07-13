@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { Edges, useTexture } from "@react-three/drei";
+import { RoundedBox, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { CUBE_BASE_ROTATION, CUBE_SIZE } from "./hero3d.config";
@@ -75,6 +75,47 @@ function TopFacets() {
   );
 }
 
+function VisibleEdgeGlow() {
+  const geometries = useMemo(() => {
+    const inset = .035;
+    const left = -HALF.x + inset;
+    const right = HALF.x - inset;
+    const top = HALF.y - inset;
+    const bottom = -HALF.y + inset;
+    const front = HALF.z + .012;
+    const back = -HALF.z + inset;
+    const bright = [
+      [left, top, front, right, top, front],
+      [right, top, front, right, bottom, front],
+      [right, bottom, front, left, bottom, front],
+      [left, bottom, front, left, top, front],
+    ];
+    const structural = [
+      [left, top, front, left, top, back],
+      [right, top, front, right, top, back],
+      [right, bottom, front, right, bottom, back],
+      [left, top, back, right, top, back],
+      [right, top, back, right, bottom, back],
+    ];
+    return [bright, structural].map((segments) => {
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(segments.flat(), 3));
+      return geometry;
+    });
+  }, []);
+  useEffect(() => () => geometries.forEach((geometry) => geometry.dispose()), [geometries]);
+  return (
+    <group renderOrder={5}>
+      <lineSegments geometry={geometries[0]}>
+        <lineBasicMaterial color="#e09aff" transparent opacity={.92} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      </lineSegments>
+      <lineSegments geometry={geometries[1]}>
+        <lineBasicMaterial color="#a958e8" transparent opacity={.50} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      </lineSegments>
+    </group>
+  );
+}
+
 export default function VerseCube({ reducedMotion = false }: { reducedMotion?: boolean }) {
   const group = useRef<THREE.Group>(null);
   const localTime = useRef(0);
@@ -100,50 +141,49 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
 
   return (
     <group ref={group} rotation={CUBE_BASE_ROTATION}>
-      {/* Dense obsidian core: visible before the invisible orbit occluder. */}
-      <mesh scale={[.935, .935, .935]} renderOrder={-2}>
-        <boxGeometry args={CUBE_SIZE} />
-        <meshStandardMaterial color="#09030f" emissive="#210632" emissiveIntensity={.20} roughness={.34} metalness={.28} />
-      </mesh>
+      {/* Dense rounded obsidian core keeps the form solid, never wireframe-like. */}
+      <RoundedBox args={CUBE_SIZE} radius={.04} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.955, .955, .955]} renderOrder={-2}>
+        <meshStandardMaterial color="#0d0316" emissive="#31064a" emissiveIntensity={.28} roughness={.28} metalness={.18} />
+      </RoundedBox>
 
-      {/* Slightly larger depth-only body creates natural rear/front token occlusion. */}
-      <mesh scale={[.968, .968, .968]} renderOrder={-1}>
-        <boxGeometry args={CUBE_SIZE} />
+      {/* Depth-only body preserves natural front/rear token occlusion. */}
+      <RoundedBox args={CUBE_SIZE} radius={.04} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.985, .985, .985]} renderOrder={-1}>
         <meshBasicMaterial colorWrite={false} depthWrite depthTest />
-      </mesh>
+      </RoundedBox>
 
-      {/* Obsidian-violet clear shell. No opaque logo plaque. */}
-      <mesh renderOrder={1}>
-        <boxGeometry args={CUBE_SIZE} />
-        {Array.from({ length: 6 }, (_, index) => (
-          <meshPhysicalMaterial
-            key={index}
-            attach={`material-${index}`}
-            color={index === 2 ? "#391054" : index === 4 ? "#2d0a44" : index === 0 ? "#240832" : "#190522"}
-            emissive={index === 4 ? "#430b67" : index === 2 ? "#4b1170" : "#250635"}
-            emissiveIntensity={index === 4 ? .30 : index === 2 ? .30 : .18}
-            transparent
-            opacity={index === 2 ? .66 : .57}
-            roughness={.19}
-            metalness={.22}
-            transmission={0}
-            clearcoat={.72}
-            clearcoatRoughness={.18}
-            depthWrite={false}
-            depthTest
-          />
-        ))}
-        <Edges threshold={12} color="#c076ff" lineWidth={1.25} />
-      </mesh>
+      {/* Solid dark-glass shell: beveled silhouette, no transparent back-edge cage. */}
+      <RoundedBox args={CUBE_SIZE} radius={.04} smoothness={2} bevelSegments={2} creaseAngle={.18} renderOrder={1}>
+        <meshPhysicalMaterial
+          color="#220735"
+          emissive="#520d7d"
+          emissiveIntensity={.31}
+          transparent
+          opacity={.91}
+          roughness={.18}
+          metalness={.14}
+          transmission={0}
+          clearcoat={.66}
+          clearcoatRoughness={.16}
+          depthWrite
+          depthTest
+        />
+        <VisibleEdgeGlow />
+      </RoundedBox>
 
       {/* Transparent Verse mark sits directly on the physical front face. */}
       <mesh position={[0, 0, HALF.z + .012]} renderOrder={4}>
         <planeGeometry args={[.92, .92]} />
         <meshBasicMaterial map={mark} transparent alphaTest={.025} depthWrite={false} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 0, HALF.z + .009]} scale={1.16} renderOrder={3}>
+      <mesh position={[0, 0, HALF.z + .009]} scale={1.12} renderOrder={3}>
         <planeGeometry args={[.92, .92]} />
-        <meshBasicMaterial map={mark} color="#b65dff" transparent opacity={.28} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial map={mark} color="#b65dff" transparent opacity={.24} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+      </mesh>
+
+      {/* Reference has a quiet embossed Verse mark on the top face. */}
+      <mesh position={[0, HALF.y + .012, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={4}>
+        <planeGeometry args={[.86, .86]} />
+        <meshBasicMaterial map={mark} color="#7d34ad" transparent opacity={.20} depthWrite={false} toneMapped={false} />
       </mesh>
 
       <TopFacets />
