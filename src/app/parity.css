@@ -89,7 +89,7 @@ body {
   gap: clamp(32px,5vw,80px);
 }
 .qp-home-hero__content { position: relative; z-index: 5; max-width: 570px; }
-.qp-home-hero__visual { position: relative; min-height: 430px; display: grid; place-items: center; }
+.qp-home-hero__visual { position: relative; min-height: 470px; display: grid; place-items: center; }
 .qp-powered-badge {
   display: inline-flex;
   align-items: center;

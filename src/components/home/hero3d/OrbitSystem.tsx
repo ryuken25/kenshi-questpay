@@ -96,7 +96,7 @@ export default function OrbitSystem({ mobile = false, reducedMotion = false }: {
 
   return (
     <group>
-      {builtOrbits.slice(0, 2).map((built, index) => (
+      {builtOrbits.map((built, index) => (
         <OrbitRing key={`ring-${ORBITS[index].id}`} built={built} tokenId={ORBITS[index].id} />
       ))}
       {ORBITS.map((config, index) => (

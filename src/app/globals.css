@@ -547,23 +547,13 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   contain: layout paint style;
   pointer-events: none;
 }
-.qp-hero3d--home { width: min(100%, 620px); height: clamp(390px, 34vw, 510px); }
-.qp-hero3d::before {
-  content: "";
-  position: absolute;
-  inset: 13% 12% 12%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(131,62,231,.25), rgba(69,24,136,.10) 48%, transparent 74%);
-  filter: blur(34px);
-}
+.qp-hero3d--home { width: min(100%, 680px); height: clamp(420px, 36vw, 540px); }
 .qp-hero3d canvas { display: block; width: 100% !important; height: 100% !important; }
 .qp-hero3d--fallback img { filter: saturate(.94) contrast(1.05) drop-shadow(0 22px 58px rgba(0,0,0,.52)); }
 .qp-hero3d--signin { width: min(100%, 390px); height: 320px; }
 
 @media (max-width: 767px) {
   .qp-hero3d--home { width: min(100%, 390px); height: clamp(290px, 78vw, 355px); margin-inline: auto; }
-  .qp-hero3d::before { inset: 16% 11% 12%; filter: blur(26px); }
 }
 
 .qp-auth-overlay {
@@ -731,14 +721,14 @@ body {
   content: '';
   position: absolute;
   z-index: -1;
-  inset: -18% -16% -22%;
+  inset: -24% -22% -28%;
   pointer-events: none;
   background:
-    radial-gradient(circle at 54% 48%, rgba(111, 48, 224, .22), rgba(80, 28, 178, .10) 36%, transparent 70%);
-  filter: blur(28px);
-  opacity: 0.86;
-  mask-image: radial-gradient(ellipse 76% 72% at center, black 26%, rgba(0,0,0,.82) 52%, transparent 78%);
-  -webkit-mask-image: radial-gradient(ellipse 76% 72% at center, black 26%, rgba(0,0,0,.82) 52%, transparent 78%);
+    radial-gradient(circle at 50% 50%, rgba(120, 55, 240, .28), rgba(90, 35, 195, .16) 30%, rgba(60, 22, 150, .06) 52%, transparent 74%);
+  filter: blur(42px);
+  opacity: 0.95;
+  mask-image: radial-gradient(ellipse 80% 76% at center, black 20%, rgba(0,0,0,.7) 48%, transparent 74%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 76% at center, black 20%, rgba(0,0,0,.7) 48%, transparent 74%);
 }
 
 .qp-hero-scene-wrap canvas {
@@ -752,13 +742,13 @@ body {
   content: '';
   position: absolute;
   z-index: -1;
-  width: min(92vw, 88rem);
-  height: min(56vw, 42rem);
-  top: -6rem;
-  left: 44%;
-  transform: translateX(-20%);
-  background: radial-gradient(ellipse, rgba(102, 41, 215, .13), rgba(72, 25, 160, .055) 45%, transparent 72%);
-  filter: blur(42px);
+  width: min(96vw, 92rem);
+  height: min(62vw, 48rem);
+  top: -8rem;
+  left: 42%;
+  transform: translateX(-18%);
+  background: radial-gradient(ellipse, rgba(110, 48, 228, .16), rgba(80, 30, 175, .07) 40%, transparent 68%);
+  filter: blur(52px);
   pointer-events: none;
 }
 
