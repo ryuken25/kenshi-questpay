@@ -35,11 +35,11 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
         <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.34} metalness={.58} roughness={.22} />
       </mesh>
       <mesh position={[0, 0, thickness / 2 + .003]}>
-        <circleGeometry args={[config.size * .82, 48]} />
+        <circleGeometry args={[config.size * .75, 48]} />
         <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.38} roughness={.28} metalness={.16} />
       </mesh>
       <mesh position={[0, 0, -thickness / 2 - .003]} rotation={[0, Math.PI, 0]}>
-        <circleGeometry args={[config.size * .82, 48]} />
+        <circleGeometry args={[config.size * .75, 48]} />
         <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.28} roughness={.30} metalness={.16} />
       </mesh>
       <mesh>
