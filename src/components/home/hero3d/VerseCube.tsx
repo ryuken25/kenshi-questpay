@@ -95,8 +95,8 @@ function TopFacets() {
 }
 
 function VisibleEdgeGlow() {
-  const { bright, structural } = useMemo(() => {
-    const inset = .03;
+  const { bright, structural, hotPoints } = useMemo(() => {
+    const inset = .028;
     const left = -HALF.x + inset;
     const right = HALF.x - inset;
     const top = HALF.y - inset;
@@ -104,21 +104,24 @@ function VisibleEdgeGlow() {
     const front = HALF.z + .014;
     const back = -HALF.z + inset;
     const toPoints = (segments: number[][]) => segments.flatMap(([x1, y1, z1, x2, y2, z2]) => [[x1, y1, z1], [x2, y2, z2]] as [number, number, number][]);
-    return {
-      bright: toPoints([
-        [left, top, front, right, top, front],
-        [right, top, front, right, bottom, front],
-        [right, bottom, front, left, bottom, front],
-        [left, bottom, front, left, top, front],
-      ]),
-      structural: toPoints([
-        [left, top, front, left, top, back],
-        [right, top, front, right, top, back],
-        [right, bottom, front, right, bottom, back],
-        [left, top, back, right, top, back],
-        [right, top, back, right, bottom, back],
-      ]),
-    };
+    const bright = toPoints([
+      [left, top, front, right, top, front],
+      [right, top, front, right, bottom, front],
+      [right, bottom, front, left, bottom, front],
+      [left, bottom, front, left, top, front],
+      [left, top, front, left, top, back],
+      [right, top, front, right, top, back],
+      [right, bottom, front, right, bottom, back],
+    ]);
+    const structural = toPoints([
+      [left, top, front, left, top, back],
+      [right, top, front, right, top, back],
+      [right, bottom, front, right, bottom, back],
+      [left, top, back, right, top, back],
+      [right, top, back, right, bottom, back],
+    ]);
+    const hotPoints = [ [left, top, front],[right, top, front],[left, bottom, front],[right, bottom, front] ].map(([x,y,z]) => new THREE.Vector3(x, y, z));
+    return { bright, structural, hotPoints };
   }, []);
 
   return (
@@ -128,6 +131,15 @@ function VisibleEdgeGlow() {
       <Line points={bright} segments lineWidth={1.7} color="#f3c9ff" transparent={false} depthTest depthWrite={false} toneMapped={false} />
       <Line points={structural} segments lineWidth={4.5} color="#8f36dd" transparent opacity={.08} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
       <Line points={structural} segments lineWidth={1} color="#bd65f0" transparent opacity={.48} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      {hotPoints.map((p, i) => (
+        <group key={i} position={p}>
+          <mesh renderOrder={7}>
+            <circleGeometry args={[.045, 24]} />
+            <meshBasicMaterial color="#f5deff" transparent opacity={.95} toneMapped={false} depthTest depthWrite={false} />
+          </mesh>
+          <pointLight color="#d6a3ff" intensity={3.8} distance={1.0} decay={2} />
+        </group>
+      ))}
     </group>
   );
 }

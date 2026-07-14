@@ -188,6 +188,7 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   assert.doesNotMatch(cube, /cube-front-verse-albedo/);
   assert.match(particles, /mobile \? 42 : 96/);
   assert.match(scene, /mobile \? \.92 : \.84/);
+  assert.match(scene, /cubeScale = mobile \? \.82/);
   assert.match(scene, /EffectComposer/);
   assert.match(scene, /Bloom intensity=\{1\.35\}/);
   assert.match(scene, /luminanceThreshold=\{\.46\}/);
