@@ -83,19 +83,19 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
         <Canvas
           className="pointer-events-none"
           style={{ pointerEvents: "none" }}
-          dpr={mobile ? [1, 1.25] : [1, 1.5]}
+          dpr={mobile ? [1, 1.75] : [1, 2]}
           camera={camera}
           gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-          performance={{ min: .5 }}
+          performance={{ min: .6 }}
           frameloop={active ? "always" : "demand"}
           onCreated={({ gl }) => {
             gl.setClearColor(new THREE.Color("#000000"), 0);
             gl.outputColorSpace = THREE.SRGBColorSpace;
           }}
         >
-          <AdaptiveDpr pixelated />
+          <AdaptiveDpr />
           <PerformanceMonitor
-            flipflops={2}
+            flipflops={3}
             onDecline={() => setQuality("low")}
             onIncline={() => setQuality("high")}
           />
