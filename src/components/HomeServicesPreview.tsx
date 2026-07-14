@@ -28,7 +28,7 @@ function CardArtwork({ index }: { index: number }) {
 
 export default function HomeServicesPreview() {
   return (
-    <section id="pricing" className="relative overflow-hidden border-y border-white/[.045] bg-[#020208] px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
+    <section id="pricing" className="relative overflow-hidden qp-blend-section px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-28" style={{'--blend-x': '82%', '--blend-color': 'rgba(118,55,225,.075)'} as React.CSSProperties}>
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(91,35,180,.08),transparent_42%)]" />
       <div className="relative mx-auto w-full max-w-7xl">
         <div className="inline-flex max-w-full items-center rounded-full border border-[rgba(168,111,255,.23)] bg-[rgba(105,55,191,.055)] px-4 py-2 font-mono text-[10px] font-black uppercase leading-5 tracking-[.14em] text-[#c8b5ec] sm:px-5 sm:text-xs sm:tracking-[.17em]">

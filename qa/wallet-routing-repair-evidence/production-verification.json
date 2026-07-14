@@ -1,0 +1,51 @@
+{
+  "base": "https://kenshi-questpay.vercel.app",
+  "sha": "c58e24f2664bc04414589706f7e4f64cddf5e241",
+  "cases": [
+    {
+      "name": "home-mobile",
+      "overflow": 0,
+      "undersized": [],
+      "errors": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokens": "4",
+        "canvas": 1
+      },
+      "anchors": null
+    },
+    {
+      "name": "how-mobile",
+      "overflow": 0,
+      "undersized": [],
+      "errors": [],
+      "hero": null,
+      "anchors": 6
+    },
+    {
+      "name": "home-desktop",
+      "overflow": 0,
+      "undersized": [],
+      "errors": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokens": "4",
+        "canvas": 1
+      },
+      "anchors": null
+    },
+    {
+      "name": "how-desktop",
+      "overflow": 0,
+      "undersized": [],
+      "errors": [],
+      "hero": null,
+      "anchors": 6
+    }
+  ],
+  "lifecycle": {
+    "first": 1,
+    "second": 1,
+    "panels": 1
+  }
+}

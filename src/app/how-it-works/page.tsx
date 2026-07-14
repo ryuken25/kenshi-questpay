@@ -39,7 +39,7 @@ export default function HowItWorksPage() {
     <Web3Provider>
       <Navbar />
       <main className="relative min-screen-safe overflow-clip bg-[#020207] pt-20 text-white">
-        <section className="relative flex min-h-[min(760px,calc(100svh-80px))] items-center border-b border-white/[.055] px-5 py-16 sm:px-6 sm:py-24 lg:px-8">
+        <section className="relative flex min-h-[min(760px,calc(100svh-80px))] items-center px-5 py-16 sm:px-6 sm:py-24 lg:px-8">
           <span className="qp-workflow-particles absolute -inset-[4%] bg-[url('/assets/how-it-works/workflow-particle-field.svg')] bg-cover bg-center bg-no-repeat opacity-60 mix-blend-screen" aria-hidden="true" />
           <div className="relative mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
             <div>

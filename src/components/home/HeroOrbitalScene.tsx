@@ -9,5 +9,5 @@ const QuestPayHeroCanvas = dynamic(() => import("./hero3d/QuestPayHeroCanvas"), 
 });
 
 export default function HeroOrbitalScene({ variant = "home" }: { variant?: "home" | "signin" }) {
-  return <QuestPayHeroCanvas variant={variant} />;
+  return <div className={variant === "home" ? "qp-hero-scene-wrap" : undefined}><QuestPayHeroCanvas variant={variant} /></div>;
 }

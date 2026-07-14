@@ -67,7 +67,7 @@ export default function ForCreatorsPage() {
           </div>
         </section>
 
-        <section className="border-y border-white/[.055] bg-white/[.015] px-4 py-6 sm:px-6 lg:px-8">
+        <section className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-3 text-center text-sm font-bold text-[var(--qp-text-secondary)] sm:grid-cols-2 lg:grid-cols-4">
             {["No custody", "No seed phrase", "Private brief off-chain", "Public proof redacted"].map((item) => <p key={item} className="rounded-xl border border-white/[.06] bg-black/20 px-4 py-3"><BadgeCheck className="mr-2 inline text-[var(--qp-violet-300)]" size={16} />{item}</p>)}
           </div>

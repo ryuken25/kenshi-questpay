@@ -78,7 +78,9 @@ export default function ProductPreviewRow() {
   const triggerRef = useRef<TriggerHandle | null>(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
+  const [activeMobile, setActiveMobile] = useState(0);
   const [desktopMotion, setDesktopMotion] = useState(false);
+  const mobileCardRefs = useRef<(HTMLElement | null)[]>([]);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -141,6 +143,25 @@ export default function ProductPreviewRow() {
     };
   }, [reduceMotion]);
 
+  // IntersectionObserver for mobile active chapter
+  useEffect(() => {
+    const refs = mobileCardRefs.current;
+    if (!refs.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.52) {
+            const idx = refs.indexOf(entry.target as HTMLElement);
+            if (idx !== -1) setActiveMobile(idx);
+          }
+        }
+      },
+      { threshold: [0.35, 0.52, 0.7], rootMargin: '-16% 0px -26% 0px' }
+    );
+    refs.forEach((el) => { if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
+
   const current = previews[active];
   const CurrentIcon = current.icon;
 
@@ -157,7 +178,7 @@ export default function ProductPreviewRow() {
   };
 
   return (
-    <section id="inside-questpay" className="relative border-y border-white/[.055] bg-[rgba(3,3,9,.72)]">
+    <section id="inside-questpay" className="relative qp-blend-section" style={{'--blend-x': '67%', '--blend-color': 'rgba(102,44,214,.085)'} as React.CSSProperties}>
       <div ref={rangeRef} className="relative hidden overflow-visible lg:block">
         <div ref={stageRef} className="flex min-h-[calc(100svh-72px)] items-center py-8">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-[.82fr_1.18fr] items-center gap-12 px-8">
@@ -226,16 +247,37 @@ export default function ProductPreviewRow() {
         </div>
       </div>
 
-      <div className="px-4 py-20 sm:px-6 lg:hidden">
+      <div className="px-4 py-20 sm:px-6 lg:hidden" data-testid="mobile-inside-story">
         <div className="mx-auto max-w-2xl">
           <p className="font-sora text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">Inside QuestPay</p>
           <h2 className="mt-3 font-sora text-4xl font-black leading-none tracking-[-.045em] text-white sm:text-5xl">A closer look at the complete flow.</h2>
           <p className="mt-5 leading-7 text-[var(--qp-text-secondary)]">Six clear stages connect service selection, private requirements, verified payment, and delivery.</p>
-          <div className="mt-10 space-y-4">
-            {previews.map((item) => {
+          <div className="sticky top-[calc(var(--qp-navbar-height)+8px)] z-15 mt-10 mb-6 flex items-center gap-3 rounded-full border border-[rgba(174,139,255,.11)] bg-[rgba(4,4,10,.76)] px-3 py-2.5 backdrop-blur-[16px]" data-testid="mobile-story-progress">
+            <span className="font-mono text-xs text-[var(--qp-violet-300)]">{String(activeMobile + 1).padStart(2, '0')} / 06</span>
+            <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+              <motion.div className="absolute inset-y-0 left-0 rounded-full bg-[var(--qp-violet-500)]" animate={{ scaleX: (activeMobile + 1) / previews.length }} transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }} style={{ transformOrigin: 'left' }} />
+            </div>
+          </div>
+          <div className="space-y-5">
+            {previews.map((item, idx) => {
               const Icon = item.icon;
               return (
-                <motion.article key={item.id} initial={reduceMotion ? false : { opacity: 0, y: 20 }} whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} className="rounded-[1.4rem] border border-[var(--qp-line-2)] bg-[var(--qp-surface-2)] p-5">
+                <motion.article
+                  key={item.id}
+                  data-testid={`mobile-story-card-${idx + 1}`}
+                  ref={(node) => { if (node) mobileCardRefs.current[idx] = node; }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.28 }}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  data-active={activeMobile === idx}
+                  className="relative min-h-[min(72svh,570px)] overflow-hidden rounded-[26px] border border-[rgba(174,139,255,.12)] p-5"
+                  style={{
+                    background: 'radial-gradient(circle at 82% 10%, rgba(124,65,238,.13), transparent 42%), linear-gradient(180deg, rgba(10,10,18,.92), rgba(5,5,10,.96))',
+                    boxShadow: activeMobile === idx ? '0 22px 70px rgba(59,24,125,.20), inset 0 1px rgba(255,255,255,.035)' : '0 20px 60px rgba(0,0,0,.30), inset 0 1px rgba(255,255,255,.025)',
+                    borderColor: activeMobile === idx ? 'rgba(174,139,255,.23)' : undefined,
+                  }}
+                >
                   <div className="flex items-center justify-between"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[rgba(139,77,255,.11)] text-[var(--qp-violet-300)]"><Icon size={22}/></span><span className="font-mono text-xs text-[var(--qp-violet-300)]">{item.number}</span></div>
                   <Image src={item.image} alt="" width={640} height={300} className="mt-4 h-auto w-full" />
                   <h3 className="mt-5 font-sora text-2xl font-black text-white">{item.title}</h3>

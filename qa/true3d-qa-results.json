@@ -1,0 +1,96 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "viewports": [
+    {
+      "name": "desktop-1440",
+      "width": 1440,
+      "height": 900,
+      "canvas": 1,
+      "engine": "react-three-fiber",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "desktop-1366",
+      "width": 1366,
+      "height": 768,
+      "canvas": 1,
+      "engine": "react-three-fiber",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "mobile-390",
+      "width": 390,
+      "height": 844,
+      "canvas": 1,
+      "engine": "react-three-fiber",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "mobile-360",
+      "width": 360,
+      "height": 800,
+      "canvas": 1,
+      "engine": "react-three-fiber",
+      "overflow": false,
+      "errors": []
+    }
+  ],
+  "reducedMotion": {
+    "attribute": "true",
+    "active": "false",
+    "errors": []
+  },
+  "fallback": {
+    "image": 1,
+    "canvas": 0,
+    "errors": []
+  },
+  "tabRestore": {
+    "visibility": "visible",
+    "active": "true",
+    "errors": []
+  },
+  "cpuThrottle": {
+    "canvas": 1,
+    "errors": []
+  },
+  "longRun": {
+    "fps5s": 5.4,
+    "samples": [
+      {
+        "second": 10,
+        "canvas": 1,
+        "active": "true"
+      },
+      {
+        "second": 20,
+        "canvas": 1,
+        "active": "true"
+      },
+      {
+        "second": 30,
+        "canvas": 1,
+        "active": "true"
+      },
+      {
+        "second": 40,
+        "canvas": 1,
+        "active": "true"
+      },
+      {
+        "second": 50,
+        "canvas": 1,
+        "active": "true"
+      },
+      {
+        "second": 60,
+        "canvas": 1,
+        "active": "true"
+      }
+    ],
+    "errors": []
+  }
+}

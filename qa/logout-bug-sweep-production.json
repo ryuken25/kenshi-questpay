@@ -1,0 +1,215 @@
+{
+  "http": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/api/health/auth",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/api/auth/session",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/api/auth/logout",
+      "status": 303,
+      "location": "https://kenshi-questpay.vercel.app/sign-in"
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/services",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/services/ux-quick-look",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/checkout/ux-quick-look",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/sign-in",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/verify",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/faq",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/contact",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/how-it-works",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/privacy",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/terms",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/account",
+      "status": 307,
+      "location": "/sign-in?next=/account"
+    },
+    {
+      "path": "/dashboard",
+      "status": 307,
+      "location": "/studio/login?next=/studio"
+    },
+    {
+      "path": "/admin",
+      "status": 307,
+      "location": "/sign-in?next=/admin"
+    },
+    {
+      "path": "/onboarding",
+      "status": 307,
+      "location": "/sign-in?next=%2Fonboarding%3Fnext%3D%2Faccount"
+    },
+    {
+      "path": "/my-orders",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/api/profile",
+      "status": 401,
+      "location": null
+    },
+    {
+      "path": "/api/profile/onboarding",
+      "status": 401,
+      "location": null
+    },
+    {
+      "path": "/api/orders",
+      "status": 401,
+      "location": null
+    },
+    {
+      "path": "/api/auth/wallet/nonce",
+      "status": 400,
+      "location": null
+    },
+    {
+      "path": "/api/auth/wallet/verify",
+      "status": 400,
+      "location": null
+    }
+  ],
+  "browserQA": [
+    {
+      "viewport": "desktop",
+      "path": "/",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/services",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/checkout/ux-quick-look",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/sign-in",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/verify",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/faq",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/services",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/checkout/ux-quick-look",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/sign-in",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/verify",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/faq",
+      "status": 200,
+      "overflow": false,
+      "errors": []
+    }
+  ]
+}

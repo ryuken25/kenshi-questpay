@@ -1,0 +1,177 @@
+{
+  "matrix": {
+    "320/": {
+      "inner": 320,
+      "html": 320,
+      "body": 320,
+      "undersized": 0,
+      "serviceCardsVisible": 6,
+      "serviceCards": 6
+    },
+    "320/how-it-works": {
+      "inner": 320,
+      "html": 320,
+      "body": 320,
+      "undersized": 0
+    },
+    "320/for-creators": {
+      "inner": 320,
+      "html": 320,
+      "body": 320,
+      "undersized": 0
+    },
+    "390/": {
+      "inner": 390,
+      "html": 390,
+      "body": 390,
+      "undersized": 0,
+      "serviceCardsVisible": 6,
+      "serviceCards": 6
+    },
+    "390/how-it-works": {
+      "inner": 390,
+      "html": 390,
+      "body": 390,
+      "undersized": 0
+    },
+    "390/for-creators": {
+      "inner": 390,
+      "html": 390,
+      "body": 390,
+      "undersized": 0
+    },
+    "768/": {
+      "inner": 768,
+      "html": 768,
+      "body": 768,
+      "undersized": 0
+    },
+    "768/how-it-works": {
+      "inner": 768,
+      "html": 768,
+      "body": 768,
+      "undersized": 0
+    },
+    "768/for-creators": {
+      "inner": 768,
+      "html": 768,
+      "body": 768,
+      "undersized": 0
+    },
+    "1440/": {
+      "inner": 1440,
+      "html": 1440,
+      "body": 1440,
+      "undersized": 0,
+      "serviceCardsVisible": 6,
+      "serviceCards": 6
+    },
+    "1440/how-it-works": {
+      "inner": 1440,
+      "html": 1440,
+      "body": 1440,
+      "undersized": 1
+    },
+    "1440/for-creators": {
+      "inner": 1440,
+      "html": 1440,
+      "body": 1440,
+      "undersized": 0
+    }
+  },
+  "features": {
+    "chipRail": 0,
+    "desktopTop": 0,
+    "mobileTop": 0,
+    "creatorSections": {
+      "join": 1,
+      "features": 1,
+      "gets": 1
+    },
+    "footer": {
+      "telegram": 1,
+      "text": "© 2026 ryuken25 FAQ Verify receipt Privacy Terms Sign in",
+      "duplicates": 0
+    },
+    "terms": {
+      "visible": true,
+      "sections": 6,
+      "locked": "hidden"
+    }
+  },
+  "orbit": {
+    "initial": [
+      {
+        "id": "pol",
+        "progress": 0.5230681818181818,
+        "x": -2.350332233440781,
+        "y": 0.2665565557952821,
+        "z": -0.6036195627199811
+      },
+      {
+        "id": "usdt",
+        "progress": 0.02159574468085106,
+        "x": 2.3833935667351196,
+        "y": 0.4844255263618871,
+        "z": -0.2476017855387032
+      },
+      {
+        "id": "verse",
+        "progress": 0.2695192307692308,
+        "x": -0.8343829349938745,
+        "y": 1.2305755666221192,
+        "z": 1.8786421812304683
+      },
+      {
+        "id": "usdc",
+        "progress": 0.7707142857142858,
+        "x": -0.10165868350403132,
+        "y": -1.8309527868442736,
+        "z": -1.3614481935740783
+      }
+    ],
+    "after": [
+      {
+        "id": "pol",
+        "progress": 0.6629787878809551,
+        "x": -1.0957702599392283,
+        "y": -0.6002632039227177,
+        "z": -1.6971064663281141
+      },
+      {
+        "id": "usdt",
+        "progress": 0.15257588652685186,
+        "x": 1.4096630176363378,
+        "y": 1.344261955179004,
+        "z": 0.9759528161320933
+      },
+      {
+        "id": "verse",
+        "progress": 0.38790512820696227,
+        "x": -2.3208859740787635,
+        "y": 0.566527674152023,
+        "z": 0.9720063642502652
+      },
+      {
+        "id": "usdc",
+        "progress": 0.8963482993216745,
+        "x": 1.7046714234437754,
+        "y": -1.4568995389238024,
+        "z": -1.0294250795851552
+      }
+    ],
+    "cardinal": {
+      "polLeft": true,
+      "usdtRight": true,
+      "verseTop": true,
+      "usdcBottom": true
+    },
+    "xyz": {
+      "pol": true,
+      "usdt": true,
+      "verse": true,
+      "usdc": true
+    }
+  },
+  "errors": []
+}

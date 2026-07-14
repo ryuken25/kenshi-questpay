@@ -1,0 +1,53 @@
+{
+  "sha": "31aa723188c709f6b10f7fefe4c19aefb456f2ea",
+  "cases": [
+    {
+      "name": "desktop",
+      "sha": "31aa723188c709f6b10f7fefe4c19aefb456f2ea",
+      "html": 1440,
+      "body": 1440,
+      "width": 1440,
+      "engine": "react-three-fiber",
+      "tokens": "4",
+      "quality": "low",
+      "frameDelta": 23,
+      "progressDeltas": [
+        0.11261261261261257,
+        0.11990407673860948,
+        0.09057971014492683,
+        0.10288065843621308
+      ],
+      "errors": [],
+      "authDialog": true
+    },
+    {
+      "name": "mobile",
+      "sha": "31aa723188c709f6b10f7fefe4c19aefb456f2ea",
+      "html": 390,
+      "body": 390,
+      "width": 390,
+      "engine": "react-three-fiber",
+      "tokens": "4",
+      "quality": "low",
+      "frameDelta": 67,
+      "progressDeltas": [
+        0.1880022522498359,
+        0.2001750599494656,
+        0.15121920289660706,
+        0.17175514403071435
+      ],
+      "errors": [],
+      "authDialog": true
+    }
+  ],
+  "how": {
+    "anchors": 15,
+    "navClientWidth": 1152,
+    "navScrollWidth": 1152,
+    "placeholderLinks": 0
+  },
+  "fallback": {
+    "canvas": 0,
+    "naturalWidth": 390
+  }
+}

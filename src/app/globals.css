@@ -138,11 +138,6 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background:
-    radial-gradient(900px 520px at 66% 10%, rgba(104, 40, 216, .15), transparent 62%),
-    radial-gradient(620px 420px at 90% 0%, rgba(87, 35, 178, .08), transparent 68%),
-    linear-gradient(180deg, #030308 0%, #020207 46%, #030308 100%);
-  background-attachment: fixed;
   color: var(--qp-text-secondary);
   font-size: 16px;
   line-height: 1.6;
@@ -623,7 +618,154 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   animation: qp-particle-drift 22s ease-in-out infinite;
 }
 
+/* ── Global visual blend system ───────────────────────────── */
+
+/* Page-canvas custom properties */
+:root {
+  --qp-page-base: #020207;
+  --qp-page-deep: #030308;
+  --qp-page-violet: rgba(104, 40, 216, .14);
+  --qp-page-violet-soft: rgba(87, 35, 178, .07);
+  --qp-page-light: rgba(173, 121, 255, .06);
+}
+
+html {
+  background: var(--qp-page-base);
+}
+
+body {
+  background:
+    radial-gradient(900px 520px at 66% 10%, var(--qp-page-violet), transparent 62%),
+    radial-gradient(620px 420px at 90% 0%, var(--qp-page-violet-soft), transparent 68%),
+    radial-gradient(800px 480px at 20% 60%, var(--qp-page-light), transparent 70%),
+    linear-gradient(180deg, var(--qp-page-deep) 0%, var(--qp-page-base) 46%, var(--qp-page-deep) 100%);
+  background-attachment: fixed;
+}
+
+/* ── PublicAmbientBackground layer ──────────────────────── */
+.qp-public-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.qp-public-ambient__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 1;
+}
+
+.qp-public-ambient__glow--1 {
+  top: -18%;
+  right: -10%;
+  width: 55vw;
+  height: 55vw;
+  max-width: 820px;
+  max-height: 820px;
+  background: radial-gradient(circle, rgba(104, 40, 216, .12), transparent 70%);
+  animation: qp-ambient-drift-1 28s ease-in-out infinite alternate;
+}
+
+.qp-public-ambient__glow--2 {
+  bottom: -22%;
+  left: -14%;
+  width: 48vw;
+  height: 48vw;
+  max-width: 720px;
+  max-height: 720px;
+  background: radial-gradient(circle, rgba(87, 35, 178, .08), transparent 70%);
+  animation: qp-ambient-drift-2 34s ease-in-out infinite alternate;
+}
+
+.qp-public-ambient__noise {
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/ui/noise.png');
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+
+@keyframes qp-ambient-drift-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-40px, 30px) scale(1.06); }
+}
+
+@keyframes qp-ambient-drift-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(35px, -25px) scale(1.04); }
+}
+
+/* ── BlendSection ───────────────────────────────────────── */
+.qp-blend-section {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+
+.qp-blend-section::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -8rem 0;
+  pointer-events: none;
+  background:
+    radial-gradient(52rem 24rem at var(--blend-x, 50%) 48%, var(--blend-color, rgba(110, 50, 220, .08)), transparent 70%);
+  mask-image: linear-gradient(to bottom, transparent, black 22%, black 78%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 22%, black 78%, transparent);
+}
+
+/* ── Hero scene wrapper ─────────────────────────────────── */
+.qp-hero-scene-wrap {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  background: transparent;
+}
+
+.qp-hero-scene-wrap::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -18% -16% -22%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 54% 48%, rgba(111, 48, 224, .22), rgba(80, 28, 178, .10) 36%, transparent 70%);
+  filter: blur(28px);
+  opacity: 0.86;
+  mask-image: radial-gradient(ellipse 76% 72% at center, black 26%, rgba(0,0,0,.82) 52%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 76% 72% at center, black 26%, rgba(0,0,0,.82) 52%, transparent 78%);
+}
+
+.qp-hero-scene-wrap canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+}
+
+.qp-home-hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: min(92vw, 88rem);
+  height: min(56vw, 42rem);
+  top: -6rem;
+  left: 44%;
+  transform: translateX(-20%);
+  background: radial-gradient(ellipse, rgba(102, 41, 215, .13), rgba(72, 25, 160, .055) 45%, transparent 72%);
+  filter: blur(42px);
+  pointer-events: none;
+}
+
+/* ── Reduced-motion override ────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .qp-auth-overlay, .qp-auth-dialog { animation: none; }
   .qp-workflow-particles { animation: none; }
+  .qp-public-ambient__glow--1,
+  .qp-public-ambient__glow--2 { animation: none; }
 }

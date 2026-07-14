@@ -1,0 +1,203 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "generatedAt": "2026-07-13T17:23:34.135Z",
+  "matrix": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "route": "/",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokenCount": "4",
+        "quality": "high",
+        "canvasCount": 1
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "route": "/how-it-works",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "deepAnchors": 6
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "route": "/",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokenCount": "4",
+        "quality": "high",
+        "canvasCount": 1
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "route": "/how-it-works",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "deepAnchors": 6
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokenCount": "4",
+        "quality": "high",
+        "canvasCount": 1
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/how-it-works",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "deepAnchors": 6
+    },
+    {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "route": "/",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokenCount": "4",
+        "quality": "high",
+        "canvasCount": 1
+      }
+    },
+    {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "route": "/how-it-works",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "deepAnchors": 6
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "route": "/",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokenCount": "4",
+        "quality": "high",
+        "canvasCount": 1
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "route": "/how-it-works",
+      "overflow": 0,
+      "minInteractiveHeight": 44,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "deepAnchors": 6
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "route": "/",
+      "overflow": 0,
+      "minInteractiveHeight": 20,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "hero": {
+        "engine": "react-three-fiber",
+        "tokenCount": "4",
+        "quality": "high",
+        "canvasCount": 1
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "route": "/how-it-works",
+      "overflow": 0,
+      "minInteractiveHeight": 20,
+      "undersizedMobileControls": [],
+      "errors": [],
+      "failedAssets": [],
+      "deepAnchors": 6
+    }
+  ],
+  "lifecycle": {
+    "firstPins": 1,
+    "secondPins": 1,
+    "activePanels": 1
+  },
+  "reducedMotion": {
+    "pinSpacers": 0,
+    "activePanels": 1,
+    "heroReduced": "true"
+  },
+  "video": "qa/wallet-routing-repair-evidence/videos/questpay-how-wallet-routing-repair.webm"
+}

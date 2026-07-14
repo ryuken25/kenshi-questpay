@@ -1,0 +1,325 @@
+{
+  "matrix": [
+    {
+      "viewport": "320x568",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 288
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 288
+        },
+        {
+          "text": "Built for creators.",
+          "width": 288
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "360x800",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 328
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 328
+        },
+        {
+          "text": "Built for creators.",
+          "width": 328
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "375x812",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 343
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 343
+        },
+        {
+          "text": "Built for creators.",
+          "width": 343
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "390x844",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 358
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 358
+        },
+        {
+          "text": "Built for creators.",
+          "width": 358
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "412x915",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 380
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 380
+        },
+        {
+          "text": "Built for creators.",
+          "width": 380
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "430x932",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 398
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 398
+        },
+        {
+          "text": "Built for creators.",
+          "width": 398
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "768x1024",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 202.84375
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 202.84375
+        },
+        {
+          "text": "Built for creators.",
+          "width": 202.84375
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "820x1180",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 243.96875
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 243.96875
+        },
+        {
+          "text": "Built for creators.",
+          "width": 243.96875
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "1024x768",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 405.09375
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 405.09375
+        },
+        {
+          "text": "Built for creators.",
+          "width": 405.09375
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "1280x720",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 506.359375
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 506.359375
+        },
+        {
+          "text": "Built for creators.",
+          "width": 506.359375
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "1366x768",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 538.96875
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 538.96875
+        },
+        {
+          "text": "Built for creators.",
+          "width": 538.96875
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "1440x900",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 537.265625
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 537.265625
+        },
+        {
+          "text": "Built for creators.",
+          "width": 537.265625
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "1536x864",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 535.0625
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 535.0625
+        },
+        {
+          "text": "Built for creators.",
+          "width": 535.0625
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    },
+    {
+      "viewport": "1920x1080",
+      "overflow": false,
+      "titleLines": [
+        {
+          "text": "Creator services.",
+          "width": 533.59375
+        },
+        {
+          "text": "Paid with crypto.",
+          "width": 533.59375
+        },
+        {
+          "text": "Built for creators.",
+          "width": 533.59375
+        }
+      ],
+      "sceneNodes": 8,
+      "sceneBeforeContentOnMobile": true
+    }
+  ],
+  "errors": [
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Failed to fetch RSC payload for http://127.0.0.1:3000/how-it-works. Falling back to browser navigation. TypeError: Failed to fetch\n    at f (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:45577)\n    at http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:59128\n    at Object.u [as task] (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:31932)\n    at c.s (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:32637)\n    at c.enqueue (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:32062)\n    at s (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:59091)\n    at i (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:58631)\n    at a (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:65457)\n    at f (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:75371)\n    at Object.action (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:2:7102)",
+    "Failed to fetch RSC payload for http://127.0.0.1:3000/faq. Falling back to browser navigation. TypeError: Failed to fetch\n    at f (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:45577)\n    at http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:59128\n    at Object.u [as task] (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:31932)\n    at c.s (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:32637)\n    at c.enqueue (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:32062)\n    at s (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:59091)\n    at i (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:58631)\n    at a (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:65457)\n    at f (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:75371)\n    at Object.action (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:2:7102)",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Failed to fetch RSC payload for http://127.0.0.1:3000/faq. Falling back to browser navigation. TypeError: Failed to fetch\n    at f (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:45577)\n    at http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:59128\n    at Object.u [as task] (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:31932)\n    at c.s (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:32637)\n    at c.enqueue (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:32062)\n    at s (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:59091)\n    at i (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:58631)\n    at a (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:65457)\n    at f (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:1:75371)\n    at Object.action (http://127.0.0.1:3000/_next/static/chunks/2117-d8a0bd9c68b4a524.js:2:7102)",
+    "Failed to fetch RSC payload for http://127.0.0.1:3000/how-it-works. Falling back to browser navigation. TypeError: network error",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/amp' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Connecting to 'https://cca-lite.coinbase.com/metrics' violates the following Content Security Policy directive: \"connect-src 'self' https://analytics.vgdh.io https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com\". The action has been blocked.",
+    "Fetch API cannot load https://cca-lite.coinbase.com/metrics. Refused to connect because it violates the document's Content Security Policy.",
+    "Analytics SDK: TypeError: Failed to fetch\n    at _t (<anonymous>:1:64025)\n    at <anonymous>:1:68106 {context: AnalyticsSDKApiError}"
+  ],
+  "mutations": {
+    "childList": 0
+  },
+  "sampleCount": 90,
+  "stableNodeCount": true,
+  "invalidStyles": false,
+  "reduced": {
+    "count": 8,
+    "visible": 4,
+    "overflow": false
+  }
+}

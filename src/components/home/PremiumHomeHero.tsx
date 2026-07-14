@@ -14,12 +14,21 @@ const trustItems = [
   { label: "Public receipt proof", icon: ReceiptText },
 ];
 
+const heroContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
+};
+const heroItem = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } }
+};
+
 export default function PremiumHomeHero() {
   return (
     <section className="qp-home-hero">
       <div className="qp-home-hero__light" />
-      <div className="qp-home-hero__grid">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="qp-home-hero__content">
+      <motion.div variants={heroContainer} initial="hidden" animate="show" className="qp-home-hero__grid">
+        <motion.div variants={heroItem} className="qp-home-hero__content">
           <div className="qp-powered-badge">
             <Image src="/brand/verse/verse-v-glow.svg" alt="" width={12} height={11} />
             <span>Powered by VERSE</span>
@@ -50,14 +59,14 @@ export default function PremiumHomeHero() {
           </p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.55 }} className="qp-home-hero__visual">
+        <motion.div variants={heroItem} className="qp-home-hero__visual">
           <HeroOrbitalScene variant="home" />
         </motion.div>
-        <p className="qp-community-note qp-community-note--mobile">
+        <motion.p variants={heroItem} className="qp-community-note qp-community-note--mobile">
           <span className="qp-network-note">Polygon live · BNB Chain staged behind payment gate · USDT, USDC, VERSE &amp; POL</span><br />
           {SITE.disclaimer}
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </section>
   );
 }

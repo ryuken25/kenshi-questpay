@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./parity.css";
+import PublicAmbientBackground from "@/components/layout/PublicAmbientBackground";
 
 export const metadata: Metadata = {
   title: "Kenshi QuestPay — Creator Services on Polygon",
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark">
       <body data-build-sha={buildSha} className="min-h-screen bg-[var(--qp-bg)] antialiased">
+        <PublicAmbientBackground />
         {children}
         <script defer data-domain="kenshi-questpay.vercel.app" src="https://analytics.vgdh.io/js/script.js" />
       </body>
