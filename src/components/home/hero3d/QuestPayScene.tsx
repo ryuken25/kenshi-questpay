@@ -26,7 +26,7 @@ export default function QuestPayScene({ mobile = false, reducedMotion = false, v
       </group>
       {quality !== "low" ? (
         <EffectComposer multisampling={0} enableNormalPass={false}>
-          <Bloom intensity={1.35} luminanceThreshold={.46} luminanceSmoothing={.2} mipmapBlur />
+          <Bloom intensity={0.55} luminanceThreshold={.62} luminanceSmoothing={.14} mipmapBlur />
         </EffectComposer>
       ) : null}
     </Suspense>

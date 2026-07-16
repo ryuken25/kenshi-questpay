@@ -89,7 +89,7 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
           performance={{ min: .6 }}
           frameloop={active ? "always" : "demand"}
           onCreated={({ gl }) => {
-            gl.setClearColor(new THREE.Color("#000000"), 0);
+            gl.setClearColor(new THREE.Color("#0a0612"), 0);
             gl.outputColorSpace = THREE.SRGBColorSpace;
           }}
         >

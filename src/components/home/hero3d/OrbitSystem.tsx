@@ -17,17 +17,17 @@ declare global {
 }
 
 function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
-  const coreColor = tokenId === "usdt" ? "#a66ce0" : "#b476ff";
+  const coreColor = tokenId === "usdt" ? "#6a4e9a" : "#7a5cb0";
   return (
     <group>
       <mesh geometry={built.haloGeometry}>
-        <meshBasicMaterial color={coreColor} transparent opacity={.055} depthTest depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        <meshBasicMaterial color={coreColor} transparent opacity={.028} depthTest depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
       <mesh geometry={built.geometry}>
         <meshBasicMaterial
           color={coreColor}
           transparent
-          opacity={tokenId === "verse" ? .38 : .28}
+          opacity={tokenId === "verse" ? .20 : .14}
           depthTest
           depthWrite={false}
           blending={THREE.AdditiveBlending}

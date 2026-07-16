@@ -34,7 +34,7 @@ export default function EnergyShards({ mobile = false, reducedMotion = false, qu
       {shards.map((shard, index) => (
         <mesh key={index} ref={(node) => { refs.current[index] = node; }} position={[shard.x, shard.y, shard.z]} scale={[shard.scale * .55, shard.scale * 2.5, shard.scale]}>
           <tetrahedronGeometry args={[1, 0]} />
-          <meshBasicMaterial color={index % 2 ? "#8f48e6" : "#ddb8ff"} transparent opacity={.52} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+          <meshBasicMaterial color={index % 2 ? "#6a38a8" : "#9a78c8"} transparent opacity={.28} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
         </mesh>
       ))}
     </group>

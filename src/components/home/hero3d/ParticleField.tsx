@@ -66,12 +66,12 @@ export default function ParticleField({ mobile = false, reducedMotion = false, q
   return (
     <group>
       <points ref={points} geometry={geometry}>
-        <pointsMaterial size={mobile ? .038 : .030} vertexColors transparent opacity={.76} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        <pointsMaterial size={mobile ? .038 : .030} vertexColors transparent opacity={.38} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </points>
       {bases.map((base, index) => (
         <mesh key={index} ref={(node) => { motes.current[index] = node; }} position={[base.x, base.y, base.z]}>
           <sphereGeometry args={[base.size, 8, 8]} />
-          <meshBasicMaterial color={index % 3 === 0 ? "#e0c4ff" : "#a45cff"} transparent opacity={.78} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+          <meshBasicMaterial color={index % 3 === 0 ? "#8050a8" : "#6838a0"} transparent opacity={.36} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
         </mesh>
       ))}
     </group>
