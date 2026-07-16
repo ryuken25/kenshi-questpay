@@ -421,10 +421,15 @@
 
 /* Mobile: hide sidebar, show top bar + bottom nav */
 @media (max-width: 767px) {
+  .qp-app-shell {
+    flex-direction: column;
+  }
   .qp-app-shell__sidebar { display: none; }
   .qp-app-shell__mobile-topbar { display: block; }
   .qp-app-shell__mobile-bottomnav { display: block; }
   .qp-app-shell__main {
+    flex: 1;
+    min-height: 0;
     padding-bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
   }
   /* Prevent horizontal scroll on mobile */
