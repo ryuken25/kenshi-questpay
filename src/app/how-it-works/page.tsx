@@ -36,7 +36,7 @@ const faqs = [
 export default function HowItWorksPage() {
   return (
     <Web3Provider>
-      <main className="relative min-screen-safe overflow-clip bg-[#020207] pt-20 text-white">
+      <div className="relative min-screen-safe overflow-clip bg-[#020207] pt-6 text-white">
         <section className="relative flex min-h-[min(760px,calc(100svh-80px))] items-center px-5 py-16 sm:px-6 sm:py-24 lg:px-8">
           <span className="qp-workflow-particles absolute -inset-[4%] bg-[url('/assets/how-it-works/workflow-particle-field.svg')] bg-cover bg-center bg-no-repeat opacity-60 mix-blend-screen" aria-hidden="true" />
           <div className="relative mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
@@ -121,7 +121,7 @@ export default function HowItWorksPage() {
         <section id="faq" className="scroll-mt-40 px-4 py-16 sm:px-6 sm:py-24 lg:px-8"><div className="mx-auto max-w-4xl"><div className="flex items-center gap-3"><ReceiptText className="text-[var(--qp-violet-300)]" aria-hidden="true" /><h2 className="font-sora text-3xl font-black text-white sm:text-5xl">Practical answers.</h2></div><div className="mt-8 space-y-3">{faqs.map(([question, answer]) => <details key={question} className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-5"><summary className="cursor-pointer font-sora text-base font-bold text-white">{question}</summary><p className="mt-3 text-sm leading-7 text-[var(--qp-text-muted)]">{answer}</p></details>)}</div></div></section>
 
         <section id="about" className="scroll-mt-40 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"><div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[linear-gradient(180deg,rgba(18,16,29,.95),rgba(7,7,13,.98))] p-8 text-center sm:p-12"><p className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Ready to turn clear scope into trackable work?</p><h2 className="mt-4 font-sora text-3xl font-black text-white sm:text-5xl">Start with a real package and keep the proof connected.</h2><div className="mt-8 flex flex-col justify-center gap-3 min-[390px]:flex-row"><Link href="/services" className={primaryButton}>Browse Services</Link><CreatorIntentButton className={secondaryButton} /></div><p className="mt-5 text-xs leading-6 text-[var(--qp-text-subtle)]">{SITE.disclaimer}</p></div></section>
-      </main>
+      </div>
       <Footer />
     </Web3Provider>
   );

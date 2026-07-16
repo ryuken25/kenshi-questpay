@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle2, Copy, ExternalLink, Loader2, XCircle } from "lucide-react";
 import { middle } from "@/lib/payment-utils-client";
-import Navbar from "@/components/Navbar";
 
 interface Props {
   txHash: string;
@@ -45,9 +44,8 @@ export default function VerifyTxClient({ txHash }: Props) {
   }, [txHash]);
 
   return (
-    <main className="min-h-screen bg-[var(--qp-bg)] text-white">
-      <Navbar />
-      <section className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8 lg:pt-24">
+    <div className="min-h-screen bg-[var(--qp-bg)] text-white">
+      <section className="mx-auto max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5 shadow-2xl sm:p-8">
           <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[var(--qp-violet-300)]">
             QuestPay Public Verify
@@ -140,7 +138,7 @@ export default function VerifyTxClient({ txHash }: Props) {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

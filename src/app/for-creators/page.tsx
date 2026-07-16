@@ -42,7 +42,7 @@ const creatorGets = [
 export default function ForCreatorsPage() {
   return (
     <Web3Provider>
-      <main className="relative min-screen-safe overflow-clip bg-[#020207] pt-20 text-white">
+      <div className="relative min-screen-safe overflow-clip bg-[#020207] pt-6 text-white">
         <section className="relative px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(135,68,246,.18),transparent_34%),radial-gradient(circle_at_15%_70%,rgba(83,38,164,.11),transparent_32%)]" />
           <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.02fr_.98fr] lg:items-center">
@@ -100,7 +100,7 @@ export default function ForCreatorsPage() {
         <section className="px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
           <div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[radial-gradient(circle_at_50%_0%,rgba(139,77,255,.18),transparent_45%),rgba(8,7,15,.98)] p-7 text-center sm:p-12"><p className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Ready to organize paid work?</p><h2 className="mt-4 font-sora text-3xl font-black tracking-[-.045em] sm:text-5xl">Build a cleaner creator workflow.</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[var(--qp-text-muted)]">Create your account, complete onboarding, and request creator access. No custody claims, fake escrow, or hidden private brief exposure.</p><div className="mt-8 flex flex-col justify-center gap-3 min-[390px]:flex-row"><CreatorIntentButton className={primary}>Become a Creator</CreatorIntentButton><Link href="/services" className={secondary}>Explore Current Services</Link></div></div>
         </section>
-      </main>
+      </div>
       <Footer />
     </Web3Provider>
   );

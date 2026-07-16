@@ -5,8 +5,8 @@ import { Web3Provider } from "@/components/Web3Provider";
 export default function StudioLogin({ searchParams }: { searchParams: { error?: string; sent?: string } }) {
   return (
     <Web3Provider>
-      <main className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
-        <section className="mx-auto max-w-lg px-4 pb-20 pt-28">
+      <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
+        <section className="mx-auto max-w-lg px-4 pb-20 pt-6">
           <div className="glass-panel-strong rounded-[2rem] p-6 sm:p-8">
             <p className="text-sm font-black uppercase tracking-[0.12em] text-[#C1B6FF]">Private creator workflow</p>
             <h1 className="mt-3 font-sora text-3xl font-black text-[var(--qp-text-primary)]">QuestPay Studio</h1>
@@ -25,7 +25,7 @@ export default function StudioLogin({ searchParams }: { searchParams: { error?: 
           </div>
         </section>
         <Footer />
-      </main>
+      </div>
     </Web3Provider>
   );
 }

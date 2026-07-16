@@ -15,7 +15,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: {
 
   return (
     <Web3Provider>
-      <main className="min-h-screen bg-[var(--qp-bg)] pt-24 pb-16 text-[var(--qp-text-secondary)]">
+      <div className="min-h-screen bg-[var(--qp-bg)] pt-6 pb-16 text-[var(--qp-text-secondary)]">
         <section className="mx-auto max-w-xl px-4 sm:px-6">
           <div className="mb-6 text-center">
             <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">Almost there</p>
@@ -26,7 +26,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: {
           </div>
           <OnboardingForm next={next} initialDisplayName={profile?.displayName ?? undefined} />
         </section>
-      </main>
+      </div>
       <Footer />
     </Web3Provider>
   );
