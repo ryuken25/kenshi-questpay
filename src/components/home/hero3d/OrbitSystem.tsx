@@ -17,7 +17,7 @@ declare global {
 }
 
 function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
-  const coreColor = tokenId === "usdt" ? "#6a4e9a" : "#7a5cb0";
+  const coreColor = tokenId === "usdt" ? "#8a5ec0" : "#9a6ad0";
   return (
     <group>
       <mesh geometry={built.haloGeometry}>
@@ -27,7 +27,7 @@ function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
         <meshBasicMaterial
           color={coreColor}
           transparent
-          opacity={tokenId === "verse" ? .26 : .18}
+          opacity={tokenId === "verse" ? .30 : .22}
           depthTest
           depthWrite={false}
           blending={THREE.AdditiveBlending}

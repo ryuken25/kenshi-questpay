@@ -126,18 +126,18 @@ function VisibleEdgeGlow() {
 
   return (
     <group renderOrder={6}>
-      <Line points={bright} segments lineWidth={7} color="#8f3ed0" transparent opacity={.08} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
-      <Line points={bright} segments lineWidth={3.2} color="#a054e0" transparent opacity={.22} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
-      <Line points={bright} segments lineWidth={1.7} color="#c9a0e8" transparent={false} depthTest depthWrite={false} toneMapped={false} />
-      <Line points={structural} segments lineWidth={4.5} color="#6f28a8" transparent opacity={.04} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
-      <Line points={structural} segments lineWidth={1} color="#9a4ec8" transparent opacity={.24} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={bright} segments lineWidth={7} color="#a042e8" transparent opacity={.12} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={bright} segments lineWidth={3.2} color="#bc60f0" transparent opacity={.34} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={bright} segments lineWidth={1.7} color="#e0b8f8" transparent={false} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={structural} segments lineWidth={4.5} color="#7f30c8" transparent opacity={.06} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
+      <Line points={structural} segments lineWidth={1} color="#ac58d8" transparent opacity={.36} blending={THREE.AdditiveBlending} depthTest depthWrite={false} toneMapped={false} />
       {hotPoints.map((p, i) => (
         <group key={i} position={p}>
           <mesh renderOrder={7}>
             <circleGeometry args={[.045, 24]} />
-            <meshBasicMaterial color="#c8a8e8" transparent opacity={.55} toneMapped={false} depthTest depthWrite={false} />
+            <meshBasicMaterial color="#e8c8ff" transparent opacity={.78} toneMapped={false} depthTest depthWrite={false} />
           </mesh>
-          <pointLight color="#a070d0" intensity={1.5} distance={1.0} decay={2} />
+          <pointLight color="#c090f0" intensity={2.8} distance={1.0} decay={2} />
         </group>
       ))}
     </group>
@@ -171,7 +171,7 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
     <group ref={group} rotation={CUBE_BASE_ROTATION}>
       {/* Dense rounded obsidian core keeps the form solid, never wireframe-like. */}
       <RoundedBox args={CUBE_SIZE} radius={.055} smoothness={2} bevelSegments={2} creaseAngle={.18} scale={[.955, .955, .955]} renderOrder={-2}>
-        <meshStandardMaterial color="#080214" emissive="#1a0428" emissiveIntensity={.14} roughness={.32} metalness={.12} />
+        <meshStandardMaterial color="#0a0218" emissive="#28055c" emissiveIntensity={.22} roughness={.30} metalness={.16} />
       </RoundedBox>
 
       {/* Depth-only body preserves natural front/rear token occlusion. */}
@@ -182,16 +182,16 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
       {/* Solid dark-glass shell: beveled silhouette, no transparent back-edge cage. */}
       <RoundedBox args={CUBE_SIZE} radius={.055} smoothness={2} bevelSegments={2} creaseAngle={.18} renderOrder={1}>
         <meshPhysicalMaterial
-          color="#140525"
-          emissive="#2a0844"
-          emissiveIntensity={.16}
+          color="#1a0635"
+          emissive="#3d0a6a"
+          emissiveIntensity={.24}
           transparent
-          opacity={.82}
-          roughness={.22}
-          metalness={.10}
+          opacity={.80}
+          roughness={.20}
+          metalness={.12}
           transmission={0}
-          clearcoat={.50}
-          clearcoatRoughness={.20}
+          clearcoat={.58}
+          clearcoatRoughness={.18}
           depthWrite
           depthTest
         />
