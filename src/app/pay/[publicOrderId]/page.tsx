@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Web3Provider } from "@/components/Web3Provider";
-import Footer from "@/components/Footer";
 import PayPageClient from "@/components/PayPageClient";
 import { getSupabase } from "@/lib/supabase-server";
 import { getServiceBySlug } from "@/lib/services";
@@ -43,7 +42,6 @@ export default async function PayPage({ params }: Props) {
           serviceName={service?.name || order?.slug}
         />
       </div>
-      <Footer />
     </Web3Provider>
   );
 }

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, CircleAlert, LockKeyhole, ReceiptText, ShieldCheck } from "lucide-react";
 import { Web3Provider } from "@/components/Web3Provider";
-import Footer from "@/components/Footer";
 import CreatorIntentButton from "@/components/CreatorIntentButton";
 import HowWorkflowSteps from "@/components/how-it-works/HowWorkflowSteps";
 import { SITE } from "@/lib/site";
@@ -122,7 +121,6 @@ export default function HowItWorksPage() {
 
         <section id="about" className="scroll-mt-40 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"><div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[linear-gradient(180deg,rgba(18,16,29,.95),rgba(7,7,13,.98))] p-8 text-center sm:p-12"><p className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Ready to turn clear scope into trackable work?</p><h2 className="mt-4 font-sora text-3xl font-black text-white sm:text-5xl">Start with a real package and keep the proof connected.</h2><div className="mt-8 flex flex-col justify-center gap-3 min-[390px]:flex-row"><Link href="/services" className={primaryButton}>Browse Services</Link><CreatorIntentButton className={secondaryButton} /></div><p className="mt-5 text-xs leading-6 text-[var(--qp-text-subtle)]">{SITE.disclaimer}</p></div></section>
       </div>
-      <Footer />
     </Web3Provider>
   );
 }

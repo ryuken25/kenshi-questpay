@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, Blocks, BriefcaseBusiness, CircleDollarSign, Clock3, FileCheck2, LockKeyhole, ReceiptText, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import { Web3Provider } from "@/components/Web3Provider";
-import Footer from "@/components/Footer";
 import CreatorIntentButton from "@/components/CreatorIntentButton";
 
 export const metadata: Metadata = {
@@ -101,7 +100,6 @@ export default function ForCreatorsPage() {
           <div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[radial-gradient(circle_at_50%_0%,rgba(139,77,255,.18),transparent_45%),rgba(8,7,15,.98)] p-7 text-center sm:p-12"><p className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Ready to organize paid work?</p><h2 className="mt-4 font-sora text-3xl font-black tracking-[-.045em] sm:text-5xl">Build a cleaner creator workflow.</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[var(--qp-text-muted)]">Create your account, complete onboarding, and request creator access. No custody claims, fake escrow, or hidden private brief exposure.</p><div className="mt-8 flex flex-col justify-center gap-3 min-[390px]:flex-row"><CreatorIntentButton className={primary}>Become a Creator</CreatorIntentButton><Link href="/services" className={secondary}>Explore Current Services</Link></div></div>
         </section>
       </div>
-      <Footer />
     </Web3Provider>
   );
 }

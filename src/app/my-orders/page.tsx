@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 
 export default function MyOrdersPage() {
@@ -14,7 +13,6 @@ export default function MyOrdersPage() {
           </div>
         </section>
       </div>
-      <Footer />
     </Web3Provider>
   );
 }

@@ -1,6 +1,5 @@
 import { getSession, getServiceClient } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 import { getProfile } from "@/lib/profile";
 import AccountProfileForm from "@/components/account/AccountProfileForm";
@@ -61,7 +60,6 @@ export default async function AccountPage() {
             </form>
           </div>
         </section>
-        <Footer />
       </div>
     </Web3Provider>
   );

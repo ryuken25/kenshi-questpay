@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { Web3Provider } from "@/components/Web3Provider";
-import Footer from "@/components/Footer";
 import { getSession, sanitizeNextPath } from "@/lib/auth";
 import { getProfile } from "@/lib/profile";
 import OnboardingForm from "@/components/onboarding/OnboardingForm";
@@ -27,7 +26,6 @@ export default async function OnboardingPage({ searchParams }: { searchParams: {
           <OnboardingForm next={next} initialDisplayName={profile?.displayName ?? undefined} />
         </section>
       </div>
-      <Footer />
     </Web3Provider>
   );
 }

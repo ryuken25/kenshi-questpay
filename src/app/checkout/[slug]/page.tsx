@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Web3Provider } from "@/components/Web3Provider";
-import Footer from "@/components/Footer";
 import { SERVICES, getServiceBySlug } from "@/lib/services";
 import { SITE } from "@/lib/site";
 import CheckoutBriefForm from "@/components/checkout/CheckoutBriefForm";
@@ -56,7 +55,6 @@ export default async function CheckoutPage({ params }: Props) {
           </div>
         </section>
       </div>
-      <Footer />
     </Web3Provider>
   );
 }

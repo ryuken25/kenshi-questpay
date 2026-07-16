@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 
 export default function StudioLogin({ searchParams }: { searchParams: { error?: string; sent?: string } }) {
@@ -24,7 +23,6 @@ export default function StudioLogin({ searchParams }: { searchParams: { error?: 
             <Link href="/" className="mt-6 block text-center text-sm text-[var(--qp-text-muted)] hover:text-white">Back to QuestPay</Link>
           </div>
         </section>
-        <Footer />
       </div>
     </Web3Provider>
   );

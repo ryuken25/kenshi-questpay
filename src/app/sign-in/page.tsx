@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 import HeroOrbitalScene from "@/components/home/HeroOrbitalScene";
 import AuthPanel from "@/components/auth/AuthPanel";
@@ -43,7 +42,6 @@ function SignInContent() {
             </div>
           </div>
         </section>
-        <Footer />
       </div>
     </Web3Provider>
   );
