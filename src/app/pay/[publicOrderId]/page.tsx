@@ -36,13 +36,13 @@ export default async function PayPage({ params }: Props) {
 
   return (
     <Web3Provider>
-      <main className="min-screen-safe pt-6">
+      <div className="min-screen-safe pt-6">
         <PayPageClient
           publicOrderId={publicOrderId}
           order={order}
           serviceName={service?.name || order?.slug}
         />
-      </main>
+      </div>
       <Footer />
     </Web3Provider>
   );

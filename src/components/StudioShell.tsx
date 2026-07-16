@@ -4,7 +4,7 @@ const navItem = "rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-s
 
 export default function StudioShell({ email, children }: { email: string; children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
+    <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
       <header className="border-b border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -21,6 +21,6 @@ export default function StudioShell({ email, children }: { email: string; childr
         </div>
       </header>
       <div className="mx-auto max-w-7xl px-4 py-8">{children}</div>
-    </main>
+    </div>
   );
 }

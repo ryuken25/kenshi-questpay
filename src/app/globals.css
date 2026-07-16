@@ -551,7 +551,8 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
 .qp-hero3d--signin { width: min(100%, 390px); height: 320px; }
 
 @media (max-width: 767px) {
-  .qp-hero3d--home { width: min(100%, 390px); height: clamp(290px, 78vw, 355px); margin-inline: auto; }
+  .qp-hero3d--home { width: 100%; height: clamp(260px, 70vw, 340px); margin-inline: auto; overflow: hidden; }
+  .qp-hero3d--signin { width: min(100%, 320px); height: 260px; }
 }
 
 .qp-auth-overlay {

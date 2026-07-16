@@ -44,7 +44,7 @@ export default function VerifyPage() {
 
   return (
     <PublicShell>
-      <main className="min-screen-safe px-4 py-24 text-[var(--qp-text-primary)] sm:px-6 lg:px-8">
+      <div className="min-screen-safe px-4 py-24 text-[var(--qp-text-primary)] sm:px-6 lg:px-8">
       <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5 shadow-2xl sm:p-8">
         <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[var(--qp-violet-300)]">
           QuestPay Public Verify
@@ -136,7 +136,7 @@ export default function VerifyPage() {
           </div>
         )}
       </section>
-      </main>
+      </div>
     </PublicShell>
   );
 }

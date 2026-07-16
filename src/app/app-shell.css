@@ -323,6 +323,7 @@
   text-align: center;
   min-height: 44px;
   transition: color 160ms ease;
+  position: relative;
 }
 
 .qp-mobile-bottomnav__item--active {
@@ -424,6 +425,19 @@
   .qp-app-shell__mobile-topbar { display: block; }
   .qp-app-shell__mobile-bottomnav { display: block; }
   .qp-app-shell__main {
-    padding-bottom: var(--qp-mobile-nav-height);
+    padding-bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
   }
+  /* Prevent horizontal scroll on mobile */
+  .qp-app-shell { overflow-x: hidden; }
+  .qp-app-shell__main { width: 100%; overflow-x: hidden; }
+  /* Sticky CTA should sit above bottom nav */
+  .qp-sticky-cta {
+    position: sticky;
+    bottom: var(--qp-mobile-nav-height);
+    z-index: 40;
+  }
+  /* Forms: prevent zoom on iOS by keeping font-size ≥16px */
+  input, select, textarea { font-size: 16px !important; }
+  /* Ensure touch targets meet 44px minimum */
+  button, a[role="button"], .qp-button { min-height: 44px; }
 }

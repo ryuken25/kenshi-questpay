@@ -7,7 +7,7 @@ export default async function AdminAuditPage() {
   if (!session.roles.includes("super_admin")) redirect("/my-orders");
 
   return (
-    <main className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
+    <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <a href="/admin" className="text-sm text-[var(--qp-text-muted)] hover:text-white">&larr; Admin</a>
         <h1 className="mt-3 font-sora text-3xl font-black">Audit</h1>
@@ -16,6 +16,6 @@ export default async function AdminAuditPage() {
           <p className="mt-4 text-center text-base text-[var(--qp-text-muted)]">This section is being built out. Core auth and RBAC infrastructure is active.</p>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

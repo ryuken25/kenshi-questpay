@@ -7,7 +7,7 @@ export default async function AdminPage() {
   if (!session.roles.includes("super_admin")) redirect("/my-orders");
 
   return (
-    <main className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
+    <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex items-center justify-between">
           <div>
@@ -35,6 +35,6 @@ export default async function AdminPage() {
           </a>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

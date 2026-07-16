@@ -8,7 +8,7 @@ import ScrollStoryHowItWorks from "@/components/home/ScrollStoryHowItWorks";
 export default function HomePage() {
   return (
     <Web3Provider>
-      <main>
+      <div>
         {/* 1. Hero */}
         <PremiumHomeHero />
 
@@ -40,7 +40,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-      </main>
+      </div>
       <Footer />
     </Web3Provider>
   );

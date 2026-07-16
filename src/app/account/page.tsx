@@ -20,7 +20,7 @@ export default async function AccountPage() {
 
   return (
     <Web3Provider>
-      <main className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
+      <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
         <section className="mx-auto max-w-4xl px-4 py-24 sm:px-6 lg:px-8">
           <h1 className="font-sora text-3xl font-black">Account</h1>
 
@@ -62,7 +62,7 @@ export default async function AccountPage() {
           </div>
         </section>
         <Footer />
-      </main>
+      </div>
     </Web3Provider>
   );
 }
