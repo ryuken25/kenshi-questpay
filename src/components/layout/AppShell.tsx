@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, X, LogOut, User as UserIcon } from "lucide-react";
+import { ChevronRight, X, LogOut, User as UserIcon, Menu } from "lucide-react";
 import { questPayNav, mobileBottomNav, mobileMoreNav, groupLabels, type QuestPayRole, type QuestPayNavItem } from "./nav.config";
 
 type SessionState = { authenticated: boolean; roles: string[] } | null;
@@ -117,24 +117,24 @@ function DesktopSidebar({ roles, pathname, session }: { roles: QuestPayRole[]; p
 }
 
 /** Mobile top bar */
-function MobileTopBar({ pathname }: { pathname: string }) {
+function MobileTopBar({ pathname, session, onMore }: { pathname: string; session: SessionState; onMore: () => void }) {
   const pageName = pathname === "/" ? "Home" : pathname.split("/")[1]?.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "QuestPay";
   return (
     <header className="qp-mobile-topbar">
-      <Link href="/" className="qp-mobile-topbar__logo">
+      <Link href="/" className="qp-mobile-topbar__logo" aria-label="QuestPay home">
         <Image src="/brand/questpay/questpay-mark-256.png" alt="QuestPay" width={28} height={28} />
       </Link>
       <span className="qp-mobile-topbar__title">{pageName}</span>
-      <Link href="/account" className="qp-mobile-topbar__action" aria-label="Account">
-        <UserIcon size={20} />
-      </Link>
+      <button type="button" onClick={onMore} className="qp-mobile-topbar__action" aria-label="More menu">
+        <Menu size={20} />
+      </button>
     </header>
   );
 }
 
-/** Mobile bottom navigation — 5 items */
-function MobileBottomNav({ pathname, roles }: { pathname: string; roles: QuestPayRole[] }) {
-  const items = filterByRole(mobileBottomNav, roles);
+/** Mobile bottom navigation — 5 items: Home, Services, Orders, Profile, More */
+function MobileBottomNav({ pathname, roles, session, onMore }: { pathname: string; roles: QuestPayRole[]; session: SessionState; onMore: () => void }) {
+  const items = filterByRole(mobileBottomNav, roles).slice(0, 4);
   return (
     <nav className="qp-mobile-bottomnav" aria-label="Mobile navigation">
       {items.map((item) => {
@@ -142,17 +142,34 @@ function MobileBottomNav({ pathname, roles }: { pathname: string; roles: QuestPa
         const Icon = item.icon;
         return (
           <Link key={item.id} href={item.href} className={`qp-mobile-bottomnav__item ${active ? "qp-mobile-bottomnav__item--active" : ""}`}>
-            <Icon size={22} />
+            <Icon size={20} />
             <span>{item.label}</span>
           </Link>
         );
       })}
+      {/* Profile or Sign In */}
+      {session?.authenticated ? (
+        <Link href="/account" className={`qp-mobile-bottomnav__item ${isActive(pathname, "/account") ? "qp-mobile-bottomnav__item--active" : ""}`}>
+          <UserIcon size={20} />
+          <span>Profile</span>
+        </Link>
+      ) : (
+        <Link href="/sign-in" className={`qp-mobile-bottomnav__item ${isActive(pathname, "/sign-in") ? "qp-mobile-bottomnav__item--active" : ""}`}>
+          <UserIcon size={20} />
+          <span>Sign In</span>
+        </Link>
+      )}
+      {/* More button — opens drawer */}
+      <button type="button" onClick={onMore} className="qp-mobile-bottomnav__item" aria-label="More">
+        <Menu size={20} />
+        <span>More</span>
+      </button>
     </nav>
   );
 }
 
 /** Mobile "More" slide-over drawer */
-function MobileMoreDrawer({ open, onClose, pathname, roles }: { open: boolean; onClose: () => void; pathname: string; roles: QuestPayRole[] }) {
+function MobileMoreDrawer({ open, onClose, pathname, roles, session }: { open: boolean; onClose: () => void; pathname: string; roles: QuestPayRole[]; session: SessionState }) {
   const items = filterByRole(mobileMoreNav, roles);
   const groups = groupItems(items);
   const groupOrder = ["discover", "workspace", "creator", "trust"];
@@ -203,6 +220,23 @@ function MobileMoreDrawer({ open, onClose, pathname, roles }: { open: boolean; o
                   </div>
                 );
               })}
+              {/* Account / Sign out at bottom of drawer */}
+              <div className="qp-sidebar__group">
+                <span className="qp-sidebar__group-label">Account</span>
+                {session?.authenticated ? (
+                  <Link href="/account" onClick={onClose} className={`qp-sidebar__item ${isActive(pathname, "/account") ? "qp-sidebar__item--active" : ""}`}>
+                    {isActive(pathname, "/account") && <span className="qp-sidebar__indicator" />}
+                    <UserIcon size={18} className="qp-sidebar__icon" />
+                    <span className="qp-sidebar__label">Profile</span>
+                  </Link>
+                ) : (
+                  <Link href="/sign-in" onClick={onClose} className={`qp-sidebar__item ${isActive(pathname, "/sign-in") ? "qp-sidebar__item--active" : ""}`}>
+                    {isActive(pathname, "/sign-in") && <span className="qp-sidebar__indicator" />}
+                    <UserIcon size={18} className="qp-sidebar__icon" />
+                    <span className="qp-sidebar__label">Sign In</span>
+                  </Link>
+                )}
+              </div>
             </nav>
           </motion.div>
         </>
@@ -249,7 +283,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Mobile top bar */}
       <div className="qp-app-shell__mobile-topbar">
-        <MobileTopBar pathname={pathname} />
+        <MobileTopBar pathname={pathname} session={session} onMore={() => setMoreOpen(true)} />
       </div>
 
       {/* Main content */}
@@ -259,11 +293,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Mobile bottom nav */}
       <div className="qp-app-shell__mobile-bottomnav">
-        <MobileBottomNav pathname={pathname} roles={roles} />
+        <MobileBottomNav pathname={pathname} roles={roles} session={session} onMore={() => setMoreOpen(true)} />
       </div>
 
       {/* Mobile "More" drawer trigger is inside bottom nav overflow */}
-      <MobileMoreDrawer open={moreOpen} onClose={() => setMoreOpen(false)} pathname={pathname} roles={roles} />
+      <MobileMoreDrawer open={moreOpen} onClose={() => setMoreOpen(false)} pathname={pathname} roles={roles} session={session} />
     </div>
   );
 }
