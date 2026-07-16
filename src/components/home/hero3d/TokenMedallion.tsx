@@ -13,6 +13,9 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
 
   useEffect(() => {
     texture.colorSpace = THREE.SRGBColorSpace;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.anisotropy = 8;
     texture.needsUpdate = true;
   }, [texture]);
 

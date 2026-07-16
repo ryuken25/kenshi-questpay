@@ -147,7 +147,7 @@ function VisibleEdgeGlow() {
 export default function VerseCube({ reducedMotion = false }: { reducedMotion?: boolean }) {
   const group = useRef<THREE.Group>(null);
   const localTime = useRef(0);
-  const mark = useTexture("/brand/verse/verse-mark-purple-512.png");
+  const mark = useTexture("/brand/questpay/questpay-mark-512.png");
 
   useEffect(() => {
     mark.colorSpace = THREE.SRGBColorSpace;

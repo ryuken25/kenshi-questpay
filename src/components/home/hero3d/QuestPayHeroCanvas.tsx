@@ -35,12 +35,31 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
   const [mobile, setMobile] = useState(false);
   const [webgl, setWebgl] = useState<boolean | null>(null);
   const [quality, setQuality] = useState<HeroQuality>("high");
+  const [aspect, setAspect] = useState(1.5);
+
+  // Responsive camera presets based on measured container aspect ratio
   const camera = useMemo(() => {
     if (variant === "signin") return { position: [0, 0, 7.8] as [number, number, number], fov: 35, near: .1, far: 40 };
-    return mobile
-      ? { position: [0, 0, 7.8] as [number, number, number], fov: 35, near: .1, far: 40 }
-      : { position: [0, 0, 7.2] as [number, number, number], fov: 35, near: .1, far: 40 };
-  }, [mobile, variant]);
+    // Wide: fov 36, distance 6.6 | Medium: fov 40, distance 7.0 | Narrow: fov 46, distance 7.8
+    if (aspect >= 1.35) return { position: [0, 0, 6.6] as [number, number, number], fov: 36, near: .1, far: 40 };
+    if (aspect >= 0.9) return { position: [0, 0, 7.0] as [number, number, number], fov: 40, near: .1, far: 40 };
+    return { position: [0, 0, 7.8] as [number, number, number], fov: 46, near: .1, far: 40 };
+  }, [aspect, variant]);
+
+  // ResizeObserver for container-aware scaling
+  useEffect(() => {
+    const node = container.current;
+    if (!node) return;
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        const { width, height } = entry.contentRect;
+        if (width > 0 && height > 0) setAspect(width / height);
+      }
+    });
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px)");
@@ -83,7 +102,7 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
         <Canvas
           className="pointer-events-none"
           style={{ pointerEvents: "none" }}
-          dpr={mobile ? [1, 1.75] : [1, 2]}
+          dpr={mobile ? [1, 1.5] : [1, 1.75]}
           camera={camera}
           gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
           performance={{ min: .6 }}
