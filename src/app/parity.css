@@ -176,7 +176,6 @@ input:focus, select:focus, textarea:focus { border-color: rgba(162,124,255,.56) 
   .qp-community-note--desktop { display: none; }
   .qp-community-note--mobile { display: block; order: 3; max-width: none; margin-top: -8px; }
 }
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
