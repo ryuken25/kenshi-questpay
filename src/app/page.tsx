@@ -1,5 +1,4 @@
 import { Web3Provider } from "@/components/Web3Provider";
-import Footer from "@/components/Footer";
 import HomeServicesPreview from "@/components/HomeServicesPreview";
 import PremiumHomeHero from "@/components/home/PremiumHomeHero";
 import BuyerCreatorBenefits from "@/components/home/BuyerCreatorBenefits";
@@ -41,7 +40,6 @@ export default function HomePage() {
           </div>
         </section>
       </div>
-      <Footer />
     </Web3Provider>
   );
 }
