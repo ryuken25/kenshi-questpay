@@ -21,13 +21,13 @@ function OrbitRing({ built, tokenId }: { built: BuiltOrbit; tokenId: string }) {
   return (
     <group>
       <mesh geometry={built.haloGeometry}>
-        <meshBasicMaterial color={coreColor} transparent opacity={.028} depthTest depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        <meshBasicMaterial color={coreColor} transparent opacity={.04} depthTest depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
       <mesh geometry={built.geometry}>
         <meshBasicMaterial
           color={coreColor}
           transparent
-          opacity={tokenId === "verse" ? .20 : .14}
+          opacity={tokenId === "verse" ? .26 : .18}
           depthTest
           depthWrite={false}
           blending={THREE.AdditiveBlending}
