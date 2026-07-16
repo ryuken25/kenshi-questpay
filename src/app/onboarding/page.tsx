@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { Web3Provider } from "@/components/Web3Provider";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getSession, sanitizeNextPath } from "@/lib/auth";
 import { getProfile } from "@/lib/profile";
@@ -16,7 +15,6 @@ export default async function OnboardingPage({ searchParams }: { searchParams: {
 
   return (
     <Web3Provider>
-      <Navbar />
       <main className="min-h-screen bg-[var(--qp-bg)] pt-24 pb-16 text-[var(--qp-text-secondary)]">
         <section className="mx-auto max-w-xl px-4 sm:px-6">
           <div className="mb-6 text-center">

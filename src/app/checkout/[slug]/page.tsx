@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Web3Provider } from "@/components/Web3Provider";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SERVICES, getServiceBySlug } from "@/lib/services";
 import { SITE } from "@/lib/site";
@@ -41,8 +40,7 @@ export default async function CheckoutPage({ params }: Props) {
 
   return (
     <Web3Provider>
-      <Navbar />
-      <main className="min-screen-safe pt-20">
+      <main className="min-screen-safe pt-6">
         <section className="px-4 py-14 sm:px-6 lg:px-8">
           {!session ? (
             <CheckoutAuthGate service={svc} next={checkoutPath} />

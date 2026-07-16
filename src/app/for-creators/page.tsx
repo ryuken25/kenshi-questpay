@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, Blocks, BriefcaseBusiness, CircleDollarSign, Clock3, FileCheck2, LockKeyhole, ReceiptText, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import { Web3Provider } from "@/components/Web3Provider";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CreatorIntentButton from "@/components/CreatorIntentButton";
 
@@ -43,7 +42,6 @@ const creatorGets = [
 export default function ForCreatorsPage() {
   return (
     <Web3Provider>
-      <Navbar />
       <main className="relative min-screen-safe overflow-clip bg-[#020207] pt-20 text-white">
         <section className="relative px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(135,68,246,.18),transparent_34%),radial-gradient(circle_at_15%_70%,rgba(83,38,164,.11),transparent_32%)]" />

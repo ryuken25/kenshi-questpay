@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Web3Provider } from "@/components/Web3Provider";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PayPageClient from "@/components/PayPageClient";
 import { getSupabase } from "@/lib/supabase-server";
@@ -37,8 +36,7 @@ export default async function PayPage({ params }: Props) {
 
   return (
     <Web3Provider>
-      <Navbar />
-      <main className="min-screen-safe pt-20">
+      <main className="min-screen-safe pt-6">
         <PayPageClient
           publicOrderId={publicOrderId}
           order={order}

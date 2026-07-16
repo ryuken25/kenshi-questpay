@@ -1,5 +1,4 @@
 import { Web3Provider } from "@/components/Web3Provider";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomeServicesPreview from "@/components/HomeServicesPreview";
 import PremiumHomeHero from "@/components/home/PremiumHomeHero";
@@ -12,7 +11,6 @@ import { SITE } from "@/lib/site";
 export default function HomePage() {
   return (
     <Web3Provider>
-      <Navbar />
       <main>
         <PremiumHomeHero />
         <section className="px-4 pb-8 sm:px-6 lg:px-8">

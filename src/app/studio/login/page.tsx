@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 
@@ -7,7 +6,6 @@ export default function StudioLogin({ searchParams }: { searchParams: { error?: 
   return (
     <Web3Provider>
       <main className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
-        <Navbar />
         <section className="mx-auto max-w-lg px-4 pb-20 pt-28">
           <div className="glass-panel-strong rounded-[2rem] p-6 sm:p-8">
             <p className="text-sm font-black uppercase tracking-[0.12em] text-[#C1B6FF]">Private creator workflow</p>

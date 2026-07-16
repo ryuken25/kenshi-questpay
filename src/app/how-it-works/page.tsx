@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, CircleAlert, LockKeyhole, ReceiptText, ShieldCheck } from "lucide-react";
 import { Web3Provider } from "@/components/Web3Provider";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CreatorIntentButton from "@/components/CreatorIntentButton";
 import HowWorkflowSteps from "@/components/how-it-works/HowWorkflowSteps";
@@ -37,7 +36,6 @@ const faqs = [
 export default function HowItWorksPage() {
   return (
     <Web3Provider>
-      <Navbar />
       <main className="relative min-screen-safe overflow-clip bg-[#020207] pt-20 text-white">
         <section className="relative flex min-h-[min(760px,calc(100svh-80px))] items-center px-5 py-16 sm:px-6 sm:py-24 lg:px-8">
           <span className="qp-workflow-particles absolute -inset-[4%] bg-[url('/assets/how-it-works/workflow-particle-field.svg')] bg-cover bg-center bg-no-repeat opacity-60 mix-blend-screen" aria-hidden="true" />

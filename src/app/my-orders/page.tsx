@@ -1,12 +1,10 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 
 export default function MyOrdersPage() {
   return (
     <Web3Provider>
-      <Navbar />
-      <main className="min-screen-safe pt-20">
+      <main className="min-screen-safe pt-6">
         <section className="px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-6 sm:p-8">
             <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#C1B6FF]">Buyer workspace</p>

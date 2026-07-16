@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Web3Provider } from "@/components/Web3Provider";
 import HeroOrbitalScene from "@/components/home/HeroOrbitalScene";
@@ -26,7 +25,6 @@ function SignInContent() {
   return (
     <Web3Provider>
       <main className="min-h-screen overflow-hidden bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
-        <Navbar authPage />
         <section className="relative px-4 pb-14 pt-24 sm:px-6 lg:px-8 lg:pt-28">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_26%_20%,rgba(124,92,255,.22),transparent_28%),radial-gradient(circle_at_80%_16%,rgba(135,82,255,.07),transparent_22%)]" />
           <div className="relative mx-auto grid max-w-6xl gap-7 lg:grid-cols-[.9fr_1fr] lg:items-center">
