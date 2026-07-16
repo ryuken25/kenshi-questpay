@@ -22,7 +22,7 @@ export const questPayNav: QuestPayNavItem[] = [
   // Workspace — after sign-in
   { id: "overview", label: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["buyer", "creator", "admin"], group: "workspace" },
   { id: "orders", label: "My Orders", href: "/my-orders", icon: Package, roles: ["buyer", "creator", "admin"], mobilePrimary: true, group: "workspace" },
-  { id: "receipts", label: "Receipts", href: "/verify", icon: Receipt, roles: ["guest", "buyer", "creator", "admin"], group: "workspace" },
+  { id: "receipts", label: "Receipts", href: "/verify", icon: Receipt, roles: ["buyer", "creator", "admin"], group: "workspace" },
 
   // Creator — only for creator/admin
   { id: "studio", label: "Creator Studio", href: "/studio", icon: Store, roles: ["creator", "admin"], mobilePrimary: true, group: "creator" },

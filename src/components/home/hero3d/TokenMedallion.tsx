@@ -32,15 +32,15 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
     <group ref={spinGroup} rotation={[.05, -.15, .02]}>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[config.size, config.size, thickness, 48]} />
-        <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.28} metalness={.48} roughness={.28} />
+        <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.42} metalness={.52} roughness={.24} />
       </mesh>
       <mesh position={[0, 0, thickness / 2 + .003]}>
         <circleGeometry args={[config.size * .82, 48]} />
-        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.65} roughness={.30} metalness={.12} />
+        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.85} roughness={.26} metalness={.14} />
       </mesh>
       <mesh position={[0, 0, -thickness / 2 - .003]} rotation={[0, Math.PI, 0]}>
         <circleGeometry args={[config.size * .82, 48]} />
-        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.45} roughness={.32} metalness={.12} />
+        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.60} roughness={.28} metalness={.14} />
       </mesh>
       <mesh>
         <torusGeometry args={[config.size * .965, .018, 8, 48]} />
