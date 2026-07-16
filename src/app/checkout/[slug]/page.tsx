@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
 import { Web3Provider } from "@/components/Web3Provider";
 import { SERVICES, getServiceBySlug } from "@/lib/services";
 import { SITE } from "@/lib/site";
@@ -58,5 +59,3 @@ export default async function CheckoutPage({ params }: Props) {
     </Web3Provider>
   );
 }
-
-import Link from "next/link";
