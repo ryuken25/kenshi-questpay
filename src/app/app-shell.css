@@ -19,8 +19,9 @@
 }
 
 .qp-app-shell__sidebar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   height: 100svh;
   flex-shrink: 0;
   z-index: 50;
@@ -397,13 +398,23 @@
 
 /* === Responsive: show/hide === */
 
-/* Tablet: collapse sidebar to icon rail */
-@media (max-width: 1179px) {
+/* Desktop: sidebar fixed, main content offset */
+@media (min-width: 1180px) {
+  .qp-app-shell__main {
+    margin-left: var(--qp-sidebar-width);
+  }
+}
+
+/* Tablet: sidebar fixed as rail, main content offset */
+@media (min-width: 768px) and (max-width: 1179px) {
   .qp-app-shell__sidebar {
     width: var(--qp-rail-width);
   }
   .qp-sidebar {
     width: var(--qp-rail-width) !important;
+  }
+  .qp-app-shell__main {
+    margin-left: var(--qp-rail-width);
   }
 }
 
