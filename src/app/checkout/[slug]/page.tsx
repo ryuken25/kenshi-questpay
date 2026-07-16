@@ -4,10 +4,10 @@ import { Web3Provider } from "@/components/Web3Provider";
 import Footer from "@/components/Footer";
 import { SERVICES, getServiceBySlug } from "@/lib/services";
 import { SITE } from "@/lib/site";
-import CheckoutForm from "@/components/CheckoutForm";
-import CheckoutAuthGate from "@/components/checkout/CheckoutAuthGate";
+import CheckoutBriefForm from "@/components/checkout/CheckoutBriefForm";
 import { getSession } from "@/lib/auth";
 import { getProfile } from "@/lib/profile";
+import { ENABLED_TOKEN_SYMBOLS } from "@/lib/token-metadata";
 
 interface Props {
   params: { slug: string };
@@ -22,7 +22,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!svc) return { title: "Checkout — QuestPay" };
   return {
     title: `Checkout: ${svc.name} — Kenshi QuestPay`,
-    description: `Submit a brief and pay ${svc.usd} USDT for ${svc.name}.`,
+    description: `Submit a brief and pay for ${svc.name} with ${ENABLED_TOKEN_SYMBOLS.join(", ")} on Polygon.`,
   };
 }
 
@@ -41,27 +41,24 @@ export default async function CheckoutPage({ params }: Props) {
   return (
     <Web3Provider>
       <main className="min-screen-safe pt-6">
-        <section className="px-4 py-14 sm:px-6 lg:px-8">
-          {!session ? (
-            <CheckoutAuthGate service={svc} next={checkoutPath} />
-          ) : (
-            <div className="mx-auto max-w-2xl">
-              <div className="text-center mb-8">
-                <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">
-                  Checkout
-                </p>
-                <h1 className="mt-3 font-sora text-3xl font-black text-white">
-                  {svc.name} — <span className="gradient-text">${svc.usd}</span>
-                </h1>
-                <p className="mt-2 text-sm text-muted">{svc.description}</p>
-                <p className="mt-1 text-xs text-subtle">{SITE.disclaimer}</p>
-              </div>
-              <CheckoutForm slug={params.slug} serviceName={svc.name} serviceUsd={svc.usd} profile={profile} />
+        <section className="px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl">
+            <div className="mb-6">
+              <Link href={`/services/${svc.slug}`} className="text-xs text-[var(--qp-text-subtle)] hover:text-[var(--qp-text-secondary)]">← {svc.name}</Link>
             </div>
-          )}
+            <CheckoutBriefForm
+              service={svc}
+              next={checkoutPath}
+              authenticated={Boolean(session)}
+              profileEmail={profile?.contactValue ?? undefined}
+              profileName={profile?.displayName ?? undefined}
+            />
+          </div>
         </section>
       </main>
       <Footer />
     </Web3Provider>
   );
 }
+
+import Link from "next/link";
