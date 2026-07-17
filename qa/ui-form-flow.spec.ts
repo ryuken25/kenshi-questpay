@@ -5,7 +5,7 @@ const checkoutPath = '/checkout/ux-quick-look';
 test.describe('checkout brief UX', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('explains validation, advances steps, validates contact and keeps actions above mobile nav', async ({ page }) => {
+  test('explains validation, advances steps, validates contact and has no mobile bottom nav', async ({ page }) => {
     await page.goto(checkoutPath, { waitUntil: 'domcontentloaded' });
 
     const goal = page.getByLabel('What should this service help you achieve? *');
@@ -26,14 +26,14 @@ test.describe('checkout brief UX', () => {
     await contact.fill('@questpay_user');
     await expect(reviewButton).toBeEnabled();
 
-    const collision = await page.evaluate(() => {
+    await expect(page.locator('.qp-mobile-bottomnav')).toHaveCount(0);
+    const actionPosition = await page.evaluate(() => {
       const actions = document.querySelector('.qp-checkout-actions')?.getBoundingClientRect();
-      const nav = document.querySelector('.qp-mobile-bottomnav')?.getBoundingClientRect();
-      if (!actions || !nav) return null;
-      return { actionBottom: actions.bottom, navTop: nav.top, overlap: Math.max(0, actions.bottom - nav.top) };
+      if (!actions) return null;
+      return { bottom: actions.bottom, viewport: window.innerHeight };
     });
-    expect(collision).not.toBeNull();
-    expect(collision?.overlap).toBe(0);
+    expect(actionPosition).not.toBeNull();
+    expect(actionPosition!.bottom).toBeLessThanOrEqual(actionPosition!.viewport);
   });
 });
 
@@ -55,5 +55,11 @@ test.describe('service catalog mobile controls', () => {
       expect(box).not.toBeNull();
       expect(box!.height).toBeGreaterThanOrEqual(44);
     }
+
+    await page.getByRole('button', { name: 'More menu' }).click();
+    const drawer = page.getByRole('dialog', { name: 'More navigation' });
+    await expect(drawer.getByRole('link', { name: 'Home' })).toBeVisible();
+    await expect(drawer.getByRole('link', { name: 'Services' })).toBeVisible();
+    await expect(drawer.getByRole('link', { name: 'How It Works' })).toBeVisible();
   });
 });

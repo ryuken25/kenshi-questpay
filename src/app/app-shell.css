@@ -33,8 +33,7 @@
   width: 100%;
 }
 
-.qp-app-shell__mobile-topbar,
-.qp-app-shell__mobile-bottomnav {
+.qp-app-shell__mobile-topbar {
   display: none;
 }
 
@@ -295,55 +294,6 @@
 
 .qp-mobile-topbar__action:hover { color: var(--qp-text-primary); }
 
-/* === Mobile Bottom Nav === */
-.qp-mobile-bottomnav {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  min-height: var(--qp-mobile-nav-height);
-  background: var(--qp-sidebar-surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid var(--qp-border-faint);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-}
-
-.qp-mobile-bottomnav__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  flex: 1;
-  padding: 8px 4px;
-  color: var(--qp-text-subtle);
-  font-size: 10px;
-  font-weight: 500;
-  text-decoration: none;
-  text-align: center;
-  min-height: 44px;
-  transition: color 160ms ease;
-  position: relative;
-}
-
-.qp-mobile-bottomnav__item--active {
-  color: var(--qp-violet-300);
-}
-
-.qp-mobile-bottomnav__item--active::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 24px;
-  height: 2px;
-  border-radius: 0 0 2px 2px;
-  background: var(--qp-violet-400);
-}
-
 /* === Mobile More Drawer === */
 .qp-drawer__backdrop {
   position: fixed;
@@ -434,30 +384,25 @@
     height: 56px;
     flex-shrink: 0;
   }
-  .qp-app-shell__mobile-bottomnav {
-    display: block;
-    height: var(--qp-mobile-nav-height);
-    flex-shrink: 0;
-  }
   .qp-app-shell__main {
     flex: 1;
     min-height: 0;
     width: 100%;
     padding-top: 56px;
-    padding-bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   /* Prevent horizontal scroll on mobile */
   .qp-app-shell { overflow-x: hidden; }
   .qp-app-shell__main { width: 100%; overflow-x: hidden; }
-  /* Sticky CTA should sit above bottom nav */
+  /* Sticky CTA sits at the viewport edge now that bottom navigation is removed. */
   .qp-sticky-cta {
     position: sticky;
-    bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+    bottom: env(safe-area-inset-bottom, 0px);
     z-index: 40;
   }
   .qp-checkout-actions {
     position: sticky;
-    bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+    bottom: env(safe-area-inset-bottom, 0px);
     z-index: 40;
     margin-inline: -0.25rem;
     padding: 0.5rem 0.25rem;

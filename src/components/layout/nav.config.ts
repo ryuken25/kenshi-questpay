@@ -33,9 +33,8 @@ export const questPayNav: QuestPayNavItem[] = [
   { id: "faq", label: "Help & FAQ", href: "/faq", icon: HelpCircle, roles: ["guest", "buyer", "creator", "admin"], group: "trust" },
 ];
 
-export const mobileBottomNav: QuestPayNavItem[] = questPayNav.filter((item) => item.mobilePrimary);
-
-export const mobileMoreNav: QuestPayNavItem[] = questPayNav.filter((item) => !item.mobilePrimary);
+// The mobile bottom bar was removed; the top-bar drawer now exposes the full navigation.
+export const mobileMoreNav: QuestPayNavItem[] = questPayNav;
 
 export const groupLabels: Record<string, string> = {
   discover: "Discover",

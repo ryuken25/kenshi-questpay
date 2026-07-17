@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, X, LogOut, User as UserIcon, Menu } from "lucide-react";
-import { questPayNav, mobileBottomNav, mobileMoreNav, groupLabels, type QuestPayRole, type QuestPayNavItem } from "./nav.config";
+import { questPayNav, mobileMoreNav, groupLabels, type QuestPayRole, type QuestPayNavItem } from "./nav.config";
 
 type SessionState = { authenticated: boolean; roles: string[] } | null;
 
 const NAV_WIDTH = 264;
 const RAIL_WIDTH = 80;
-const MOBILE_NAV_HEIGHT = 64;
+
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -129,42 +129,6 @@ function MobileTopBar({ pathname, session, onMore }: { pathname: string; session
         <Menu size={20} />
       </button>
     </header>
-  );
-}
-
-/** Mobile bottom navigation — 5 items: Home, Services, Orders, Profile, More */
-function MobileBottomNav({ pathname, roles, session, onMore }: { pathname: string; roles: QuestPayRole[]; session: SessionState; onMore: () => void }) {
-  const items = filterByRole(mobileBottomNav, roles).slice(0, 4);
-  return (
-    <nav className="qp-mobile-bottomnav" aria-label="Mobile navigation">
-      {items.map((item) => {
-        const active = isActive(pathname, item.href);
-        const Icon = item.icon;
-        return (
-          <Link key={item.id} href={item.href} className={`qp-mobile-bottomnav__item ${active ? "qp-mobile-bottomnav__item--active" : ""}`}>
-            <Icon size={20} />
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
-      {/* Profile or Sign In */}
-      {session?.authenticated ? (
-        <Link href="/account" className={`qp-mobile-bottomnav__item ${isActive(pathname, "/account") ? "qp-mobile-bottomnav__item--active" : ""}`}>
-          <UserIcon size={20} />
-          <span>Profile</span>
-        </Link>
-      ) : (
-        <Link href="/sign-in" className={`qp-mobile-bottomnav__item ${isActive(pathname, "/sign-in") ? "qp-mobile-bottomnav__item--active" : ""}`}>
-          <UserIcon size={20} />
-          <span>Sign In</span>
-        </Link>
-      )}
-      {/* More button — opens drawer */}
-      <button type="button" onClick={onMore} className="qp-mobile-bottomnav__item" aria-label="More">
-        <Menu size={20} />
-        <span>More</span>
-      </button>
-    </nav>
   );
 }
 
@@ -291,12 +255,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* Mobile bottom nav */}
-      <div className="qp-app-shell__mobile-bottomnav">
-        <MobileBottomNav pathname={pathname} roles={roles} session={session} onMore={() => setMoreOpen(true)} />
-      </div>
-
-      {/* Mobile "More" drawer trigger is inside bottom nav overflow */}
+      {/* Mobile navigation stays available from the top-bar More button. */}
       <MobileMoreDrawer open={moreOpen} onClose={() => setMoreOpen(false)} pathname={pathname} roles={roles} session={session} />
     </div>
   );
