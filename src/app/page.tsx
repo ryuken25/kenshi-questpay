@@ -2,7 +2,7 @@ import { Web3Provider } from "@/components/Web3Provider";
 import HomeServicesPreview from "@/components/HomeServicesPreview";
 import PremiumHomeHero from "@/components/home/PremiumHomeHero";
 import BuyerCreatorBenefits from "@/components/home/BuyerCreatorBenefits";
-import ScrollStoryHowItWorks from "@/components/home/ScrollStoryHowItWorks";
+import ProductPreviewRow from "@/components/home/ProductPreviewRow";
 
 export default function HomePage() {
   return (
@@ -22,7 +22,7 @@ export default function HomePage() {
         <HomeServicesPreview />
 
         {/* 4. One workflow section (the only "how it works" on the page) */}
-        <ScrollStoryHowItWorks />
+        <ProductPreviewRow />
 
         {/* 5. Buyer / Creator split */}
         <BuyerCreatorBenefits />

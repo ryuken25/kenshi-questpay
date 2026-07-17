@@ -63,3 +63,39 @@ test.describe('service catalog mobile controls', () => {
     await expect(drawer.getByRole('link', { name: 'How It Works' })).toBeVisible();
   });
 });
+
+
+test.describe('homepage GSAP story UX', () => {
+  test('desktop mounts the pinned GSAP story stage and activates chapters on scroll', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-testid="desktop-inside-story"]')).toBeVisible();
+    await expect(page.locator('[data-testid="mobile-inside-story"]')).toBeHidden();
+    await page.locator('#inside-questpay').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(450);
+    await expect(page.locator('.pin-spacer')).toHaveCount(1);
+    await page.mouse.wheel(0, 1200);
+    await page.waitForTimeout(350);
+    await expect(page.getByRole('tabpanel')).toBeVisible();
+  });
+
+  test('mobile story has sticky progress, tappable chapters and no horizontal overflow', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-testid="mobile-inside-story"]')).toBeVisible();
+    await expect(page.locator('[data-testid="desktop-inside-story"]')).toBeHidden();
+    await page.locator('[data-testid="mobile-inside-story"]').scrollIntoViewIfNeeded();
+    await expect(page.locator('[data-testid="mobile-story-progress"]')).toBeVisible();
+    await page.getByRole('button', { name: '03' }).click();
+    await expect(page.locator('[data-testid="mobile-story-progress"]')).toContainText('03 / 06');
+    const metrics = await page.evaluate(() => ({
+      html: document.documentElement.scrollWidth,
+      body: document.body.scrollWidth,
+      inner: window.innerWidth,
+      progressTop: Math.round(document.querySelector('[data-testid="mobile-story-progress"]')?.getBoundingClientRect().top ?? -1),
+    }));
+    expect(metrics.html).toBeLessThanOrEqual(metrics.inner);
+    expect(metrics.body).toBeLessThanOrEqual(metrics.inner);
+    expect(metrics.progressTop).toBeGreaterThanOrEqual(50);
+  });
+});

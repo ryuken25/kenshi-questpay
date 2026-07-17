@@ -177,9 +177,18 @@ export default function ProductPreviewRow() {
     if (focus) tabRefs.current[next]?.focus();
   };
 
+  const activateMobile = (index: number) => {
+    const next = (index + previews.length) % previews.length;
+    setActiveMobile(next);
+    mobileCardRefs.current[next]?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "center",
+    });
+  };
+
   return (
     <section id="inside-questpay" className="relative qp-blend-section" style={{'--blend-x': '67%', '--blend-color': 'rgba(102,44,214,.085)'} as React.CSSProperties}>
-      <div ref={rangeRef} className="relative hidden overflow-visible lg:block">
+      <div ref={rangeRef} className="relative hidden overflow-visible lg:block" data-testid="desktop-inside-story">
         <div ref={stageRef} className="flex min-h-[calc(100svh-72px)] items-center py-8">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-[.82fr_1.18fr] items-center gap-12 px-8">
             <aside className="flex min-h-0 flex-col">
@@ -249,15 +258,35 @@ export default function ProductPreviewRow() {
 
       <div className="px-4 py-20 sm:px-6 lg:hidden" data-testid="mobile-inside-story">
         <div className="mx-auto max-w-2xl">
-          <p className="font-sora text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">Inside QuestPay</p>
-          <h2 className="mt-3 font-sora text-4xl font-black leading-none tracking-[-.045em] text-white sm:text-5xl">A closer look at the complete flow.</h2>
-          <p className="mt-5 leading-7 text-[var(--qp-text-secondary)]">Six clear stages connect service selection, private requirements, verified payment, and delivery.</p>
-          <div className="sticky top-[calc(var(--qp-navbar-height)+8px)] z-15 mt-10 mb-6 flex items-center gap-3 rounded-full border border-[rgba(174,139,255,.11)] bg-[rgba(4,4,10,.76)] px-3 py-2.5 backdrop-blur-[16px]" data-testid="mobile-story-progress">
-            <span className="font-mono text-xs text-[var(--qp-violet-300)]">{String(activeMobile + 1).padStart(2, '0')} / 06</span>
-            <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/10">
-              <motion.div className="absolute inset-y-0 left-0 rounded-full bg-[var(--qp-violet-500)]" animate={{ scaleX: (activeMobile + 1) / previews.length }} transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }} style={{ transformOrigin: 'left' }} />
+          <div className="rounded-[2rem] border border-[rgba(174,139,255,.12)] bg-[radial-gradient(circle_at_18%_0%,rgba(124,92,255,.16),transparent_34%),rgba(7,7,14,.72)] p-5 shadow-[0_18px_80px_rgba(0,0,0,.35)]">
+            <p className="font-sora text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">Inside QuestPay</p>
+            <h2 className="mt-3 font-sora text-4xl font-black leading-none tracking-[-.045em] text-white sm:text-5xl">Scroll the order story.</h2>
+            <p className="mt-4 leading-7 text-[var(--qp-text-secondary)]">Android-friendly story mode: swipe-scroll through six stages, or tap a chapter to jump there.</p>
+          </div>
+
+          <div className="sticky top-[64px] z-[45] mt-6 mb-5 overflow-hidden rounded-[1.35rem] border border-[rgba(174,139,255,.16)] bg-[rgba(4,4,10,.88)] p-3 shadow-[0_14px_40px_rgba(0,0,0,.36)] backdrop-blur-md" data-testid="mobile-story-progress">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="font-mono text-xs font-bold text-[var(--qp-violet-300)]">{String(activeMobile + 1).padStart(2, '0')} / 06</span>
+              <span className="truncate font-sora text-sm font-bold text-white">{previews[activeMobile].title}</span>
+            </div>
+            <div className="relative h-1.5 overflow-hidden rounded-full bg-white/10">
+              <motion.div className="absolute inset-y-0 left-0 rounded-full bg-[linear-gradient(90deg,var(--qp-violet-500),#cbbcff)]" animate={{ scaleX: (activeMobile + 1) / previews.length }} transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }} style={{ transformOrigin: 'left' }} />
+            </div>
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]" aria-label="Mobile story chapters">
+              {previews.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => activateMobile(idx)}
+                  aria-current={activeMobile === idx ? "step" : undefined}
+                  className={`min-h-[44px] min-w-[44px] shrink-0 rounded-full border px-3 font-mono text-[11px] font-bold transition ${activeMobile === idx ? "border-[rgba(174,139,255,.48)] bg-[rgba(139,77,255,.22)] text-white" : "border-white/10 bg-white/[.03] text-[var(--qp-text-muted)]"}`}
+                >
+                  {item.number}
+                </button>
+              ))}
             </div>
           </div>
+
           <div className="space-y-5">
             {previews.map((item, idx) => {
               const Icon = item.icon;
@@ -266,24 +295,31 @@ export default function ProductPreviewRow() {
                   key={item.id}
                   data-testid={`mobile-story-card-${idx + 1}`}
                   ref={(node) => { if (node) mobileCardRefs.current[idx] = node; }}
-                  initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+                  initial={reduceMotion ? false : { opacity: 0.88, y: 18, scale: 1 }}
                   whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true, amount: 0.28 }}
                   transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                   data-active={activeMobile === idx}
-                  className="relative min-h-[min(72svh,570px)] overflow-hidden rounded-[26px] border border-[rgba(174,139,255,.12)] p-5"
+                  className="relative min-h-[min(72svh,570px)] scroll-mt-32 overflow-hidden rounded-[26px] border border-[rgba(174,139,255,.12)] p-5 transition-transform duration-300"
                   style={{
                     background: 'radial-gradient(circle at 82% 10%, rgba(124,65,238,.13), transparent 42%), linear-gradient(180deg, rgba(10,10,18,.92), rgba(5,5,10,.96))',
                     boxShadow: activeMobile === idx ? '0 22px 70px rgba(59,24,125,.20), inset 0 1px rgba(255,255,255,.035)' : '0 20px 60px rgba(0,0,0,.30), inset 0 1px rgba(255,255,255,.025)',
                     borderColor: activeMobile === idx ? 'rgba(174,139,255,.23)' : undefined,
+                    transform: activeMobile === idx ? 'translateY(-2px)' : undefined,
                   }}
                 >
                   <div className="flex items-center justify-between"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[rgba(139,77,255,.11)] text-[var(--qp-violet-300)]"><Icon size={22}/></span><span className="font-mono text-xs text-[var(--qp-violet-300)]">{item.number}</span></div>
-                  <Image src={item.image} alt="" width={640} height={300} className="mt-4 h-auto w-full" />
+                  <motion.div animate={activeMobile === idx && !reduceMotion ? { y: [0, -4, 0] } : { y: 0 }} transition={{ duration: 2.8, repeat: activeMobile === idx && !reduceMotion ? Infinity : 0, ease: "easeInOut" }}>
+                    <Image src={item.image} alt="" width={640} height={300} className="mt-4 h-auto w-full" />
+                  </motion.div>
                   <h3 className="mt-5 font-sora text-2xl font-black text-white">{item.title}</h3>
                   <p className="mt-2 font-medium text-[var(--qp-text-secondary)]">{item.summary}</p>
                   <p className="mt-3 text-sm leading-6 text-[var(--qp-text-muted)]">{item.detail}</p>
                   <ul className="mt-4 space-y-2">{item.points.map((point)=><li key={point} className="flex gap-2 text-sm text-[var(--qp-text-secondary)]"><span className="text-[var(--qp-violet-300)]">•</span>{point}</li>)}</ul>
+                  <div className="mt-5 flex gap-2">
+                    <button type="button" onClick={() => activateMobile(idx - 1)} className="min-h-12 flex-1 rounded-2xl border border-white/10 bg-white/[.03] px-3 text-sm font-bold text-[var(--qp-text-secondary)]">Prev</button>
+                    <button type="button" onClick={() => activateMobile(idx + 1)} className="min-h-12 flex-1 rounded-2xl border border-[rgba(174,139,255,.25)] bg-[rgba(139,77,255,.16)] px-3 text-sm font-bold text-white">Next</button>
+                  </div>
                 </motion.article>
               );
             })}
