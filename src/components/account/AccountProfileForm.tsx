@@ -63,43 +63,43 @@ export default function AccountProfileForm({ profile }: { profile: AccountProfil
       <h2 className="font-sora text-xl font-black text-white">Profile</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-semibold text-muted">Display name <span className="text-red-400">*</span></label>
-          <input className={inputClass} value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <label htmlFor="profile-display-name" className="mb-1 block text-sm font-semibold text-muted">Display name <span className="text-red-400">*</span></label>
+          <input id="profile-display-name" name="displayName" autoComplete="name" required minLength={2} className={inputClass} value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold text-muted">Public handle</label>
-          <input className={inputClass} value={publicHandle} onChange={(e) => setPublicHandle(e.target.value)} placeholder="@yourhandle" />
+          <label htmlFor="profile-public-handle" className="mb-1 block text-sm font-semibold text-muted">Public handle</label>
+          <input id="profile-public-handle" name="publicHandle" autoComplete="username" className={inputClass} value={publicHandle} onChange={(e) => setPublicHandle(e.target.value)} placeholder="@yourhandle" />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold text-muted">Organization / studio</label>
-        <input className={inputClass} value={organization} onChange={(e) => setOrganization(e.target.value)} />
+        <label htmlFor="profile-organization" className="mb-1 block text-sm font-semibold text-muted">Organization / studio</label>
+        <input id="profile-organization" name="organization" autoComplete="organization" className={inputClass} value={organization} onChange={(e) => setOrganization(e.target.value)} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-semibold text-muted">Contact method <span className="text-red-400">*</span></label>
-          <select className={inputClass} value={contactMethod} onChange={(e) => setContactMethod(e.target.value as ContactMethod)}>
+          <label htmlFor="profile-contact-method" className="mb-1 block text-sm font-semibold text-muted">Contact method <span className="text-red-400">*</span></label>
+          <select id="profile-contact-method" name="contactMethod" className={inputClass} value={contactMethod} onChange={(e) => setContactMethod(e.target.value as ContactMethod)}>
             {CONTACT_METHODS.map((m) => (
               <option key={m} value={m}>{CONTACT_METHOD_LABELS[m]}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold text-muted">Contact value <span className="text-red-400">*</span></label>
-          <input className={inputClass} value={contactValue} onChange={(e) => setContactValue(e.target.value)} />
+          <label htmlFor="profile-contact-value" className="mb-1 block text-sm font-semibold text-muted">Contact value <span className="text-red-400">*</span></label>
+          <input id="profile-contact-value" name="contactValue" required minLength={3} autoComplete={contactMethod === "email" ? "email" : "off"} className={inputClass} value={contactValue} onChange={(e) => setContactValue(e.target.value)} />
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-semibold text-muted">Preferred network</label>
-          <select className={inputClass} value={preferredChain} onChange={(e) => setPreferredChain(e.target.value as ChainKey)}>
+          <label htmlFor="profile-network" className="mb-1 block text-sm font-semibold text-muted">Preferred network</label>
+          <select id="profile-network" name="preferredChain" className={inputClass} value={preferredChain} onChange={(e) => setPreferredChain(e.target.value as ChainKey)}>
             <option value="polygon">Polygon</option>
             <option value="bnb">BNB Chain</option>
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold text-muted">Timezone</label>
-          <input className={inputClass} value={timezone} onChange={(e) => setTimezone(e.target.value)} placeholder="e.g., Asia/Jakarta" />
+          <label htmlFor="profile-timezone" className="mb-1 block text-sm font-semibold text-muted">Timezone</label>
+          <input id="profile-timezone" name="timezone" autoComplete="off" className={inputClass} value={timezone} onChange={(e) => setTimezone(e.target.value)} placeholder="e.g., Asia/Jakarta" />
         </div>
       </div>
 

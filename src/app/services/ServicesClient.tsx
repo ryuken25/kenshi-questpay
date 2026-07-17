@@ -140,7 +140,7 @@ export default function ServicesClient() {
         </div>
 
         {/* Toolbar: search + sort */}
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-5 grid gap-3 sm:grid-cols-[minmax(0,320px)_auto] sm:items-center sm:justify-between">
           {/* Search */}
           <div className="relative flex-1 sm:max-w-xs">
             <Search
@@ -153,12 +153,12 @@ export default function ServicesClient() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search services…"
               aria-label="Search services"
-              className="w-full rounded-xl border border-white/10 bg-[var(--qp-surface)] py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-subtle focus:border-[var(--qp-violet-500)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--qp-violet-500)]/30"
+              className="min-h-12 w-full rounded-xl border border-white/10 bg-[var(--qp-surface)] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-subtle focus:border-[var(--qp-violet-500)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--qp-focus-ring)] sm:text-sm"
             />
           </div>
 
           {/* Sort dropdown */}
-          <div className="flex items-center gap-2">
+          <div className="flex min-h-12 items-center gap-2 rounded-xl border border-white/10 bg-[var(--qp-surface)] pl-3">
             <SlidersHorizontal size={16} className="text-subtle" />
             <label htmlFor="sort-select" className="sr-only">
               Sort services
@@ -167,7 +167,7 @@ export default function ServicesClient() {
               id="sort-select"
               value={sortKey}
               onChange={(e) => setSortKey(e.target.value as SortKey)}
-              className="rounded-xl border border-white/10 bg-[var(--qp-surface)] px-3 py-2.5 text-sm font-medium text-secondary focus:border-[var(--qp-violet-500)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--qp-violet-500)]/30"
+              className="min-h-12 flex-1 rounded-xl bg-transparent px-1 pr-3 text-base font-medium text-secondary focus:outline-none sm:text-sm"
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value} className="bg-[var(--qp-black-100)] text-white">
@@ -199,6 +199,8 @@ export default function ServicesClient() {
             );
           })}
         </div>
+
+        <p className="sr-only" aria-live="polite">{filtered.length} services shown</p>
 
         {/* Content: loading skeleton / empty state / grid */}
         {loading ? (
@@ -236,7 +238,7 @@ function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
+      className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
         active
           ? "border-[var(--qp-violet-500)]/50 bg-[var(--qp-violet-500)]/20 text-white"
           : "border-white/10 bg-[var(--qp-surface)] text-subtle hover:border-white/20 hover:text-secondary"
@@ -260,7 +262,7 @@ function Chip({
 function ServiceCard({ svc }: { svc: ServicePackage }) {
   const category = deriveCategory(svc);
   return (
-    <div className="group flex flex-col rounded-[1.5rem] p-6 glass-panel transition-all duration-300 hover:border-[var(--qp-violet-500)]/30 hover:bg-[var(--qp-surface-hover)]">
+    <article className="group flex flex-col rounded-[1.5rem] p-5 glass-panel transition-all duration-300 hover:border-[var(--qp-violet-500)]/30 hover:bg-[var(--qp-surface-hover)] sm:p-6">
       {/* Top row: category badge + price */}
       <div className="flex items-start justify-between gap-3">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[var(--qp-surface)] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-secondary">
@@ -292,7 +294,7 @@ function ServiceCard({ svc }: { svc: ServicePackage }) {
           {svc.delivery}
         </span>
         <span className="text-subtle">·</span>
-        <div className="flex flex-wrap items-center gap-1">
+        <div className="hidden flex-wrap items-center gap-1 sm:flex">
           {ENABLED_TOKEN_SYMBOLS.map((sym) => (
             <span
               key={sym}
@@ -311,7 +313,7 @@ function ServiceCard({ svc }: { svc: ServicePackage }) {
       >
         View package
       </Link>
-    </div>
+    </article>
   );
 }
 

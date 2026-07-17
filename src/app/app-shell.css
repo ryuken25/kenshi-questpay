@@ -452,8 +452,16 @@
   /* Sticky CTA should sit above bottom nav */
   .qp-sticky-cta {
     position: sticky;
-    bottom: var(--qp-mobile-nav-height);
+    bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
     z-index: 40;
+  }
+  .qp-checkout-actions {
+    position: sticky;
+    bottom: calc(var(--qp-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+    z-index: 40;
+    margin-inline: -0.25rem;
+    padding: 0.5rem 0.25rem;
+    background: linear-gradient(to bottom, transparent, rgba(5, 5, 10, .96) 28%);
   }
   /* Forms: prevent zoom on iOS by keeping font-size ≥16px */
   input, select, textarea { font-size: 16px !important; }

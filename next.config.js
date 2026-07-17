@@ -20,7 +20,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https:",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https://analytics.vgdh.io https://cca-lite.coinbase.com https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com",
+      "connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://analytics.vgdh.io https://cca-lite.coinbase.com https://*.walletconnect.com https://*.walletconnect.org https://polygon-rpc.com https://polygon-bor-rpc.publicnode.com https://api.coingecko.com https://*.supabase.co https://accounts.google.com",
       "frame-src 'self' https://verify.walletconnect.org https://verify.walletconnect.com https://accounts.google.com",
       "object-src 'none'",
       "base-uri 'self'",

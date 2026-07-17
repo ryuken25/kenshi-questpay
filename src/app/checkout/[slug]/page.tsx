@@ -41,10 +41,10 @@ export default async function CheckoutPage({ params }: Props) {
   return (
     <Web3Provider>
       <div className="min-screen-safe pt-6">
-        <section className="px-4 py-14 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl">
+        <section className="px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+          <div className="mx-auto max-w-2xl pb-6">
             <div className="mb-6">
-              <Link href={`/services/${svc.slug}`} className="text-xs text-[var(--qp-text-subtle)] hover:text-[var(--qp-text-secondary)]">← {svc.name}</Link>
+              <Link href={`/services/${svc.slug}`} className="inline-flex min-h-11 items-center text-sm font-medium text-subtle hover:text-secondary">← Back to {svc.name}</Link>
             </div>
             <CheckoutBriefForm
               service={svc}

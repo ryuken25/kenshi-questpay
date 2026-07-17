@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { LockKeyhole, ShieldCheck, ClipboardList, Link2, Mail, MessageSquare, ChevronRight, Check, Eye, EyeOff } from "lucide-react";
+import { ShieldCheck, Link2, ChevronRight, Check, Clock3, LockKeyhole } from "lucide-react";
 import AuthModal from "@/components/auth/AuthModal";
 import type { ServicePackage } from "@/lib/services";
 import { ENABLED_TOKEN_SYMBOLS } from "@/lib/token-metadata";
@@ -69,7 +67,6 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
   profileEmail?: string;
   profileName?: string;
 }) {
-  const router = useRouter();
   const [step, setStep] = useState<Step>("project");
   const [authOpen, setAuthOpen] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
@@ -115,8 +112,15 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
     setValues((prev) => ({ ...prev, [key]: val }));
   };
 
-  const canProceedProject = values.projectGoal.trim().length >= 10;
-  const canProceedDetails = values.contactValue.trim().length >= 3;
+  const goalLength = values.projectGoal.trim().length;
+  const canProceedProject = goalLength >= 10;
+  const contactValue = values.contactValue.trim();
+  const canProceedDetails = values.contactMethod === "email"
+    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactValue)
+    : values.contactMethod === "telegram"
+      ? /^@[A-Za-z0-9_]{5,}$/.test(contactValue)
+      : contactValue.length >= 3;
+  const minDeadline = new Date().toISOString().slice(0, 10);
 
   const handleReview = () => {
     if (!authenticated) {
@@ -148,31 +152,38 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
   ];
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl rounded-[1.75rem] border border-[var(--qp-border-soft)] bg-[linear-gradient(180deg,rgba(12,11,20,.96),rgba(5,5,10,.98))] p-4 shadow-[0_28px_80px_rgba(0,0,0,.32)] sm:p-7">
+      <div className="mb-6 flex items-start gap-3 border-b border-[var(--qp-border-faint)] pb-5">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-[var(--qp-border-default)] bg-[rgba(135,82,255,.12)] text-[var(--qp-violet-300)]"><LockKeyhole size={18} /></span>
+        <div>
+          <p className="font-sora text-lg font-bold text-white">Start your private brief</p>
+          <p className="mt-1 text-sm leading-6 text-muted">Three quick steps. Your draft saves automatically on this device.</p>
+        </div>
+      </div>
       {/* Step indicator */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className="mb-6 flex items-center gap-1.5" aria-label="Checkout progress">
         {steps.map((s, i) => (
-          <div key={s.id} className="flex items-center gap-2">
-            <div className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium ${step === s.id ? "bg-[var(--qp-violet-soft)] text-[var(--qp-violet-200)]" : "text-[var(--qp-text-subtle)]"}`}>
-              <span className={`grid size-5 place-items-center rounded-full text-[10px] ${step === s.id ? "bg-[var(--qp-violet-500)] text-white" : "bg-[var(--qp-surface)] text-[var(--qp-text-subtle)]"}`}>{i + 1}</span>
-              {s.label}
+          <div key={s.id} className="flex min-w-0 flex-1 items-center gap-1.5">
+            <div aria-current={step === s.id ? "step" : undefined} className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-semibold sm:px-3 ${step === s.id ? "border-[var(--qp-border-strong)] bg-[rgba(135,82,255,.16)] text-[var(--qp-violet-200)]" : "border-transparent text-[var(--qp-text-subtle)]"}`}>
+              <span className={`grid size-5 shrink-0 place-items-center rounded-full text-[10px] ${step === s.id ? "bg-[var(--qp-violet-500)] text-white" : "bg-[var(--qp-surface-raised)] text-[var(--qp-text-subtle)]"}`}>{i + 1}</span>
+              <span className="truncate max-[360px]:sr-only">{s.label}</span>
             </div>
-            {i < steps.length - 1 && <ChevronRight size={14} className="text-[var(--qp-text-subtle)]" />}
+            {i < steps.length - 1 && <ChevronRight size={13} className="shrink-0 text-[var(--qp-text-subtle)]" />}
           </div>
         ))}
-        {savedAt && <span className="ml-auto text-[10px] text-[var(--qp-text-faint)]">Saved {savedAt}</span>}
       </div>
+      {savedAt && <p role="status" className="-mt-3 mb-5 flex items-center justify-end gap-1 text-[11px] text-subtle"><Check size={12} /> Draft saved {savedAt}</p>}
 
       {/* Service summary */}
-      <div className="mb-6 rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4">
+      <div className="mb-6 rounded-2xl border border-[var(--qp-border-default)] bg-[rgba(135,82,255,.06)] p-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-sora text-lg font-bold text-white">{service.name}</h2>
-            <p className="text-xs text-[var(--qp-text-muted)] mt-0.5">{service.delivery} · {service.revisions} revisions</p>
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><Clock3 size={13} /> {service.delivery} · {service.revisions} revisions</p>
           </div>
           <div className="text-right">
             <p className="font-mono text-xl font-black text-white">${service.usd}</p>
-            <p className="text-[10px] text-[var(--qp-text-subtle)]">{ENABLED_TOKEN_SYMBOLS.join(", ")}</p>
+            <p className="text-[10px] text-subtle">from · {ENABLED_TOKEN_SYMBOLS.join(", ")}</p>
           </div>
         </div>
       </div>
@@ -181,7 +192,7 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
       {step === "project" && (
         <div className="space-y-5">
           <div>
-            <label className={labelClass} htmlFor="goal">What should this service help you achieve?</label>
+            <label className={labelClass} htmlFor="goal">What should this service help you achieve? <span className="text-[var(--qp-danger)]">*</span></label>
             <textarea
               id="goal"
               className={`${inputClass} min-h-[120px] resize-y`}
@@ -189,8 +200,13 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
               value={values.projectGoal}
               onChange={(e) => update("projectGoal", e.target.value)}
               maxLength={2000}
+              required
+              aria-describedby="goal-help goal-count"
             />
-            <p className="mt-1 text-[11px] text-[var(--qp-text-subtle)]">Your brief stays private and is not written on-chain.</p>
+            <div className="mt-1 flex items-start justify-between gap-3 text-[11px] text-subtle">
+              <p id="goal-help">Be specific about the outcome. Your brief stays private.</p>
+              <p id="goal-count" className={goalLength > 0 && goalLength < 10 ? "shrink-0 text-amber-300" : "shrink-0"}>{goalLength}/10 min</p>
+            </div>
           </div>
           <div>
             <label className={labelClass} htmlFor="link">Project link or reference</label>
@@ -218,17 +234,15 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
             </div>
             <div>
               <label className={labelClass} htmlFor="deadline">Desired deadline (optional)</label>
-              <input id="deadline" type="date" className={inputClass} value={values.deadline} onChange={(e) => update("deadline", e.target.value)} />
+              <input id="deadline" type="date" min={minDeadline} className={inputClass} value={values.deadline} onChange={(e) => update("deadline", e.target.value)} />
             </div>
           </div>
-          <button
-            type="button"
-            disabled={!canProceedProject}
-            onClick={() => setStep("details")}
-            className="qp-button qp-button--primary w-full min-h-[50px] disabled:opacity-40"
-          >
-            Continue
-          </button>
+          <div className="qp-checkout-actions">
+            <button ref={triggerRef} type="button" disabled={!canProceedProject} onClick={() => setStep("details")} aria-describedby={!canProceedProject ? "project-cta-help" : undefined} className="qp-button qp-button--primary w-full min-h-[50px] disabled:opacity-45">
+              Continue to contact details
+            </button>
+            {!canProceedProject && <p id="project-cta-help" className="mt-2 text-center text-xs text-subtle">Add at least 10 characters so the creator understands the goal.</p>}
+          </div>
         </div>
       )}
 
@@ -244,17 +258,25 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
             </select>
           </div>
           <div>
-            <label className={labelClass} htmlFor="contact-value">Contact value</label>
+            <label className={labelClass} htmlFor="contact-value">Contact value <span className="text-[var(--qp-danger)]">*</span></label>
             <input
               id="contact-value"
               className={inputClass}
               placeholder={values.contactMethod === "email" ? "you@example.com" : values.contactMethod === "telegram" ? "@username" : "username#0000"}
               value={values.contactValue}
               onChange={(e) => update("contactValue", e.target.value)}
+              type={values.contactMethod === "email" ? "email" : "text"}
+              inputMode={values.contactMethod === "email" ? "email" : "text"}
+              autoComplete={values.contactMethod === "email" ? "email" : "off"}
+              required
+              aria-describedby="contact-help"
             />
             {profileEmail && values.contactMethod === "email" && (
               <p className="mt-1 text-[11px] text-[var(--qp-text-subtle)]">Prefilled from your profile</p>
             )}
+            <p id="contact-help" className={`mt-1 text-[11px] ${contactValue && !canProceedDetails ? "text-amber-300" : "text-subtle"}`}>
+              {values.contactMethod === "telegram" ? "Use your public username, for example @yourname." : values.contactMethod === "email" ? "We only use this for order updates." : "Use the username the creator should contact."}
+            </p>
           </div>
           <div>
             <label className={labelClass} htmlFor="extra">Extra context (optional)</label>
@@ -267,13 +289,13 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
               maxLength={1000}
             />
           </div>
-          <div className="flex gap-3">
+          <div className="qp-checkout-actions flex gap-3">
             <button type="button" onClick={() => setStep("project")} className="qp-button qp-button--secondary min-h-[50px] px-6">Back</button>
             <button
               type="button"
               disabled={!canProceedDetails}
               onClick={handleReview}
-              className="qp-button qp-button--primary flex-1 min-h-[50px] disabled:opacity-40"
+              className="qp-button qp-button--primary flex-1 min-h-[50px] disabled:opacity-45"
             >
               {authenticated ? "Review" : "Save & Sign In"}
             </button>
@@ -287,7 +309,7 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
           <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-[var(--qp-border-faint)] pb-2">
               <h3 className="font-sora text-sm font-bold text-white">Review your brief</h3>
-              <button onClick={() => setStep("project")} className="text-xs text-[var(--qp-violet-300)] hover:underline">Edit</button>
+              <button type="button" onClick={() => setStep("project")} className="text-xs text-[var(--qp-violet-300)] hover:underline">Edit</button>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-wide text-[var(--qp-text-subtle)]">Project goal</p>
@@ -319,7 +341,7 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
           </div>
 
           {/* Submit to original CheckoutForm by redirecting to the actual order creation */}
-          <form action={`/api/orders`} method="POST">
+          <form action={`/api/orders`} method="POST" className="qp-checkout-actions">
             <input type="hidden" name="serviceSlug" value={service.slug} />
             <input type="hidden" name="projectGoal" value={values.projectGoal} />
             <input type="hidden" name="projectLink" value={values.projectLink} />

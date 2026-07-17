@@ -98,14 +98,14 @@ export default function OnboardingForm({ next, initialDisplayName }: { next: str
 
       {step === 1 ? (
         <div className="space-y-4">
-          <Field label="Display name" required>
-            <input className={inputClass} value={form.displayName} onChange={(e) => update("displayName", e.target.value)} placeholder="How should we address you?" autoFocus />
+          <Field label="Display name" htmlFor="onboarding-display-name" required>
+            <input id="onboarding-display-name" name="displayName" autoComplete="name" required minLength={2} className={inputClass} value={form.displayName} onChange={(e) => update("displayName", e.target.value)} placeholder="How should we address you?" autoFocus />
           </Field>
-          <Field label="Public handle" hint="Optional — shown on public receipts if you choose.">
-            <input className={inputClass} value={form.publicHandle} onChange={(e) => update("publicHandle", e.target.value)} placeholder="@yourhandle" />
+          <Field label="Public handle" htmlFor="onboarding-public-handle" hint="Optional — shown on public receipts if you choose.">
+            <input id="onboarding-public-handle" name="publicHandle" autoComplete="username" className={inputClass} value={form.publicHandle} onChange={(e) => update("publicHandle", e.target.value)} placeholder="@yourhandle" />
           </Field>
-          <Field label="Organization / studio" hint="Optional">
-            <input className={inputClass} value={form.organization} onChange={(e) => update("organization", e.target.value)} placeholder="Optional" />
+          <Field label="Organization / studio" htmlFor="onboarding-organization" hint="Optional">
+            <input id="onboarding-organization" name="organization" autoComplete="organization" className={inputClass} value={form.organization} onChange={(e) => update("organization", e.target.value)} placeholder="Optional" />
           </Field>
           <button type="button" onClick={goNext} disabled={!step1Valid} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-verse-purple px-5 font-black text-white disabled:opacity-40">
             Continue <ArrowRight size={18} />
@@ -113,24 +113,24 @@ export default function OnboardingForm({ next, initialDisplayName }: { next: str
         </div>
       ) : (
         <div className="space-y-4">
-          <Field label="Contact method" required>
-            <select className={inputClass} value={form.contactMethod} onChange={(e) => update("contactMethod", e.target.value as ContactMethod)}>
+          <Field label="Contact method" htmlFor="onboarding-contact-method" required>
+            <select id="onboarding-contact-method" name="contactMethod" className={inputClass} value={form.contactMethod} onChange={(e) => update("contactMethod", e.target.value as ContactMethod)}>
               {CONTACT_METHODS.map((m) => (
                 <option key={m} value={m}>{CONTACT_METHOD_LABELS[m]}</option>
               ))}
             </select>
           </Field>
-          <Field label="Contact value" required>
-            <input className={inputClass} value={form.contactValue} onChange={(e) => update("contactValue", e.target.value)} placeholder="user#1234, @handle, email@example.com" autoFocus />
+          <Field label="Contact value" htmlFor="onboarding-contact-value" required>
+            <input id="onboarding-contact-value" name="contactValue" required minLength={3} autoComplete={form.contactMethod === "email" ? "email" : "off"} className={inputClass} value={form.contactValue} onChange={(e) => update("contactValue", e.target.value)} placeholder="user#1234, @handle, email@example.com" autoFocus />
           </Field>
-          <Field label="Preferred network" required>
-            <select className={inputClass} value={form.preferredChain} onChange={(e) => update("preferredChain", e.target.value as ChainKey)}>
+          <Field label="Preferred network" htmlFor="onboarding-network" required>
+            <select id="onboarding-network" name="preferredChain" className={inputClass} value={form.preferredChain} onChange={(e) => update("preferredChain", e.target.value as ChainKey)}>
               <option value="polygon">Polygon</option>
               <option value="bnb">BNB Chain</option>
             </select>
           </Field>
-          <Field label="Timezone" hint="Optional — helps creators know when you're around.">
-            <input className={inputClass} value={form.timezone} onChange={(e) => update("timezone", e.target.value)} placeholder="e.g., Asia/Jakarta" />
+          <Field label="Timezone" htmlFor="onboarding-timezone" hint="Optional — helps creators know when you're around.">
+            <input id="onboarding-timezone" name="timezone" autoComplete="off" className={inputClass} value={form.timezone} onChange={(e) => update("timezone", e.target.value)} placeholder="e.g., Asia/Jakarta" />
           </Field>
 
           {error ? <div className="rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-200">{error}</div> : null}
@@ -149,10 +149,10 @@ export default function OnboardingForm({ next, initialDisplayName }: { next: str
   );
 }
 
-function Field({ label, required = false, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
+function Field({ label, htmlFor, required = false, hint, children }: { label: string; htmlFor: string; required?: boolean; hint?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1 flex items-center justify-between text-sm font-semibold text-muted">
+      <label htmlFor={htmlFor} className="mb-1 flex items-center justify-between text-sm font-semibold text-muted">
         <span>{label} {required ? <span className="text-red-400">*</span> : null}</span>
       </label>
       {children}

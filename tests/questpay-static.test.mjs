@@ -140,7 +140,7 @@ test('hero uses one true-3D R3F scene with physical depth, XYZ medallions and fa
   assert.match(canvas, /AdaptiveDpr/);
   assert.match(cube, /colorWrite=\{false\}/);
   assert.match(cube, /meshPhysicalMaterial/);
-  assert.match(cube, /verse-mark-purple-512\.png/);
+  assert.match(cube, /questpay-mark-512\.png/);
   assert.match(cube, /SurfaceFractures/);
   assert.match(curve, /CatmullRomCurve3[\s\S]*arcLengthDivisions[\s\S]*updateArcLengths/);
   assert.match(orbits, /getPointAt[\s\S]*position\.copy/);
@@ -170,7 +170,7 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   assert.match(config, /id: "usdc"[\s\S]*phase: \(3 \* Math\.PI\) \/ 2/);
   assert.match(config, /radius: \[2\.45, 1\.18, 1\.58\]/);
   assert.match(config, /size: \.24/);
-  assert.match(cube, /verse-mark-purple-512\.png/);
+  assert.match(cube, /questpay-mark-512\.png/);
   assert.match(cube, /RoundedBox/);
   assert.match(cube, /radius=\{\.055\}/);
   assert.match(cube, /bevelSegments=\{2\}/);
@@ -190,8 +190,8 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   assert.match(scene, /mobile \? \.92 : \.84/);
   assert.match(scene, /cubeScale = mobile \? \.82/);
   assert.match(scene, /EffectComposer/);
-  assert.match(scene, /Bloom intensity=\{1\.35\}/);
-  assert.match(scene, /luminanceThreshold=\{\.46\}/);
+  assert.match(scene, /Bloom intensity=\{0\.85\}/);
+  assert.match(scene, /luminanceThreshold=\{\.55\}/);
   assert.match(read('src/components/home/hero3d/OrbitSystem.tsx'), /mobile \? \.88 : 1\.15/);
   const medallion = read('src/components/home/hero3d/TokenMedallion.tsx');
   assert.doesNotMatch(medallion, /rotation\.y \+=/);
@@ -245,11 +245,15 @@ test('order creation API rejects unauthenticated and incomplete-profile requests
   assert.ok(authGateIndex !== -1 && quoteIndex !== -1 && authGateIndex < quoteIndex);
 });
 
-test('checkout page gates anonymous and incomplete-profile sessions server-side', () => {
+test('checkout lets guests draft privately, requires auth before review, and redirects incomplete profiles', () => {
   const checkout = read('src/app/checkout/[slug]/page.tsx');
+  const brief = read('src/components/checkout/CheckoutBriefForm.tsx');
   assert.match(checkout, /getSession\(\)/);
-  assert.match(checkout, /CheckoutAuthGate/);
+  assert.match(checkout, /authenticated=\{Boolean\(session\)\}/);
   assert.match(checkout, /redirect\(`\/onboarding/);
+  assert.match(brief, /if \(!authenticated\)/);
+  assert.match(brief, /setAuthOpen\(true\)/);
+  assert.match(brief, /<AuthModal/);
 });
 
 test('profile migration and APIs never trust a client-supplied account_id', () => {
