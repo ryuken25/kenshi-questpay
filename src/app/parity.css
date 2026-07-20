@@ -102,8 +102,8 @@ body {
   min-height: 470px;
   display: grid;
   place-items: center;
-  overflow: visible;          /* prevent right-side medallion clipping */
-  margin-right: -40px;        /* let the 3D scene breathe past the grid edge */
+  overflow: visible;
+  margin-right: -16px; /* subtle only; avoid aggressive off-canvas shift */
 }
 .qp-powered-badge {
   display: inline-flex;
