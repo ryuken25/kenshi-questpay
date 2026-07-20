@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import CreatorApplicationForm from "@/components/studio/CreatorApplicationForm";
+import { getPendingApplication, listApplicationsForAccount } from "@/lib/studio/store";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +21,9 @@ export default async function RequestCreatorPage({
   if (isCreator) redirect("/studio");
 
   const submitted = searchParams?.submitted === "1";
+  const pending = await getPendingApplication(session.accountId);
+  const history = await listApplicationsForAccount(session.accountId);
+  const showSuccess = submitted || Boolean(pending);
 
   return (
     <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
@@ -28,18 +33,37 @@ export default async function RequestCreatorPage({
         </p>
         <h1 className="mt-3 font-sora text-3xl font-black sm:text-4xl">Request to be a Creator</h1>
         <p className="mt-4 text-base leading-7 text-[var(--qp-text-secondary)]">
-          Submit an application for Creator Studio access. Admins review requests and grant the{" "}
+          Submit an application for Creator Studio access. Super admins review requests and grant the{" "}
           <span className="font-semibold text-white">creator</span> role. Until approved you keep full
           buyer access (orders, receipts, verify).
         </p>
 
-        {submitted ? (
+        {showSuccess ? (
           <div className="mt-8 rounded-[2rem] border border-green-400/25 bg-green-400/10 p-6">
-            <h2 className="font-sora text-xl font-black text-green-100">Application received</h2>
+            <h2 className="font-sora text-xl font-black text-green-100">
+              {pending ? "Application pending review" : "Application received"}
+            </h2>
             <p className="mt-3 text-sm leading-6 text-green-50/90">
-              Thanks — your request is queued for admin review. You&apos;ll get creator access once a
-              super admin approves your account. Buyer tools stay available in the meantime.
+              {pending
+                ? "Your request is queued for admin review. You'll get creator access once a super admin approves your account. Buyer tools stay available in the meantime."
+                : "Thanks — your request is queued for admin review. You'll get creator access once a super admin approves your account. Buyer tools stay available in the meantime."}
             </p>
+            {pending && (
+              <dl className="mt-4 grid gap-2 text-sm text-green-50/90">
+                <div>
+                  <dt className="text-xs uppercase tracking-wider text-green-100/70">Display name</dt>
+                  <dd className="font-semibold">{pending.displayName}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wider text-green-100/70">Craft</dt>
+                  <dd className="font-semibold">{pending.craft}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wider text-green-100/70">Submitted</dt>
+                  <dd className="font-semibold">{new Date(pending.createdAt).toLocaleString()}</dd>
+                </div>
+              </dl>
+            )}
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/my-orders"
@@ -56,80 +80,33 @@ export default async function RequestCreatorPage({
             </div>
           </div>
         ) : (
-          <form
-            className="mt-8 space-y-4 rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-6"
-            action="/studio/request"
-            method="get"
-          >
-            <input type="hidden" name="submitted" value="1" />
+          <CreatorApplicationForm />
+        )}
 
-            <label className="block">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted">Display name</span>
-              <input
-                name="displayName"
-                required
-                placeholder="How buyers should know you"
-                className="mt-2 min-h-12 w-full rounded-xl border border-white/10 bg-[rgba(8,8,14,.72)] px-4 text-base outline-none focus:border-[var(--qp-violet-500)]"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted">
-                Primary craft / services
-              </span>
-              <input
-                name="craft"
-                required
-                placeholder="e.g. UI review, landing polish, component builds"
-                className="mt-2 min-h-12 w-full rounded-xl border border-white/10 bg-[rgba(8,8,14,.72)] px-4 text-base outline-none focus:border-[var(--qp-violet-500)]"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted">
-                Portfolio / proof link
-              </span>
-              <input
-                name="portfolio"
-                type="url"
-                placeholder="https://"
-                className="mt-2 min-h-12 w-full rounded-xl border border-white/10 bg-[rgba(8,8,14,.72)] px-4 text-base outline-none focus:border-[var(--qp-violet-500)]"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted">
-                Why you want Creator Studio
-              </span>
-              <textarea
-                name="note"
-                required
-                rows={5}
-                placeholder="Brief pitch, typical delivery window, and payout wallet readiness."
-                className="mt-2 w-full rounded-xl border border-white/10 bg-[rgba(8,8,14,.72)] px-4 py-3 text-base outline-none focus:border-[var(--qp-violet-500)]"
-              />
-            </label>
-
-            <label className="flex items-start gap-3 rounded-xl border border-white/10 bg-[rgba(8,8,14,.45)] p-4 text-sm leading-6 text-[var(--qp-text-secondary)]">
-              <input type="checkbox" name="agree" required className="mt-1" />
-              <span>
-                I understand QuestPay uses temporary custody → buyer accept → server release, and I will
-                only mark work submitted after delivering the agreed scope.
-              </span>
-            </label>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button type="submit" className="min-h-12 flex-1 rounded-2xl bg-verse-purple px-6 font-black">
-                Submit application
-              </button>
-              <Link
-                href="/for-creators"
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-white/10 px-6 font-bold text-[var(--qp-text-secondary)] hover:bg-white/5"
-              >
-                Learn more
-              </Link>
-            </div>
-          </form>
+        {history.some((a) => a.status !== "pending") && (
+          <section className="mt-8 rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5">
+            <h2 className="font-sora text-lg font-black">Previous applications</h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              {history
+                .filter((a) => a.status !== "pending")
+                .map((a) => (
+                  <li
+                    key={a.id}
+                    className="flex items-center justify-between gap-3 rounded-xl bg-[rgba(8,8,14,.55)] px-4 py-3"
+                  >
+                    <span>
+                      <b className="capitalize">{a.status}</b>
+                      <span className="ml-2 text-muted">
+                        {new Date(a.createdAt).toLocaleDateString()}
+                      </span>
+                    </span>
+                    {a.reviewNote && (
+                      <span className="truncate text-xs text-muted">{a.reviewNote}</span>
+                    )}
+                  </li>
+                ))}
+            </ul>
+          </section>
         )}
 
         <p className="mt-6 text-center text-sm text-muted">

@@ -67,3 +67,29 @@ Verification requires exact match of:
 - `POST /api/orders` accepts idempotency key
 - Payment verification is transactional
 - Duplicate tx hash rejected by unique constraint
+
+---
+
+## Migration: `supabase/migrations/20260721_questpay_v8_creator_applications_products.sql`
+
+### `creator_applications`
+- `id` — UUID primary key
+- `account_id` — FK to accounts (applicant)
+- `display_name`, `craft`, `portfolio_url`, `note` — application payload
+- `status` — `pending | approved | rejected | withdrawn`
+- `reviewed_by`, `reviewed_at`, `review_note` — super_admin review
+- Unique partial index: one `pending` application per account
+- API: `GET/POST /api/studio/applications`, `GET/PATCH /api/studio/applications/[id]`
+- Approving grants `creator` role on `account_roles` and writes `admin_audit_log`
+
+### `creator_services` (products)
+- `id` — UUID primary key
+- `creator_account_id` — FK to accounts (owner)
+- `slug` — unique per creator (kebab-case)
+- `title`, `description`, `outcome`, `usd_price`, `delivery`, `revisions`
+- `status` — `draft | active | paused | archived`
+- `sort_order`, timestamps
+- API: `GET/POST /api/studio/products`, `GET/PATCH/DELETE /api/studio/products/[id]`
+- DELETE soft-archives (`status = archived`)
+- Role guards: creator (own rows) or super_admin; Zod validation on write paths
+- In-process memory fallback when Supabase tables are not yet migrated

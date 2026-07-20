@@ -58,3 +58,73 @@ export const profileSchema = z.object({
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;
+
+/* ── Creator applications (vNext Studio) ───────────────────────────── */
+
+export const creatorApplicationStatusEnum = z.enum([
+  "pending",
+  "approved",
+  "rejected",
+  "withdrawn",
+]);
+
+export const createCreatorApplicationSchema = z.object({
+  displayName: z.string().trim().min(2, "Display name is required (min 2 chars)").max(80),
+  craft: z.string().trim().min(2, "Craft / services is required").max(200),
+  portfolioUrl: z
+    .string()
+    .trim()
+    .url("Portfolio must be a valid URL")
+    .max(500)
+    .optional()
+    .or(z.literal("")),
+  note: z.string().trim().min(20, "Tell us a bit more (min 20 chars)").max(2000),
+  agree: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the custody / delivery terms" }),
+  }),
+});
+
+export type CreateCreatorApplicationInput = z.infer<typeof createCreatorApplicationSchema>;
+
+export const reviewCreatorApplicationSchema = z.object({
+  status: z.enum(["approved", "rejected"]),
+  reviewNote: z.string().trim().max(1000).optional().or(z.literal("")),
+});
+
+export type ReviewCreatorApplicationInput = z.infer<typeof reviewCreatorApplicationSchema>;
+
+/* ── Creator products / services (vNext Studio) ────────────────────── */
+
+export const creatorServiceStatusEnum = z.enum(["draft", "active", "paused", "archived"]);
+
+const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export const createCreatorServiceSchema = z.object({
+  title: z.string().trim().min(2).max(120),
+  slug: z
+    .string()
+    .trim()
+    .min(2)
+    .max(80)
+    .regex(slugRegex, "Slug must be lowercase kebab-case (a-z, 0-9, hyphens)")
+    .optional(),
+  description: z.string().trim().min(10).max(2000),
+  outcome: z.string().trim().max(500).optional().or(z.literal("")),
+  usdPrice: z.coerce.number().min(0).max(100_000),
+  delivery: z.string().trim().min(1).max(120),
+  revisions: z.string().trim().min(1).max(120),
+  status: creatorServiceStatusEnum.optional().default("draft"),
+  sortOrder: z.coerce.number().int().min(0).max(10_000).optional().default(0),
+});
+
+export type CreateCreatorServiceInput = z.infer<typeof createCreatorServiceSchema>;
+
+export const updateCreatorServiceSchema = createCreatorServiceSchema.partial().extend({
+  title: z.string().trim().min(2).max(120).optional(),
+  description: z.string().trim().min(10).max(2000).optional(),
+  usdPrice: z.coerce.number().min(0).max(100_000).optional(),
+  delivery: z.string().trim().min(1).max(120).optional(),
+  revisions: z.string().trim().min(1).max(120).optional(),
+});
+
+export type UpdateCreatorServiceInput = z.infer<typeof updateCreatorServiceSchema>;

@@ -39,7 +39,7 @@ export default async function StudioDashboard() {
         <Metric label="Released / delivered" value={count("delivered", "completed", "released")} />
       </section>
       <section className="mt-6 grid gap-3 sm:grid-cols-3">
-        <QuickLink href="/studio/products" title="Products" body="Catalog packages & upcoming CRUD" />
+        <QuickLink href="/studio/products" title="Products" body="Custom packages + shared catalog CRUD" />
         <QuickLink href="/studio/orders" title="Studio Orders" body="Incoming briefs & status" />
         <QuickLink href="/studio/earnings" title="Earnings" body="Payout / release timeline" />
       </section>
