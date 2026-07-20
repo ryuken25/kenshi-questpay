@@ -69,7 +69,7 @@ body {
 
 .qp-home-hero {
   position: relative;
-  overflow: clip;
+  overflow: visible;          /* allow 3D glow/medallions to breathe past hero bounds */
   min-height: 620px;
   padding: clamp(28px, 4vw, 58px) 0 clamp(46px,5.4vw,84px);
 }
@@ -90,14 +90,21 @@ body {
 }
 @media (max-width: 1179px) {
   .qp-home-hero__grid { grid-template-columns: 1fr; gap: 24px; }
-  .qp-home-hero__visual { min-height: 360px; }
+  .qp-home-hero__visual { min-height: 360px; margin-right: 0; }
 }
 @media (max-width: 767px) {
   .qp-home-hero__grid { width: calc(100% - 32px); gap: 16px; }
-  .qp-home-hero__visual { min-height: 280px; }
+  .qp-home-hero__visual { min-height: 280px; margin-right: 0; }
 }
 .qp-home-hero__content { position: relative; z-index: 5; max-width: 570px; }
-.qp-home-hero__visual { position: relative; min-height: 470px; display: grid; place-items: center; }
+.qp-home-hero__visual {
+  position: relative;
+  min-height: 470px;
+  display: grid;
+  place-items: center;
+  overflow: visible;          /* prevent right-side medallion clipping */
+  margin-right: -40px;        /* let the 3D scene breathe past the grid edge */
+}
 .qp-powered-badge {
   display: inline-flex;
   align-items: center;

@@ -550,7 +550,7 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   -webkit-mask-image: radial-gradient(ellipse 70% 66% at 50% 50%, #000 38%, rgba(0,0,0,.95) 52%, rgba(0,0,0,.55) 68%, rgba(0,0,0,.18) 82%, transparent 96%);
   mask-image: radial-gradient(ellipse 70% 66% at 50% 50%, #000 38%, rgba(0,0,0,.95) 52%, rgba(0,0,0,.55) 68%, rgba(0,0,0,.18) 82%, transparent 96%);
 }
-.qp-hero3d--home { width: min(100%, 720px); height: clamp(440px, 38vw, 560px); }
+.qp-hero3d--home { width: min(100%, 760px); height: clamp(440px, 40vw, 580px); }
 .qp-hero3d canvas,
 .qp-hero3d__canvas {
   display: block;
@@ -758,11 +758,17 @@ body {
 .qp-hero-scene-wrap::after {
   content: '';
   position: absolute;
-  inset: -12%;
+  inset: -18% -22% -18% -8%;  /* looser on the right so medallions aren't clipped */
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 68% 64% at 50% 50%, transparent 40%, rgba(2, 2, 7, .22) 62%, rgba(2, 2, 7, .62) 82%, rgba(2, 2, 7, .96) 100%);
+    radial-gradient(
+      ellipse 72% 68% at 48% 50%,
+      transparent 38%,
+      rgba(2, 2, 7, 0.18) 58%,
+      rgba(2, 2, 7, 0.55) 78%,
+      rgba(2, 2, 7, 0.92) 100%
+    );
   opacity: 1;
 }
 

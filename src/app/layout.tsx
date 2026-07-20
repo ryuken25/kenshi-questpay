@@ -45,10 +45,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const buildSha = process.env.NEXT_PUBLIC_BUILD_SHA || process.env.VERCEL_GIT_COMMIT_SHA || "unknown";
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Vibe Coding With Verse (VCWV) required analytics tag */}
+        <script
+          defer
+          data-domain="kenshi-questpay.vercel.app"
+          src="https://analytics.vgdh.io/js/script.js"
+        />
+      </head>
       <body data-build-sha={buildSha} className="min-h-screen bg-[var(--qp-bg)] antialiased">
         <PublicAmbientBackground />
         <AppShell>{children}</AppShell>
-        <script defer data-domain="kenshi-questpay.vercel.app" src="https://analytics.vgdh.io/js/script.js" />
       </body>
     </html>
   );

@@ -40,10 +40,10 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
   // Responsive camera presets based on measured container aspect ratio
   const camera = useMemo(() => {
     if (variant === "signin") return { position: [0, 0, 7.8] as [number, number, number], fov: 35, near: .1, far: 40 };
-    // Wide: fov 36, distance 6.6 | Medium: fov 40, distance 7.0 | Narrow: fov 46, distance 7.8
-    if (aspect >= 1.35) return { position: [0, 0, 6.6] as [number, number, number], fov: 36, near: .1, far: 40 };
-    if (aspect >= 0.9) return { position: [0, 0, 7.0] as [number, number, number], fov: 40, near: .1, far: 40 };
-    return { position: [0, 0, 7.8] as [number, number, number], fov: 46, near: .1, far: 40 };
+    // Slightly farther camera so orbiting medallions stay inside the soft mask.
+    if (aspect >= 1.35) return { position: [0, 0, 6.9] as [number, number, number], fov: 36, near: .1, far: 40 };
+    if (aspect >= 0.9) return { position: [0, 0, 7.2] as [number, number, number], fov: 40, near: .1, far: 40 };
+    return { position: [0, 0, 8.0] as [number, number, number], fov: 46, near: .1, far: 40 };
   }, [aspect, variant]);
 
   // ResizeObserver for container-aware scaling

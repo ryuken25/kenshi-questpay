@@ -28,7 +28,7 @@ export default function QuestPayScene({
   return (
     <Suspense fallback={null}>
       <SceneLights quality={quality} />
-      <group scale={scale} position={variant === "signin" ? [0, -0.05, 0] : [0, 0, 0]}>
+      <group scale={scale} position={variant === "signin" ? [0, -0.05, 0] : [-0.35, 0, 0]}>
         <ParticleField mobile={compact} reducedMotion={reducedMotion} quality={quality} />
         <OrbitSystem mobile={compact} reducedMotion={reducedMotion} />
         <group scale={cubeScale}>
