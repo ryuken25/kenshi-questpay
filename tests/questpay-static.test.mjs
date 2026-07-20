@@ -168,7 +168,9 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   assert.match(config, /id: "usdt"[\s\S]*phase: 0/);
   assert.match(config, /id: "verse"[\s\S]*phase: Math\.PI \/ 2/);
   assert.match(config, /id: "usdc"[\s\S]*phase: \(3 \* Math\.PI\) \/ 2/);
-  assert.match(config, /radius: \[2\.45, 1\.18, 1\.58\]/);
+  // Tighter exterior orbits (pol/usdt/verse/usdc) — keep medallions close to the cube core.
+  assert.match(config, /radius: \[1\.95, 0\.98, 1\.28\]/);
+  assert.match(config, /radius: \[2\.15, 1\.24, 1\.4\]/);
   assert.match(config, /size: \.24/);
   assert.match(cube, /questpay-mark-512\.png/);
   assert.match(cube, /RoundedBox/);
@@ -186,12 +188,14 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   assert.match(orbitSystem, /mobile \? \.88 : 1\.15/);
   assert.match(orbitCurve, /haloGeometry/);
   assert.doesNotMatch(cube, /cube-front-verse-albedo/);
-  assert.match(particles, /mobile \? 42 : 96/);
-  assert.match(scene, /mobile \? \.92 : \.84/);
-  assert.match(scene, /cubeScale = mobile \? \.82/);
-  assert.match(scene, /EffectComposer/);
-  assert.match(scene, /Bloom intensity=\{0\.85\}/);
-  assert.match(scene, /luminanceThreshold=\{\.55\}/);
+  // Cleaner particle density (quality-aware) — avoid sparkle noise.
+  assert.match(particles, /mobile \? 18 : 36/);
+  assert.match(particles, /quality === "low" \? \(mobile \? 12 : 22\)/);
+  // Clean composition: no postprocessing composer / bloom component.
+  assert.match(scene, /mobile \? 0\.9 : 0\.88/);
+  assert.match(scene, /cubeScale = mobile \? 0\.9/);
+  assert.doesNotMatch(scene, /from ["']@react-three\/postprocessing["']/);
+  assert.doesNotMatch(scene, /<EffectComposer|<Bloom\b/);
   assert.match(read('src/components/home/hero3d/OrbitSystem.tsx'), /mobile \? \.88 : 1\.15/);
   const medallion = read('src/components/home/hero3d/TokenMedallion.tsx');
   assert.doesNotMatch(medallion, /rotation\.y \+=/);
@@ -243,6 +247,46 @@ test('order creation API rejects unauthenticated and incomplete-profile requests
   const authGateIndex = route.indexOf('status: 401');
   const quoteIndex = route.indexOf('createPaymentQuote(');
   assert.ok(authGateIndex !== -1 && quoteIndex !== -1 && authGateIndex < quoteIndex);
+});
+
+test('order create allocates unique 4-digit amount suffix and payment window expiry', () => {
+  const route = read('src/app/api/orders/route.ts');
+  const suffixLib = read('src/lib/payments/amount-suffix.ts');
+  const migration = read('supabase/migrations/20260721_questpay_v7_amount_suffix.sql');
+  const verifyRoute = read('src/app/api/orders/[publicOrderId]/verify-payment/route.ts');
+  const orderGet = read('src/app/api/orders/[publicOrderId]/route.ts');
+  const verifyLib = read('src/lib/verify-payment.ts');
+
+  assert.match(route, /createUniqueOrderAmount/);
+  assert.match(route, /amount_suffix:\s*suffixed\.amountSuffix/);
+  assert.match(route, /unique_amount_suffix:\s*suffixed\.amountSuffixPadded/);
+  assert.match(route, /amount_human:\s*suffixed\.amountHuman/);
+  assert.match(route, /amount_raw:\s*suffixed\.amountRaw/);
+  assert.match(route, /PAYMENT_WINDOW_SECONDS/);
+  assert.match(route, /payment_expires_at:\s*paymentExpiresAt/);
+
+  assert.match(suffixLib, /AMOUNT_SUFFIX_MIN = 1/);
+  assert.match(suffixLib, /AMOUNT_SUFFIX_MAX = 9999/);
+  assert.match(suffixLib, /awaiting_payment/);
+  assert.match(suffixLib, /status:\s*"cancelled"/);
+  assert.match(suffixLib, /order_cancelled_payment_expired/);
+  assert.match(suffixLib, /formatAmountWithUniqueSuffix/);
+
+  assert.match(migration, /amount_suffix integer/);
+  assert.match(migration, /unique_amount_suffix text/);
+  assert.match(migration, /idx_orders_active_unique_amount_suffix/);
+  assert.match(migration, /orders_active_payment_amount_unique/);
+  assert.match(migration, /payment_window_expired/);
+  assert.match(migration, /amount_mismatch/);
+  assert.match(migration, /work_submitted_at/);
+
+  assert.match(verifyRoute, /cancelOrderIfPaymentExpired/);
+  assert.match(verifyRoute, /amountRaw:\s*String\(order\.amount_raw\)/);
+  assert.match(verifyRoute, /status:\s*"cancelled"/);
+  assert.match(orderGet, /cancelOrderIfPaymentExpired/);
+  assert.match(orderGet, /paymentExpiresAt/);
+  assert.match(verifyLib, /value !== expectedRaw/);
+  assert.match(verifyLib, /transferredRaw !== expectedRaw/);
 });
 
 test('checkout lets guests draft privately, requires auth before review, and redirects incomplete profiles', () => {

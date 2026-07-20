@@ -546,11 +546,11 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   pointer-events: none;
   isolation: isolate;
   background: transparent !important;
-  /* Soft circular falloff — premium, not boxed */
-  -webkit-mask-image: radial-gradient(ellipse 68% 64% at 50% 50%, #000 40%, rgba(0,0,0,.92) 56%, rgba(0,0,0,.45) 72%, rgba(0,0,0,.12) 86%, transparent 98%);
-  mask-image: radial-gradient(ellipse 68% 64% at 50% 50%, #000 40%, rgba(0,0,0,.92) 56%, rgba(0,0,0,.45) 72%, rgba(0,0,0,.12) 86%, transparent 98%);
+  /* Soft circular falloff — avoid hard rectangular canvas edge */
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, #000 46%, rgba(0,0,0,.94) 62%, rgba(0,0,0,.4) 78%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, #000 46%, rgba(0,0,0,.94) 62%, rgba(0,0,0,.4) 78%, transparent 100%);
 }
-.qp-hero3d--home { width: min(100%, 720px); height: clamp(430px, 38vw, 560px); }
+.qp-hero3d--home { width: min(100%, 700px); height: clamp(420px, 36vw, 540px); }
 .qp-hero3d canvas,
 .qp-hero3d__canvas {
   display: block;

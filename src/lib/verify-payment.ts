@@ -6,13 +6,15 @@ import { NETWORKS, type ChainKey, type TokenConfig, type TokenSymbol } from "./s
 const TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef" as const;
 
-const MIN_CONFIRMATIONS = 3;
+const MIN_CONFIRMATIONS = Number(process.env.PAYMENT_MIN_CONFIRMATIONS || 3);
 
 export interface VerifyContext {
   chainKey: ChainKey;
   receiveAddress: string;
   token: TokenConfig;
   amountHuman: string;
+  /** Optional raw units; when set, preferred over re-parsing amountHuman. */
+  amountRaw?: string;
 }
 
 export interface VerifyResult {
@@ -34,6 +36,13 @@ function padAddr(addr: string): string {
   return `0x${addr.toLowerCase().replace(/^0x/, "").padStart(64, "0")}`;
 }
 
+function resolveExpectedRaw(ctx: VerifyContext): bigint {
+  if (ctx.amountRaw && /^\d+$/.test(ctx.amountRaw)) {
+    return BigInt(ctx.amountRaw);
+  }
+  return parseUnits(ctx.amountHuman, ctx.token.decimals);
+}
+
 /**
  * Server-authoritative payment verification.
  *
@@ -41,8 +50,8 @@ function padAddr(addr: string): string {
  * NOT from the client), verifies:
  *   1. tx exists and receipt status === success
  *   2. >= MIN_CONFIRMATIONS confirmations
- *   3. For native POL: tx.to === receiveAddress && tx.value >= expected
- *   4. For ERC-20: a Transfer event log matching token + receiver + amount
+ *   3. For native POL: tx.to === receiveAddress && tx.value === expected (exact)
+ *   4. For ERC-20: a Transfer event log matching token + receiver + exact amount
  *
  * Returns a sanitized receipt on success.
  */
@@ -60,7 +69,7 @@ export async function verifyPayment(
 
   const client = getChainClient(ctx.chainKey);
   const explorerBase = NETWORKS[ctx.chainKey].explorer;
-  const expectedRaw = parseUnits(ctx.amountHuman, ctx.token.decimals);
+  const expectedRaw = resolveExpectedRaw(ctx);
 
   // Fetch tx, receipt, and current block number in parallel
   const [tx, receipt, currentBlock] = await Promise.all([
@@ -102,10 +111,11 @@ export async function verifyPayment(
     if (txTo !== expectedTo) {
       return { ...base, reason: "Transaction recipient does not match the expected receive address." };
     }
-    if (value < expectedRaw) {
+    // vNext: exact amount match (unique 4-digit suffix) — not >=
+    if (value !== expectedRaw) {
       return {
         ...base,
-        reason: `Transaction value (${formatUnits(value, ctx.token.decimals)} ${ctx.token.symbol}) is less than expected (${ctx.amountHuman} ${ctx.token.symbol}).`,
+        reason: `Transaction value (${formatUnits(value, ctx.token.decimals)} ${ctx.token.symbol}) does not exactly match expected (${ctx.amountHuman} ${ctx.token.symbol}).`,
       };
     }
 
@@ -143,10 +153,11 @@ export async function verifyPayment(
   }
 
   const transferredRaw = BigInt(transferLog.data || "0x0");
-  if (transferredRaw < expectedRaw) {
+  // vNext: exact amount match (unique 4-digit suffix) — not >=
+  if (transferredRaw !== expectedRaw) {
     return {
       ...base,
-      reason: `${ctx.token.symbol} amount transferred is less than expected.`,
+      reason: `${ctx.token.symbol} amount transferred (${formatUnits(transferredRaw, ctx.token.decimals)}) does not exactly match expected (${ctx.amountHuman}).`,
     };
   }
 

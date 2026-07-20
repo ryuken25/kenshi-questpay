@@ -6,7 +6,15 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, X, LogOut, User as UserIcon, Menu } from "lucide-react";
-import { questPayNav, mobileMoreNav, groupLabels, type QuestPayRole, type QuestPayNavItem } from "./nav.config";
+import {
+  questPayNav,
+  mobileMoreNav,
+  groupLabels,
+  sessionRolesToNavRoles,
+  filterNavByRoles,
+  type QuestPayRole,
+  type QuestPayNavItem,
+} from "./nav.config";
 
 type SessionState = { authenticated: boolean; roles: string[] } | null;
 
@@ -17,10 +25,6 @@ const RAIL_WIDTH = 80;
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(href + "/");
-}
-
-function filterByRole(items: QuestPayNavItem[], roles: QuestPayRole[]): QuestPayNavItem[] {
-  return items.filter((item) => item.roles.some((r) => roles.includes(r)));
 }
 
 function groupItems(items: QuestPayNavItem[]) {
@@ -35,9 +39,9 @@ function groupItems(items: QuestPayNavItem[]) {
 /** Desktop sidebar — full width (264px) or collapsed rail (80px) */
 function DesktopSidebar({ roles, pathname, session }: { roles: QuestPayRole[]; pathname: string; session: SessionState }) {
   const [collapsed, setCollapsed] = useState(false);
-  const items = filterByRole(questPayNav, roles);
+  const items = filterNavByRoles(questPayNav, roles);
   const groups = groupItems(items);
-  const groupOrder = ["discover", "workspace", "creator", "trust"];
+  const groupOrder = ["discover", "workspace", "creator", "admin", "trust"];
 
   return (
     <aside
@@ -134,9 +138,9 @@ function MobileTopBar({ pathname, session, onMore }: { pathname: string; session
 
 /** Mobile "More" slide-over drawer */
 function MobileMoreDrawer({ open, onClose, pathname, roles, session }: { open: boolean; onClose: () => void; pathname: string; roles: QuestPayRole[]; session: SessionState }) {
-  const items = filterByRole(mobileMoreNav, roles);
+  const items = filterNavByRoles(mobileMoreNav, roles);
   const groups = groupItems(items);
-  const groupOrder = ["discover", "workspace", "creator", "trust"];
+  const groupOrder = ["discover", "workspace", "creator", "admin", "trust"];
   return (
     <AnimatePresence>
       {open && (
@@ -226,9 +230,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setMoreOpen(false);
   }, [pathname]);
 
-  const roles: QuestPayRole[] = session?.authenticated
-    ? (session.roles.includes("creator") ? ["buyer", "creator"] : ["buyer"]) as QuestPayRole[]
-    : ["guest"];
+  // Super admin → full nav (buyer + creator + admin). Creators get studio. Buyers get request-creator.
+  const roles: QuestPayRole[] = sessionRolesToNavRoles(
+    Boolean(session?.authenticated),
+    session?.roles ?? [],
+  );
 
   // Escape key closes drawer
   useEffect(() => {

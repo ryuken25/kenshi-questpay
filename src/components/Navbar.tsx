@@ -67,9 +67,12 @@ export default function Navbar({ authPage = false }: NavbarProps) {
   };
 
   const isAuthenticated = session?.authenticated ?? false;
-  const isCreator = session?.roles.includes("creator") ?? false;
-  const creatorDestination = isCreator ? "/studio" : "/onboarding?next=/studio";
-  const creatorLabel = isCreator ? "Creator Studio" : "Start Selling";
+  const isCreator =
+    Boolean(session?.roles.includes("creator")) ||
+    Boolean(session?.roles.includes("super_admin"));
+  // Non-creators request access via /studio/request (vNext); creators/admins open Studio.
+  const creatorDestination = isCreator ? "/studio" : "/studio/request";
+  const creatorLabel = isCreator ? "Creator Studio" : "Request Creator";
 
   return (
     <>

@@ -6,6 +6,12 @@ import { getServiceBySlug, isValidChainTokenPair } from "@/lib/services";
 import { createOrderSchema, profileSchema } from "@/lib/schemas";
 import { sendOrderCreatedEmails } from "@/lib/email";
 import { createPaymentQuote } from "@/lib/payments/quote-service";
+import {
+  createUniqueOrderAmount,
+  computePaymentExpiresAt,
+  PAYMENT_AMOUNT_DECIMALS,
+  PAYMENT_WINDOW_SECONDS,
+} from "@/lib/payments/amount-suffix";
 import { getSession } from "@/lib/auth";
 import { getProfile, upsertProfile } from "@/lib/profile";
 
@@ -61,6 +67,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `${tokenSymbol} quote is unavailable. Token is disabled until a real price source responds.`, reason }, { status: 503 });
   }
 
+  if (quote.tokenDecimals < PAYMENT_AMOUNT_DECIMALS) {
+    return NextResponse.json({
+      error: `${tokenSymbol} has fewer than ${PAYMENT_AMOUNT_DECIMALS} decimals and cannot use unique amount matching.`,
+      reason: "token_decimals_too_low",
+    }, { status: 503 });
+  }
+
+  // Server-generated unique 4-digit decimal suffix among active awaiting_payment orders.
+  let suffixed;
+  try {
+    suffixed = await createUniqueOrderAmount(sb, quote.amountHuman, quote.tokenDecimals, {
+      chainId: quote.chainId,
+      tokenSymbol,
+    });
+  } catch (e) {
+    const reason = e instanceof Error ? e.message : "unique_suffix_failed";
+    return NextResponse.json({
+      error: "Could not allocate a unique payment amount. Please try again.",
+      reason,
+    }, { status: 503 });
+  }
+
   if (saveProfileDefaults) {
     try {
       await upsertProfile(session.accountId, profileSchema.parse({
@@ -79,8 +107,7 @@ export async function POST(req: NextRequest) {
 
   const publicOrderId = generatePublicOrderId();
   const now = new Date();
-  const paymentWindowSeconds = Number(process.env.PAYMENT_WINDOW_SECONDS || 1800);
-  const paymentExpiresAt = new Date(now.getTime() + paymentWindowSeconds * 1000).toISOString();
+  const paymentExpiresAt = computePaymentExpiresAt(now, PAYMENT_WINDOW_SECONDS);
 
   const { data, error } = await sb.from("orders").insert({
     public_order_id: publicOrderId,
@@ -92,8 +119,10 @@ export async function POST(req: NextRequest) {
     token_symbol: tokenSymbol,
     token_address: quote.tokenAddress,
     token_decimals: quote.tokenDecimals,
-    amount_human: quote.amountHuman,
-    amount_raw: quote.amountRaw,
+    amount_human: suffixed.amountHuman,
+    amount_raw: suffixed.amountRaw,
+    amount_suffix: suffixed.amountSuffix,
+    unique_amount_suffix: suffixed.amountSuffixPadded,
     usd_price: service.usd,
     quote_id: quote.id,
     quote_expires_at: quote.expiresAt,
@@ -112,8 +141,18 @@ export async function POST(req: NextRequest) {
     user_agent: req.headers.get("user-agent") || null,
   }).select("id, public_order_id").single();
 
-  if (error) return NextResponse.json({ error: "Failed to create order.", detail: error.message }, { status: 500 });
+  if (error) {
+    // Unique index race on active amount suffix / amount_raw.
+    if (error.code === "23505") {
+      return NextResponse.json({
+        error: "Unique payment amount conflict. Please retry order creation.",
+        reason: "unique_suffix_conflict",
+      }, { status: 409 });
+    }
+    return NextResponse.json({ error: "Failed to create order.", detail: error.message }, { status: 500 });
+  }
 
+  // Persist quote snapshot with the same unique amount the order requires.
   await sb.from("payment_quotes").insert({
     id: quote.id,
     service_slug: quote.serviceSlug,
@@ -123,8 +162,8 @@ export async function POST(req: NextRequest) {
     token_decimals: quote.tokenDecimals,
     usd_price: quote.usdPrice,
     token_usd_price: quote.tokenUsdPrice,
-    amount_human: quote.amountHuman,
-    amount_raw: quote.amountRaw,
+    amount_human: suffixed.amountHuman,
+    amount_raw: suffixed.amountRaw,
     source: quote.source,
     expires_at: quote.expiresAt,
   }).then(() => undefined);
@@ -133,14 +172,24 @@ export async function POST(req: NextRequest) {
     order_id: data.id,
     event_type: "order_created",
     to_status: "awaiting_payment",
-    metadata: { source: "public_checkout", quote_id: quote.id, quote_source: quote.source, payment_expires_at: paymentExpiresAt },
+    metadata: {
+      source: "public_checkout",
+      quote_id: quote.id,
+      quote_source: quote.source,
+      payment_expires_at: paymentExpiresAt,
+      amount_suffix: suffixed.amountSuffix,
+      unique_amount_suffix: suffixed.amountSuffixPadded,
+      amount_human: suffixed.amountHuman,
+      base_amount_human: quote.amountHuman,
+      payment_window_seconds: PAYMENT_WINDOW_SECONDS,
+    },
   });
 
   await sendOrderCreatedEmails({
     id: data.id,
     publicOrderId: data.public_order_id,
     serviceName: service.name,
-    amountHuman: quote.amountHuman,
+    amountHuman: suffixed.amountHuman,
     tokenSymbol,
     customerName: brief.customerName,
     contactMethod: brief.contactMethod,
@@ -153,8 +202,10 @@ export async function POST(req: NextRequest) {
     slug,
     chainKey: quote.chainKey,
     tokenSymbol,
-    amountHuman: quote.amountHuman,
-    amountRaw: quote.amountRaw,
+    amountHuman: suffixed.amountHuman,
+    amountRaw: suffixed.amountRaw,
+    amountSuffix: suffixed.amountSuffix,
+    uniqueAmountSuffix: suffixed.amountSuffixPadded,
     quoteId: quote.id,
     quoteSource: quote.source,
     quoteExpiresAt: quote.expiresAt,

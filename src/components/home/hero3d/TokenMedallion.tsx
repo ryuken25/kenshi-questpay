@@ -6,7 +6,20 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { OrbitConfig } from "./hero3d.config";
 
-export default function TokenMedallion({ config, reducedMotion = false }: { config: OrbitConfig; reducedMotion?: boolean }) {
+/**
+ * Premium metallic coin medallion:
+ * - thick beveled disc
+ * - embossed logo face
+ * - bright outer rim outline
+ * - soft under-glow (no full-frame postprocessing)
+ */
+export default function TokenMedallion({
+  config,
+  reducedMotion = false,
+}: {
+  config: OrbitConfig;
+  reducedMotion?: boolean;
+}) {
   const spinGroup = useRef<THREE.Group>(null);
   const localTime = useRef(0);
   const texture = useTexture(config.texture);
@@ -22,40 +35,111 @@ export default function TokenMedallion({ config, reducedMotion = false }: { conf
   useFrame((_, delta) => {
     const node = spinGroup.current;
     if (!node || reducedMotion) return;
-    const safeDelta = delta > .15 ? 0 : Math.min(delta, 1 / 12);
+    const safeDelta = delta > 0.15 ? 0 : Math.min(delta, 1 / 12);
     localTime.current += safeDelta;
     const t = localTime.current + config.phase;
-    node.rotation.x = .05 + Math.sin(t * (.58 + config.spin[0])) * (.10 + config.spin[0] * .18);
-    node.rotation.y = -.15 + Math.cos(t * (.46 + config.spin[1])) * (.14 + config.spin[1] * .14);
-    node.rotation.z = .02 + Math.sin(t * (.67 + config.spin[2])) * (.08 + config.spin[2] * .16);
+    node.rotation.x = 0.08 + Math.sin(t * (0.5 + config.spin[0])) * (0.08 + config.spin[0] * 0.12);
+    node.rotation.y = -0.18 + Math.cos(t * (0.42 + config.spin[1])) * (0.12 + config.spin[1] * 0.1);
+    node.rotation.z = 0.02 + Math.sin(t * (0.55 + config.spin[2])) * (0.05 + config.spin[2] * 0.1);
   });
 
-  const thickness = .10;
+  const r = config.size;
+  const thickness = Math.max(0.085, r * 0.42);
+
   return (
-    <group ref={spinGroup} rotation={[.05, -.15, .02]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[config.size, config.size, thickness, 48]} />
-        <meshStandardMaterial color={config.body} emissive={config.rim} emissiveIntensity={.42} metalness={.52} roughness={.24} />
+    <group ref={spinGroup} rotation={[0.08, -0.18, 0.02]}>
+      {/* Core metallic body */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} castShadow={false}>
+        <cylinderGeometry args={[r, r, thickness, 64]} />
+        <meshStandardMaterial
+          color={config.body}
+          emissive={config.rim}
+          emissiveIntensity={0.28}
+          metalness={0.78}
+          roughness={0.28}
+        />
       </mesh>
-      <mesh position={[0, 0, thickness / 2 + .003]}>
-        <circleGeometry args={[config.size * .82, 48]} />
-        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.85} roughness={.26} metalness={.14} />
-      </mesh>
-      <mesh position={[0, 0, -thickness / 2 - .003]} rotation={[0, Math.PI, 0]}>
-        <circleGeometry args={[config.size * .82, 48]} />
-        <meshStandardMaterial map={texture} emissiveMap={texture} emissive={config.emissive} emissiveIntensity={.60} roughness={.28} metalness={.14} />
-      </mesh>
+
+      {/* Beveled rim ring */}
       <mesh>
-        <torusGeometry args={[config.size * .965, .018, 8, 48]} />
-        <meshBasicMaterial color={config.rim} transparent opacity={.72} toneMapped={false} />
+        <torusGeometry args={[r * 0.985, Math.max(0.014, r * 0.08), 12, 64]} />
+        <meshStandardMaterial
+          color={config.rim}
+          emissive={config.emissive}
+          emissiveIntensity={0.55}
+          metalness={0.85}
+          roughness={0.22}
+        />
       </mesh>
-      <mesh position={[0, 0, -.058]} scale={1.26}>
-        <circleGeometry args={[config.size, 40]} />
-        <meshBasicMaterial color={config.rim} transparent opacity={.08} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+
+      {/* Bright outline edge */}
+      <mesh>
+        <torusGeometry args={[r * 1.01, Math.max(0.008, r * 0.035), 10, 64]} />
+        <meshBasicMaterial color={config.emissive} transparent opacity={0.7} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 0, -.062]} scale={1.48}>
-        <circleGeometry args={[config.size, 40]} />
-        <meshBasicMaterial color={config.emissive} transparent opacity={.035} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+
+      {/* Front embossed logo face */}
+      <mesh position={[0, 0, thickness / 2 + 0.004]}>
+        <circleGeometry args={[r * 0.78, 64]} />
+        <meshStandardMaterial
+          map={texture}
+          emissiveMap={texture}
+          emissive={config.emissive}
+          emissiveIntensity={0.95}
+          roughness={0.3}
+          metalness={0.18}
+          transparent
+        />
+      </mesh>
+
+      {/* Front face plate under logo for raised-coin look */}
+      <mesh position={[0, 0, thickness / 2 + 0.0015]}>
+        <circleGeometry args={[r * 0.86, 64]} />
+        <meshStandardMaterial
+          color={config.body}
+          emissive={config.rim}
+          emissiveIntensity={0.18}
+          metalness={0.7}
+          roughness={0.26}
+        />
+      </mesh>
+
+      {/* Back logo face */}
+      <mesh position={[0, 0, -thickness / 2 - 0.004]} rotation={[0, Math.PI, 0]}>
+        <circleGeometry args={[r * 0.78, 64]} />
+        <meshStandardMaterial
+          map={texture}
+          emissiveMap={texture}
+          emissive={config.emissive}
+          emissiveIntensity={0.65}
+          roughness={0.32}
+          metalness={0.18}
+          transparent
+        />
+      </mesh>
+
+      {/* Soft under-glow discs */}
+      <mesh position={[0, 0, -thickness * 0.72]} scale={1.22}>
+        <circleGeometry args={[r, 48]} />
+        <meshBasicMaterial
+          color={config.rim}
+          transparent
+          opacity={0.09}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh position={[0, 0, -thickness * 0.78]} scale={1.42}>
+        <circleGeometry args={[r, 48]} />
+        <meshBasicMaterial
+          color={config.emissive}
+          transparent
+          opacity={0.04}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
       </mesh>
     </group>
   );

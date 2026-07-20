@@ -12,12 +12,30 @@
 - `receive_address` — immutable payment receiver
 - `chain_id` — 137 (Polygon mainnet)
 - `token_symbol`, `token_address`, `token_decimals` — immutable token config
-- `amount_human`, `amount_raw` — immutable expected amount
+- `amount_human`, `amount_raw` — immutable expected amount (includes unique 4-digit decimal suffix)
+- `unique_amount_suffix` — zero-padded text `0001–9999` (last 4 decimals of amount_human)
+- `amount_suffix` — integer 1–9999 (same value as unique_amount_suffix)
+- `payment_expires_at` — order payment window (`now + PAYMENT_WINDOW_SECONDS`, default 1800s / 30 min)
 - `usd_price` — package price in USD
 - `customer_name`, `contact_method`, `contact_value` — client info
 - `project_link`, `brief`, `expected_output`, `ref_links`, `notes`, `deadline` — brief snapshot
 - `client_ip`, `user_agent` — metadata
 - `created_at`, `updated_at`, `paid_at`, `delivered_at` — timestamps
+
+### Payment amount fingerprint
+On `POST /api/orders`:
+1. Create a market quote (base amount)
+2. Allocate unique `unique_amount_suffix` in range `0001–9999` among active statuses `awaiting_payment | payment_submitted | pending` for the same chain+token
+3. Set `amount_human = whole.XXXX` (e.g. `12.0017`) and `amount_raw = parseUnits(amount_human, decimals)`
+4. Set `payment_expires_at = now + PAYMENT_WINDOW_SECONDS` (default 1800)
+5. After expiry, verify/read paths cancel the order (`cancelled`) and free the suffix
+
+Verification requires exact match of:
+- `amount_raw` (not ≥)
+- `token_symbol` / token address
+- `chain_id`
+- receive address
+- eligible status + non-expired payment window
 
 ### `payments`
 - `id` — UUID primary key

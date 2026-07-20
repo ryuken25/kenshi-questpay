@@ -19,14 +19,16 @@ export default function CreatorIntentButton({ className = "", children = "Start 
   }, []);
 
   const authenticated = session?.authenticated ?? false;
-  const creator = session?.roles.includes("creator") ?? false;
+  const creator =
+    Boolean(session?.roles.includes("creator")) ||
+    Boolean(session?.roles.includes("super_admin"));
 
   const activate = () => {
     if (!authenticated) {
       setOpen(true);
       return;
     }
-    router.push(creator ? "/studio" : "/onboarding?next=/studio");
+    router.push(creator ? "/studio" : "/studio/request");
   };
 
   return (
@@ -34,7 +36,7 @@ export default function CreatorIntentButton({ className = "", children = "Start 
       <button type="button" onClick={activate} aria-haspopup={authenticated ? undefined : "dialog"} className={className}>
         {creator ? "Creator Studio" : children}
       </button>
-      <AuthModal open={open} onClose={() => setOpen(false)} intent="creator" next="/studio" />
+      <AuthModal open={open} onClose={() => setOpen(false)} intent="creator" next="/studio/request" />
     </>
   );
 }

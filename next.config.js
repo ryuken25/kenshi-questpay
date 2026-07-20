@@ -5,10 +5,14 @@ const nextConfig = {
   typescript: { ignoreBuildErrors: true },
   async redirects() {
     return [
-      { source: "/studio", destination: "/dashboard", permanent: false },
-      { source: "/studio/orders", destination: "/dashboard/orders", permanent: false },
-      { source: "/studio/settings", destination: "/dashboard/settings", permanent: false },
-      { source: "/studio/login", destination: "/sign-in?next=/dashboard", permanent: false },
+      // Legacy dashboard paths → canonical Creator Studio (vNext)
+      { source: "/dashboard", destination: "/studio", permanent: false },
+      { source: "/dashboard/orders", destination: "/studio/orders", permanent: false },
+      { source: "/dashboard/orders/:id", destination: "/studio/orders/:id", permanent: false },
+      { source: "/dashboard/settings", destination: "/studio/settings", permanent: false },
+      { source: "/studio/login", destination: "/sign-in?next=/studio", permanent: false },
+      // Admin aliases from older shells
+      { source: "/admin/accounts", destination: "/admin/users", permanent: false },
       { source: "/demo", destination: "/services", permanent: false },
       { source: "/demo/base-sepolia", destination: "/services", permanent: false },
     ];

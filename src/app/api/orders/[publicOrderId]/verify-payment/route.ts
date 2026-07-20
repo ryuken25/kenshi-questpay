@@ -4,6 +4,7 @@ import { verifyPayment } from "@/lib/verify-payment";
 import { verifyPaymentSchema } from "@/lib/schemas";
 import { getTokenConfig, chainKeyFromId, type TokenSymbol, getServiceBySlug } from "@/lib/services";
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
+import { cancelOrderIfPaymentExpired } from "@/lib/payments/order-expiry";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -48,23 +49,32 @@ export async function POST(
     return NextResponse.json({ error: "Order not found." }, { status: 404 });
   }
 
-  // Already paid?
-  if (["paid", "in_progress", "awaiting_client", "ready_for_review", "delivered", "completed"].includes(order.status)) {
+  // Already paid / past payment stage?
+  if (["paid", "work_submitted", "in_progress", "awaiting_client", "ready_for_review", "reviewing", "accepted", "delivered", "released", "completed"].includes(order.status)) {
     return NextResponse.json({ ok: true, alreadyVerified: true, message: "This order has already been paid.", publicOrderId, txHash });
   }
 
-  if (["expired", "cancelled"].includes(order.status)) {
+  if (["expired", "cancelled", "refunded", "disputed"].includes(order.status)) {
     return NextResponse.json({ error: `Order is ${order.status}.` }, { status: 400 });
+  }
+
+  // Auto-cancel if payment window elapsed (on-access / on-verify enforcement).
+  const expiry = await cancelOrderIfPaymentExpired(sb, {
+    id: order.id,
+    status: order.status,
+    payment_expires_at: order.payment_expires_at,
+  });
+  if (expiry.expired) {
+    return NextResponse.json({
+      ok: false,
+      reason: "Payment window expired. This order is cancelled. Create a new order before paying.",
+      status: "cancelled",
+      paymentExpiresAt: order.payment_expires_at,
+    }, { status: 400 });
   }
 
   if (!["awaiting_payment", "payment_submitted", "pending"].includes(order.status)) {
     return NextResponse.json({ error: `Order is not eligible for payment from status ${order.status}.` }, { status: 400 });
-  }
-
-  if (order.payment_expires_at && new Date(order.payment_expires_at).getTime() < Date.now()) {
-    await sb.from("orders").update({ status: "expired", updated_at: new Date().toISOString() }).eq("id", order.id);
-    await sb.from("questpay_order_events").insert({ order_id: order.id, event_type: "order_expired", from_status: order.status, to_status: "expired", metadata: { payment_expires_at: order.payment_expires_at } });
-    return NextResponse.json({ ok: false, reason: "Payment window expired. Create a new quote before paying." }, { status: 400 });
   }
 
   // ── Derive expected context from the order (NOT from the client) ──
@@ -73,6 +83,10 @@ export async function POST(
   const token = getTokenConfig(chainKey, tokenSymbol);
   if (!token) {
     return NextResponse.json({ error: "Order token misconfigured." }, { status: 500 });
+  }
+
+  if (!order.amount_raw || !order.amount_human) {
+    return NextResponse.json({ error: "Order amount is incomplete." }, { status: 500 });
   }
 
   // ── Check if tx hash is already used by another order (scoped to this chain) ──
@@ -90,20 +104,36 @@ export async function POST(
     }, { status: 409 });
   }
 
-  // ── Verify on-chain ──
+  // ── Verify on-chain (exact amount_raw + token + chain + receiver from order) ──
   const result = await verifyPayment(txHash, {
     chainKey,
     receiveAddress: order.receive_address,
     token: { ...token, address: order.token_address ? order.token_address as `0x${string}` : token.address },
-    amountHuman: order.amount_human,
+    amountHuman: String(order.amount_human),
+    amountRaw: String(order.amount_raw),
   });
 
   if (!result.ok) {
     return NextResponse.json(result, { status: 200 });
   }
 
+  // Defense-in-depth: exact amount_raw must match order before persistence.
+  if (String(result.amountRaw || "") !== String(order.amount_raw)) {
+    return NextResponse.json({
+      ok: false,
+      reason: "Verified amount does not exactly match the order amount.",
+    }, { status: 400 });
+  }
+  if (result.token && result.token !== tokenSymbol) {
+    return NextResponse.json({
+      ok: false,
+      reason: "Verified token does not match the order token.",
+    }, { status: 400 });
+  }
+
   // ── Atomically persist payment + update order + insert event ──
-  // Preferred path: database RPC wraps insert/update/event in one transaction.
+  // Preferred path: database RPC wraps insert/update/event in one transaction
+  // and re-checks exact amount/token/chain/window/status server-side.
   const paymentPayload = {
     p_order_id: order.id,
     p_chain_id: order.chain_id,
@@ -112,8 +142,9 @@ export async function POST(
     p_to_address: result.to || "",
     p_token_symbol: tokenSymbol,
     p_token_address: order.token_address || null,
-    p_amount_raw: result.amountRaw || "",
-    p_amount_human: result.amountHuman || "",
+    // Persist the order's exact expected amount (server-authoritative).
+    p_amount_raw: order.amount_raw,
+    p_amount_human: order.amount_human,
     p_block_number: result.blockNumber ? Number(result.blockNumber) : 0,
     p_block_timestamp: result.blockTimestamp ? new Date(result.blockTimestamp * 1000).toISOString() : new Date().toISOString(),
     p_confirmations: result.confirmations || 0,
@@ -121,6 +152,27 @@ export async function POST(
   };
   const { error: rpcErr } = await sb.rpc("record_verified_payment", paymentPayload);
   if (rpcErr) {
+    const msg = rpcErr.message || "";
+    if (/payment_window_expired/i.test(msg)) {
+      return NextResponse.json({
+        ok: false,
+        reason: "Payment window expired. This order is cancelled. Create a new order before paying.",
+        status: "cancelled",
+      }, { status: 400 });
+    }
+    if (/amount_mismatch|token_mismatch|chain_mismatch|receiver_mismatch/i.test(msg)) {
+      return NextResponse.json({
+        ok: false,
+        reason: "Payment does not exactly match order amount, token, chain, or receiver.",
+      }, { status: 400 });
+    }
+    if (/invalid_order_status/i.test(msg)) {
+      return NextResponse.json({
+        ok: false,
+        reason: "Order is not eligible for payment.",
+      }, { status: 400 });
+    }
+
     // Compatibility fallback for environments not migrated yet. Still keeps tx uniqueness guard above.
     const { error: payInsertErr } = await sb.from("payments").insert({
       order_id: order.id,
@@ -130,8 +182,8 @@ export async function POST(
       to_address: result.to,
       token_symbol: tokenSymbol,
       token_address: order.token_address || null,
-      amount_raw: result.amountRaw || "",
-      amount_human: result.amountHuman || "",
+      amount_raw: String(order.amount_raw),
+      amount_human: String(order.amount_human),
       block_number: result.blockNumber ? Number(result.blockNumber) : 0,
       block_timestamp: result.blockTimestamp ? new Date(result.blockTimestamp * 1000).toISOString() : new Date().toISOString(),
       confirmations: result.confirmations || 0,
@@ -142,7 +194,22 @@ export async function POST(
       return NextResponse.json({ ok: false, reason: "Failed to record payment: " + payInsertErr.message }, { status: 500 });
     }
     await sb.from("orders").update({ status: "paid", paid_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", order.id);
-    await sb.from("questpay_order_events").insert({ order_id: order.id, event_type: "payment_verified", from_status: order.status, to_status: "paid", metadata: { tx_hash: txHash.toLowerCase(), token: tokenSymbol, amount: result.amountHuman, rpc_fallback: true } });
+    await sb.from("questpay_order_events").insert({
+      order_id: order.id,
+      event_type: "payment_verified",
+      from_status: order.status,
+      to_status: "paid",
+      metadata: {
+        tx_hash: txHash.toLowerCase(),
+        token: tokenSymbol,
+        amount: order.amount_human,
+        amount_raw: order.amount_raw,
+        unique_amount_suffix: order.unique_amount_suffix || null,
+        amount_suffix: order.amount_suffix ?? null,
+        exact_match: true,
+        rpc_fallback: true,
+      },
+    });
   }
 
   // ── Send emails (after persistence, non-blocking but awaited) ──
@@ -152,7 +219,7 @@ export async function POST(
       publicOrderId,
       service,
       tokenSymbol,
-      amountHuman: result.amountHuman || order.amount_human,
+      amountHuman: String(order.amount_human),
       receiveAddress: order.receive_address,
       txHash,
       fromAddress: result.from || "",
@@ -176,7 +243,10 @@ export async function POST(
     from: result.from,
     to: result.to,
     token: result.token,
-    amountHuman: result.amountHuman,
+    amountHuman: order.amount_human,
+    amountRaw: order.amount_raw,
+    uniqueAmountSuffix: order.unique_amount_suffix || null,
+    amountSuffix: order.amount_suffix ?? null,
     blockNumber: result.blockNumber ? Number(result.blockNumber) : undefined,
     blockTimestamp: result.blockTimestamp,
     confirmations: result.confirmations,

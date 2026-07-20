@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase-server";
 import { getServiceBySlug } from "@/lib/services";
+import { cancelOrderIfPaymentExpired } from "@/lib/payments/amount-suffix";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export async function GET(
   const { data: order, error } = await sb
     .from("orders")
     .select(
-      "id, public_order_id, slug, status, receive_address, chain_id, token_symbol, token_address, token_decimals, amount_human, amount_raw, usd_price, created_at, paid_at",
+      "id, public_order_id, slug, status, receive_address, chain_id, token_symbol, token_address, token_decimals, amount_human, amount_raw, amount_suffix, unique_amount_suffix, usd_price, created_at, paid_at, payment_expires_at",
     )
     .eq("public_order_id", publicOrderId)
     .single();
@@ -29,6 +30,14 @@ export async function GET(
   if (error || !order) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });
   }
+
+  // On-access expiry: open payment window elapsed → cancelled.
+  const expiry = await cancelOrderIfPaymentExpired(sb, {
+    id: order.id,
+    status: order.status,
+    payment_expires_at: order.payment_expires_at,
+  });
+  const status = expiry.expired ? expiry.status : order.status;
 
   // Also fetch payment if exists
   const { data: payment } = await sb
@@ -46,7 +55,7 @@ export async function GET(
     serviceName: service?.name || order.slug,
     serviceUsd: order.usd_price,
     serviceDescription: service?.description,
-    status: order.status,
+    status,
     receiveAddress: order.receive_address,
     chainId: order.chain_id,
     tokenSymbol: order.token_symbol,
@@ -54,6 +63,9 @@ export async function GET(
     tokenDecimals: order.token_decimals,
     amountHuman: order.amount_human,
     amountRaw: order.amount_raw,
+    amountSuffix: order.amount_suffix ?? null,
+    uniqueAmountSuffix: order.unique_amount_suffix || null,
+    paymentExpiresAt: order.payment_expires_at || null,
     createdAt: order.created_at,
     paidAt: order.paid_at,
     payment: payment || null,

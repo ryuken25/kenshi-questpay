@@ -292,8 +292,31 @@ export function sanitizeNextPath(next: string | null | undefined): string | null
   if (next.startsWith("//") || next.startsWith("/\\")) return null;
   if (/\s/.test(next)) return null;
   const pathname = next.split(/[?#]/, 1)[0];
-  const exact = new Set(["/", "/account", "/my-orders", "/dashboard", "/studio", "/onboarding", "/services", "/verify", "/sign-in"]);
-  const prefixes = ["/services/", "/checkout/", "/orders/", "/pay/", "/verify/", "/dashboard/", "/studio/", "/admin/"];
+  const exact = new Set([
+    "/",
+    "/account",
+    "/my-orders",
+    "/receipts",
+    "/dashboard",
+    "/studio",
+    "/onboarding",
+    "/services",
+    "/verify",
+    "/sign-in",
+    "/admin",
+    "/for-creators",
+  ]);
+  const prefixes = [
+    "/services/",
+    "/checkout/",
+    "/orders/",
+    "/pay/",
+    "/verify/",
+    "/dashboard/",
+    "/studio/",
+    "/admin/",
+    "/receipts/",
+  ];
   return exact.has(pathname) || prefixes.some((prefix) => pathname.startsWith(prefix)) ? next : null;
 }
 
@@ -301,7 +324,7 @@ export function redirectForRoles(roles: Role[], next?: string): string {
   const safeNext = sanitizeNextPath(next);
   if (safeNext) return safeNext;
   if (roles.includes("super_admin")) return "/admin";
-  if (roles.includes("creator")) return "/dashboard";
+  if (roles.includes("creator")) return "/studio";
   return "/my-orders";
 }
 
