@@ -545,12 +545,12 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   overflow: visible;
   pointer-events: none;
   isolation: isolate;
-  background: transparent;
-  /* Soft radial mask kills the hard rectangular canvas edge */
-  -webkit-mask-image: radial-gradient(ellipse 74% 70% at 50% 50%, #000 42%, rgba(0,0,0,.92) 58%, rgba(0,0,0,.45) 74%, transparent 92%);
-  mask-image: radial-gradient(ellipse 74% 70% at 50% 50%, #000 42%, rgba(0,0,0,.92) 58%, rgba(0,0,0,.45) 74%, transparent 92%);
+  background: transparent !important;
+  /* Stronger soft mask: no rectangular WebGL frame */
+  -webkit-mask-image: radial-gradient(ellipse 70% 66% at 50% 50%, #000 38%, rgba(0,0,0,.95) 52%, rgba(0,0,0,.55) 68%, rgba(0,0,0,.18) 82%, transparent 96%);
+  mask-image: radial-gradient(ellipse 70% 66% at 50% 50%, #000 38%, rgba(0,0,0,.95) 52%, rgba(0,0,0,.55) 68%, rgba(0,0,0,.18) 82%, transparent 96%);
 }
-.qp-hero3d--home { width: min(100%, 680px); height: clamp(420px, 36vw, 540px); }
+.qp-hero3d--home { width: min(100%, 720px); height: clamp(440px, 38vw, 560px); }
 .qp-hero3d canvas,
 .qp-hero3d__canvas {
   display: block;
@@ -561,17 +561,21 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   border: 0 !important;
   box-shadow: none !important;
 }
-.qp-hero3d--fallback img { filter: saturate(.94) contrast(1.05) drop-shadow(0 22px 58px rgba(0,0,0,.52)); }
+.qp-hero3d--fallback img {
+  filter: saturate(.94) contrast(1.05) drop-shadow(0 22px 58px rgba(0,0,0,.52));
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, #000 46%, rgba(0,0,0,.7) 70%, transparent 92%);
+  mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, #000 46%, rgba(0,0,0,.7) 70%, transparent 92%);
+}
 .qp-hero3d--signin { width: min(100%, 390px); height: 320px; }
 
 @media (max-width: 767px) {
   .qp-hero3d--home {
     width: 100%;
-    height: clamp(260px, 70vw, 340px);
+    height: clamp(270px, 72vw, 360px);
     margin-inline: auto;
     overflow: hidden;
-    -webkit-mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 48%, rgba(0,0,0,.88) 66%, rgba(0,0,0,.35) 82%, transparent 96%);
-    mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 48%, rgba(0,0,0,.88) 66%, rgba(0,0,0,.35) 82%, transparent 96%);
+    -webkit-mask-image: radial-gradient(ellipse 78% 76% at 50% 48%, #000 44%, rgba(0,0,0,.9) 62%, rgba(0,0,0,.35) 80%, transparent 96%);
+    mask-image: radial-gradient(ellipse 78% 76% at 50% 48%, #000 44%, rgba(0,0,0,.9) 62%, rgba(0,0,0,.35) 80%, transparent 96%);
   }
   .qp-hero3d--signin { width: min(100%, 320px); height: 260px; }
 }
@@ -754,12 +758,12 @@ body {
 .qp-hero-scene-wrap::after {
   content: '';
   position: absolute;
-  inset: -8%;
+  inset: -12%;
   z-index: 1;
   pointer-events: none;
-  background: radial-gradient(ellipse 72% 68% at 50% 50%, transparent 46%, rgba(2, 2, 7, .18) 68%, rgba(2, 2, 7, .55) 86%, rgba(2, 2, 7, .92) 100%);
-  mix-blend-mode: multiply;
-  opacity: .9;
+  background:
+    radial-gradient(ellipse 68% 64% at 50% 50%, transparent 40%, rgba(2, 2, 7, .22) 62%, rgba(2, 2, 7, .62) 82%, rgba(2, 2, 7, .96) 100%);
+  opacity: 1;
 }
 
 .qp-hero-scene-wrap canvas {
