@@ -100,16 +100,25 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
     >
       <CanvasErrorBoundary fallback={fallback}>
         <Canvas
-          className="pointer-events-none"
-          style={{ pointerEvents: "none" }}
-          dpr={mobile ? [1, 1.5] : [1, 1.75]}
+          className="pointer-events-none qp-hero3d__canvas"
+          style={{ pointerEvents: "none", background: "transparent" }}
+          dpr={mobile ? [1, 1.35] : [1, 1.6]}
           camera={camera}
-          gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+          // premultipliedAlpha=false keeps transparent edges soft against the page bg
+          gl={{
+            alpha: true,
+            antialias: true,
+            premultipliedAlpha: false,
+            powerPreference: "high-performance",
+          }}
           performance={{ min: .6 }}
           frameloop={active ? "always" : "demand"}
           onCreated={({ gl }) => {
-            gl.setClearColor(new THREE.Color("#0a0612"), 0);
+            // Fully transparent clear so the page background shows through
+            gl.setClearColor(new THREE.Color("#000000"), 0);
+            gl.setClearAlpha(0);
             gl.outputColorSpace = THREE.SRGBColorSpace;
+            gl.toneMapping = THREE.NoToneMapping;
           }}
         >
           <AdaptiveDpr />

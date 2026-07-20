@@ -24,15 +24,16 @@ export default function QuestPayScene({ mobile = false, reducedMotion = false, v
         </group>
         <EnergyShards mobile={compact} reducedMotion={reducedMotion} quality={quality} />
       </group>
-      {quality !== "low" ? (
-        <EffectComposer multisampling={0} enableNormalPass={false}>
-          <Bloom intensity={0.85} luminanceThreshold={.55} luminanceSmoothing={.18} mipmapBlur />
-        </EffectComposer>
-      ) : (
-        <EffectComposer multisampling={0} enableNormalPass={false}>
-          <Bloom intensity={0.60} luminanceThreshold={.50} luminanceSmoothing={.14} mipmapBlur />
-        </EffectComposer>
-      )}
+      {/* Keep bloom soft enough that the canvas edge doesn't form a hard box. */}
+      <EffectComposer multisampling={0} enableNormalPass={false}>
+        <Bloom
+          intensity={quality !== "low" ? 0.58 : 0.42}
+          luminanceThreshold={quality !== "low" ? 0.62 : 0.58}
+          luminanceSmoothing={0.28}
+          mipmapBlur
+          radius={0.72}
+        />
+      </EffectComposer>
     </Suspense>
   );
 }
