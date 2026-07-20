@@ -57,6 +57,23 @@ Verification requires exact match of:
 ### `email_events`
 - `order_id`, `to_address`, `subject`, `status` (`sent | failed`), `error`, `created_at`
 
+### Lifecycle columns (v7+)
+- `unique_amount_suffix`, `amount_suffix`, `payment_expires_at`
+- `work_submitted_at`, `accepted_at`, `released_at`
+- `creator_wallet`, `creator_account_id`
+
+### `work_submissions` (v9)
+- `order_id`, `submitted_by`, `note`, `delivery_url`, `file_urls`, `links`, `submitted_at`
+- Creator work proofs before buyer accept
+
+### `releases` (v9)
+- `order_id` (unique), `idempotency_key` (unique), `chain_id`
+- `from_address` (custody), `to_address` (creator wallet)
+- `token_symbol`, `token_address`, `amount_raw`, `amount_human`
+- `tx_hash`, `status` (`pending | broadcast | confirmed | failed | skipped`)
+- Unique `(chain_id, lower(tx_hash))` when tx present
+- Server-only: written by release path after `status=accepted`
+
 ## RLS
 - All tables have RLS enabled
 - No anon access policies — service role bypasses RLS
@@ -67,6 +84,14 @@ Verification requires exact match of:
 - `POST /api/orders` accepts idempotency key
 - Payment verification is transactional
 - Duplicate tx hash rejected by unique constraint
+- One release row per order (`releases_order_id_unique` + `idempotency_key`)
+
+## Custody release
+- Payment lands at `QUESTPAY_RECEIVE_ADDRESS`
+- Buyer accept → `POST /api/orders/[publicOrderId]/accept` → `status=accepted`
+- Release → `POST /api/orders/[publicOrderId]/release` (or auto after accept)
+- Requires `NEXT_PUBLIC_ENABLE_REAL_PAYMENTS=true` + `QUESTPAY_RELEASE_PRIVATE_KEY`
+- Studio cannot force `paid` / `accepted` / `released` / `completed`
 
 ---
 

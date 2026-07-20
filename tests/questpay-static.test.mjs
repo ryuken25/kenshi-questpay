@@ -363,3 +363,101 @@ test('premium workflow uses kit assets, one active story panel, and real audienc
     assert.ok(existsSync(new URL(`public/assets/how-it-works/${asset}`, root)), asset);
   }
 });
+
+test('custody release foundation: tables, server-only release, studio cannot force paid/released', () => {
+  const migration = read('supabase/migrations/20260721_questpay_v9_work_submissions_releases.sql');
+  const releaseLib = read('src/lib/payments/release.ts');
+  const statusLib = read('src/lib/payments/order-status.ts');
+  const studioStatus = read('src/app/api/studio/orders/[id]/status/route.ts');
+  const releaseRoute = read('src/app/api/orders/[publicOrderId]/release/route.ts');
+  const acceptRoute = read('src/app/api/orders/[publicOrderId]/accept/route.ts');
+  const workSubmit = read('src/app/api/orders/[publicOrderId]/work-submit/route.ts');
+  const envExample = read('.env.example');
+  const studioOrderPage = read('src/app/studio/orders/[id]/page.tsx');
+
+  assert.match(migration, /create table if not exists public\.work_submissions/);
+  assert.match(migration, /create table if not exists public\.releases/);
+  assert.match(migration, /releases_order_id_unique/);
+  assert.match(migration, /releases_idempotency_key_unique/);
+  assert.match(migration, /idempotency_key/);
+
+  assert.match(releaseLib, /import \"server-only\"/);
+  assert.match(releaseLib, /status !== \"accepted\"/);
+  assert.match(releaseLib, /NEXT_PUBLIC_ENABLE_REAL_PAYMENTS/);
+  assert.match(releaseLib, /QUESTPAY_RELEASE_PRIVATE_KEY/);
+  assert.match(releaseLib, /signer_missing/);
+  assert.match(releaseLib, /alreadyReleased/);
+  assert.doesNotMatch(releaseLib, /NEXT_PUBLIC_QUESTPAY_RELEASE|window\.|localStorage/);
+
+  assert.match(statusLib, /STUDIO_ALLOWED_STATUSES/);
+  assert.match(statusLib, /STUDIO_BLOCKED_STATUSES/);
+  assert.match(statusLib, /\"paid\"/);
+  assert.match(statusLib, /\"released\"/);
+  assert.match(statusLib, /\"accepted\"/);
+  assert.match(statusLib, /\"completed\"/);
+
+  assert.match(studioStatus, /STUDIO_BLOCKED_STATUSES|isStudioAllowedStatus|canStudioTransition/);
+  assert.doesNotMatch(studioStatus, /new Set\(\[\"pending\",\"paid\"/);
+  // Studio must not allow free-form paid/completed force set.
+  assert.match(studioStatus, /cannot be set from Studio|system-controlled|not allowed for Studio/);
+  assert.match(studioStatus, /STUDIO_BLOCKED_STATUSES\.has\(status\)/);
+
+  assert.match(releaseRoute, /releaseAcceptedOrder/);
+  assert.match(releaseRoute, /getSession/);
+  assert.match(releaseRoute, /REAL_PAYMENTS_ENABLED/);
+  assert.match(releaseRoute, /hasReleaseSignerConfigured/);
+  assert.match(acceptRoute, /markOrderAccepted/);
+  assert.match(acceptRoute, /releaseAcceptedOrder/);
+  assert.match(workSubmit, /work_submissions/);
+  assert.match(workSubmit, /work_submitted/);
+
+  assert.match(envExample, /QUESTPAY_RELEASE_PRIVATE_KEY/);
+  assert.match(envExample, /NEXT_PUBLIC_ENABLE_REAL_PAYMENTS=false/);
+
+  assert.match(studioOrderPage, /STUDIO_ALLOWED_STATUSES|STUDIO_STATUS_OPTIONS/);
+  assert.doesNotMatch(studioOrderPage, /\["pending","paid","reviewing","accepted"/);
+});
+
+test('creator applications + products CRUD foundation exists with role guards and Zod', () => {
+  const migration = read('supabase/migrations/20260721_questpay_v8_creator_applications_products.sql');
+  assert.match(migration, /create table if not exists public\.creator_applications/);
+  assert.match(migration, /create table if not exists public\.creator_services/);
+  assert.match(migration, /one_pending_per_account|status = 'pending'/);
+
+  const schemas = read('src/lib/schemas.ts');
+  assert.match(schemas, /createCreatorApplicationSchema/);
+  assert.match(schemas, /createCreatorServiceSchema/);
+  assert.match(schemas, /reviewCreatorApplicationSchema/);
+
+  const store = read('src/lib/studio/store.ts');
+  assert.match(store, /grantCreatorRole/);
+  assert.match(store, /reviewApplication/);
+  assert.match(store, /createService/);
+
+  for (const file of [
+    'src/app/api/studio/applications/route.ts',
+    'src/app/api/studio/applications/[id]/route.ts',
+    'src/app/api/studio/products/route.ts',
+    'src/app/api/studio/products/[id]/route.ts',
+  ]) {
+    const src = read(file);
+    assert.match(src, /getSession\(\)/, file);
+    // 401 may be written as `{ status: 401 }` or `authError(401, ...)`.
+    assert.match(src, /status:\s*401|authError\(\s*401/, file);
+  }
+
+  const appReview = read('src/app/api/studio/applications/[id]/route.ts');
+  assert.match(appReview, /super_admin/);
+  assert.match(appReview, /reviewCreatorApplicationSchema/);
+
+  const productsPost = read('src/app/api/studio/products/route.ts');
+  assert.match(productsPost, /creator/);
+  assert.match(productsPost, /createCreatorServiceSchema/);
+
+  assert.ok(existsSync(new URL('src/app/studio/request/page.tsx', root)));
+  assert.ok(existsSync(new URL('src/app/studio/products/page.tsx', root)));
+  assert.ok(existsSync(new URL('src/app/admin/creators/page.tsx', root)));
+  assert.match(read('src/app/studio/request/page.tsx'), /CreatorApplicationForm|createApplication|getPendingApplication/);
+  assert.match(read('src/app/studio/products/page.tsx'), /CreatorProductsPanel|listServicesForCreator/);
+  assert.match(read('src/app/admin/creators/page.tsx'), /AdminCreatorsPanel|listAllApplications/);
+});

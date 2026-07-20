@@ -32,6 +32,16 @@ export const SMTP_FROM = requireEnv("SMTP_FROM") || "";
 /** Server-only receive address — never exposed to client. */
 export const QUESTPAY_RECEIVE_ADDRESS = requireEnv("QUESTPAY_RECEIVE_ADDRESS") || "";
 
+/**
+ * Server-only custody release private key (must control QUESTPAY_RECEIVE_ADDRESS).
+ * Prefer QUESTPAY_RELEASE_PRIVATE_KEY; QUESTPAY_CUSTODY_PRIVATE_KEY is an alias.
+ * Never import this into client bundles — keep usage inside `server-only` modules.
+ */
+export const QUESTPAY_RELEASE_PRIVATE_KEY =
+  requireEnv("QUESTPAY_RELEASE_PRIVATE_KEY") ||
+  requireEnv("QUESTPAY_CUSTODY_PRIVATE_KEY") ||
+  "";
+
 export const POLYGON_RPC_URL =
   requireEnv("POLYGON_RPC_URL") || "https://polygon-bor-rpc.publicnode.com";
 
