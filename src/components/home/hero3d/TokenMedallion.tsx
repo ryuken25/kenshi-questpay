@@ -80,7 +80,7 @@ export default function TokenMedallion({
 
       {/* Front embossed logo face */}
       <mesh position={[0, 0, thickness / 2 + 0.004]}>
-        <circleGeometry args={[r * 0.78, 64]} />
+        <circleGeometry args={[r * 0.92, 64]} />
         <meshStandardMaterial
           map={texture}
           emissiveMap={texture}
@@ -94,7 +94,7 @@ export default function TokenMedallion({
 
       {/* Front face plate under logo for raised-coin look */}
       <mesh position={[0, 0, thickness / 2 + 0.0015]}>
-        <circleGeometry args={[r * 0.86, 64]} />
+        <circleGeometry args={[r * 0.97, 64]} />
         <meshStandardMaterial
           color={config.body}
           emissive={config.rim}
@@ -106,7 +106,7 @@ export default function TokenMedallion({
 
       {/* Back logo face */}
       <mesh position={[0, 0, -thickness / 2 - 0.004]} rotation={[0, Math.PI, 0]}>
-        <circleGeometry args={[r * 0.78, 64]} />
+        <circleGeometry args={[r * 0.92, 64]} />
         <meshStandardMaterial
           map={texture}
           emissiveMap={texture}
