@@ -199,20 +199,44 @@ export default function VerseCube({ reducedMotion = false }: { reducedMotion?: b
       </RoundedBox>
       <GlassPanels />
 
-      {/* Transparent Verse mark sits directly on the physical front face. */}
-      <mesh position={[0, 0, HALF.z + .012]} renderOrder={4}>
-        <planeGeometry args={[.92, .92]} />
-        <meshBasicMaterial map={mark} transparent alphaTest={.025} depthWrite={false} toneMapped={false} />
+      {/* Transparent QuestPay mark on the physical front face (no opaque plate). */}
+      <mesh position={[0, 0, HALF.z + 0.012]} renderOrder={4}>
+        <planeGeometry args={[1.05, 1.05]} />
+        <meshBasicMaterial
+          map={mark}
+          transparent
+          alphaTest={0.08}
+          depthWrite={false}
+          depthTest
+          toneMapped={false}
+        />
       </mesh>
-      <mesh position={[0, 0, HALF.z + .009]} scale={1.12} renderOrder={3}>
-        <planeGeometry args={[.92, .92]} />
-        <meshBasicMaterial map={mark} color="#b65dff" transparent opacity={.24} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+      {/* Soft violet glow behind the mark only (additive, no plate). */}
+      <mesh position={[0, 0, HALF.z + 0.008]} scale={1.08} renderOrder={3}>
+        <planeGeometry args={[1.05, 1.05]} />
+        <meshBasicMaterial
+          map={mark}
+          color="#c084ff"
+          transparent
+          opacity={0.28}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
       </mesh>
 
-      {/* Reference has a quiet embossed Verse mark on the top face. */}
-      <mesh position={[0, HALF.y + .012, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={4}>
-        <planeGeometry args={[.86, .86]} />
-        <meshBasicMaterial map={mark} color="#7d34ad" transparent opacity={.20} depthWrite={false} toneMapped={false} />
+      {/* Quiet embossed mark on the top face. */}
+      <mesh position={[0, HALF.y + 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={4}>
+        <planeGeometry args={[0.95, 0.95]} />
+        <meshBasicMaterial
+          map={mark}
+          color="#a56dff"
+          transparent
+          opacity={0.22}
+          alphaTest={0.08}
+          depthWrite={false}
+          toneMapped={false}
+        />
       </mesh>
 
       <TopFacets />
