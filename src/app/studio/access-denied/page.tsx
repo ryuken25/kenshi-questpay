@@ -4,11 +4,11 @@ export default function AccessDenied() {
       <section className="max-w-lg rounded-[2rem] border border-red-400/20 bg-red-400/10 p-8 text-center">
         <h1 className="font-sora text-3xl font-black">Access denied</h1>
         <p className="mt-3 text-sm leading-6 text-secondary">
-          This authenticated account does not have Studio access. Studio is available to
+          This signed-in account cannot open Studio. Access is limited to accounts with the
           <b className="text-white"> super_admin </b>
-          and approved
+          or
           <b className="text-white"> creator </b>
-          roles only.
+          role (or the configured admin/root email allowlist).
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <a

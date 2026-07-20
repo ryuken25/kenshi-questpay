@@ -2,7 +2,16 @@ import Link from "next/link";
 
 const navItem = "rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] px-3 py-2 text-sm font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white";
 
-export default function StudioShell({ email, children }: { email: string; children: React.ReactNode }) {
+export default function StudioShell({
+  email,
+  children,
+  showAdmin = true,
+}: {
+  email: string;
+  children: React.ReactNode;
+  /** Super admins get a link into the platform admin console. */
+  showAdmin?: boolean;
+}) {
   return (
     <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
       <header className="border-b border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)]">
@@ -15,7 +24,7 @@ export default function StudioShell({ email, children }: { email: string; childr
             <Link className={navItem} href="/dashboard">Overview</Link>
             <Link className={navItem} href="/dashboard/orders">Orders</Link>
             <Link className={navItem} href="/dashboard/settings">Settings</Link>
-            <Link className={navItem} href="/admin">Admin</Link>
+            {showAdmin ? <Link className={navItem} href="/admin">Admin</Link> : null}
             <span className="max-w-48 truncate px-2 text-sm text-[var(--qp-text-muted)]">{email}</span>
             <form action="/api/auth/logout" method="post"><button type="submit" className="rounded-xl border border-red-300/35 bg-red-400/15 px-3 py-2 text-sm font-bold text-red-100 hover:bg-red-400/25">Logout</button></form>
           </nav>

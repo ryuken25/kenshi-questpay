@@ -9,7 +9,7 @@ export default function StudioLogin({ searchParams }: { searchParams: { error?: 
           <div className="glass-panel-strong rounded-[2rem] p-6 sm:p-8">
             <p className="text-sm font-black uppercase tracking-[0.12em] text-[#C1B6FF]">Private creator workflow</p>
             <h1 className="mt-3 font-sora text-3xl font-black text-[var(--qp-text-primary)]">QuestPay Studio</h1>
-            <p className="mt-3 text-base leading-7 text-[var(--qp-text-secondary)]">Public checkout needs no account. Studio access requires the allowlisted owner identity through Supabase Auth.</p>
+            <p className="mt-3 text-base leading-7 text-[var(--qp-text-secondary)]">Public checkout needs no account. Studio is for <b className="text-white">super_admin</b> and approved <b className="text-white">creator</b> roles (legacy admin/root email allowlist still works).</p>
             {searchParams.sent && <p className="mt-5 rounded-2xl border border-green-300/30 bg-green-400/10 p-4 text-sm font-medium leading-6 text-green-100">If that email is authorized, a secure sign-in link is on the way.</p>}
             {searchParams.error && <p className="mt-5 rounded-2xl border border-red-300/30 bg-red-400/10 p-4 text-sm font-medium leading-6 text-red-100">Sign-in could not be completed. Check the Supabase provider configuration and try again.</p>}
             <a href="/api/auth/oauth" className="mt-6 flex min-h-12 items-center justify-center rounded-xl bg-white px-5 text-base font-black text-black">Continue with Google</a>
