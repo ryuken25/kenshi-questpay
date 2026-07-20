@@ -1,25 +1,28 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryManyOptional } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+type AccountRow = {
+  id: string;
+  primary_email: string | null;
+  status: string | null;
+  created_at: string | null;
+};
 
 export default async function AdminUsersPage() {
   const session = await getSession();
   if (!session) redirect("/sign-in?next=/admin/users");
   if (!session.roles.includes("super_admin")) redirect("/my-orders");
 
-  const sb = getSupabase();
-  const { data: accounts = [] } = sb
-    ? await sb
-        .from("accounts")
-        .select("id,primary_email,status,created_at")
-        .order("created_at", { ascending: false })
-        .limit(50)
-    : { data: [] };
-
-  const rows = accounts || [];
+  const rows = await queryManyOptional<AccountRow>(
+    `SELECT id, primary_email, status, created_at
+     FROM accounts
+     ORDER BY created_at DESC
+     LIMIT 50`,
+  );
 
   return (
     <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">

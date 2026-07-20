@@ -383,11 +383,31 @@ test('custody release foundation: tables, server-only release, studio cannot for
 
   assert.match(releaseLib, /import \"server-only\"/);
   assert.match(releaseLib, /status !== \"accepted\"/);
-  assert.match(releaseLib, /NEXT_PUBLIC_ENABLE_REAL_PAYMENTS/);
+  assert.match(releaseLib, /NEXT_PUBLIC_ENABLE_REAL_PAYMENTS|REAL_PAYMENTS_ENABLED/);
   assert.match(releaseLib, /QUESTPAY_RELEASE_PRIVATE_KEY/);
+  assert.match(releaseLib, /PAYMENT_MIN_CONFIRMATIONS/);
   assert.match(releaseLib, /signer_missing/);
   assert.match(releaseLib, /alreadyReleased/);
   assert.doesNotMatch(releaseLib, /NEXT_PUBLIC_QUESTPAY_RELEASE|window\.|localStorage/);
+
+  const serverConfig = read('src/lib/server-config.ts');
+  assert.match(serverConfig, /PAYMENT_MIN_CONFIRMATIONS/);
+  assert.match(serverConfig, /parseRealPaymentsEnabled|REAL_PAYMENTS_ENABLED/);
+  assert.match(serverConfig, /hasReleaseSignerConfigured/);
+  assert.match(serverConfig, /getPaymentGateStatus/);
+  // Default enabled when configured: unset flag + custody ready.
+  assert.match(serverConfig, /receiveAddressValid && hasReleaseSignerConfigured/);
+
+  const verifyLibPayment = read('src/lib/verify-payment.ts');
+  assert.match(verifyLibPayment, /PAYMENT_MIN_CONFIRMATIONS/);
+  assert.doesNotMatch(verifyLibPayment, /MIN_CONFIRMATIONS = 3/);
+  assert.doesNotMatch(verifyLibPayment, /PAYMENT_MIN_CONFIRMATIONS \|\| 3/);
+
+  const healthRoute = read('src/app/api/health/route.ts');
+  assert.match(healthRoute, /getPaymentGateStatus/);
+  assert.match(healthRoute, /minConfirmations/);
+  assert.match(healthRoute, /releaseReady/);
+  assert.match(healthRoute, /paymentGate/);
 
   assert.match(statusLib, /STUDIO_ALLOWED_STATUSES/);
   assert.match(statusLib, /STUDIO_BLOCKED_STATUSES/);
@@ -413,6 +433,7 @@ test('custody release foundation: tables, server-only release, studio cannot for
 
   assert.match(envExample, /QUESTPAY_RELEASE_PRIVATE_KEY/);
   assert.match(envExample, /NEXT_PUBLIC_ENABLE_REAL_PAYMENTS=false/);
+  assert.match(envExample, /PAYMENT_MIN_CONFIRMATIONS=5/);
 
   assert.match(studioOrderPage, /STUDIO_ALLOWED_STATUSES|STUDIO_STATUS_OPTIONS/);
   assert.doesNotMatch(studioOrderPage, /\["pending","paid","reviewing","accepted"/);

@@ -14,7 +14,7 @@ import {
   SUPABASE_SERVICE_ROLE_KEY,
   SUPABASE_URL,
 } from "./server-config";
-import { createClient } from "@supabase/supabase-js";
+import { getDb } from "@/lib/db";
 
 const STUDIO_ROLES: Role[] = ["creator", "super_admin"];
 
@@ -25,10 +25,12 @@ export type StudioUser = {
 };
 
 function getServiceClient() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false },
-  });
+  try {
+    if (!process.env.DATABASE_URL) return null;
+    return getDb() as any;
+  } catch {
+    return null;
+  }
 }
 
 function isAllowlistedEmail(email: string | null | undefined): boolean {

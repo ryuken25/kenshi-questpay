@@ -1,35 +1,53 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryManyOptional } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+type PaymentRow = {
+  id: string;
+  order_id: string | null;
+  chain_id: number | null;
+  tx_hash: string | null;
+  from_address: string | null;
+  to_address: string | null;
+  token_symbol: string | null;
+  amount_human: string | null;
+  verified_at: string | null;
+  created_at: string | null;
+};
+
+type OrderRow = {
+  id: string;
+  public_order_id: string;
+  status: string;
+  token_symbol: string | null;
+  amount_human: string | null;
+  created_at: string | null;
+  paid_at: string | null;
+};
 
 export default async function AdminTransactionsPage() {
   const session = await getSession();
   if (!session) redirect("/sign-in?next=/admin/transactions");
   if (!session.roles.includes("super_admin")) redirect("/my-orders");
 
-  const sb = getSupabase();
-  const [{ data: payments = [] }, { data: orders = [] }] = sb
-    ? await Promise.all([
-        sb
-          .from("payments")
-          .select(
-            "id,order_id,chain_id,tx_hash,from_address,to_address,token_symbol,amount_human,verified_at,created_at",
-          )
-          .order("created_at", { ascending: false })
-          .limit(50),
-        sb
-          .from("orders")
-          .select("id,public_order_id,status,token_symbol,amount_human,created_at,paid_at")
-          .order("created_at", { ascending: false })
-          .limit(50),
-      ])
-    : [{ data: [] }, { data: [] }];
-
-  const paymentRows = payments || [];
-  const orderRows = orders || [];
+  const [paymentRows, orderRows] = await Promise.all([
+    queryManyOptional<PaymentRow>(
+      `SELECT id, order_id, chain_id, tx_hash, from_address, to_address,
+              token_symbol, amount_human, verified_at, created_at
+       FROM payments
+       ORDER BY created_at DESC
+       LIMIT 50`,
+    ),
+    queryManyOptional<OrderRow>(
+      `SELECT id, public_order_id, status, token_symbol, amount_human, created_at, paid_at
+       FROM orders
+       ORDER BY created_at DESC
+       LIMIT 50`,
+    ),
+  ]);
 
   return (
     <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">

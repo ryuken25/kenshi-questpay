@@ -2,11 +2,13 @@ import "server-only";
 import { parseUnits, formatUnits, type Hash, type Address } from "viem";
 import { getChainClient } from "./viem-server";
 import { NETWORKS, type ChainKey, type TokenConfig, type TokenSymbol } from "./services";
+import { PAYMENT_MIN_CONFIRMATIONS } from "./server-config";
 
 const TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef" as const;
 
-const MIN_CONFIRMATIONS = Number(process.env.PAYMENT_MIN_CONFIRMATIONS || 3);
+/** On-chain confirmations required; sourced from PAYMENT_MIN_CONFIRMATIONS (default 5). */
+const MIN_CONFIRMATIONS = PAYMENT_MIN_CONFIRMATIONS;
 
 export interface VerifyContext {
   chainKey: ChainKey;

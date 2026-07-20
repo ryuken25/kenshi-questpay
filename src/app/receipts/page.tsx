@@ -1,27 +1,36 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryManyOptional } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+type ReceiptOrder = {
+  id: string;
+  public_order_id: string;
+  slug: string;
+  status: string;
+  token_symbol: string | null;
+  amount_human: string | null;
+  usd_price: number | null;
+  created_at: string;
+  paid_at: string | null;
+  account_id: string | null;
+};
 
 export default async function ReceiptsPage() {
   const session = await getSession();
   if (!session) redirect("/sign-in?next=/receipts");
 
-  const sb = getSupabase();
-  const { data: orders = [] } = sb
-    ? await sb
-        .from("orders")
-        .select(
-          "id,public_order_id,slug,status,token_symbol,amount_human,usd_price,created_at,paid_at,account_id",
-        )
-        .eq("account_id", session.accountId)
-        .order("created_at", { ascending: false })
-        .limit(50)
-    : { data: [] };
-
-  const rows = orders || [];
+  const rows = await queryManyOptional<ReceiptOrder>(
+    `SELECT id, public_order_id, slug, status, token_symbol, amount_human,
+            usd_price, created_at, paid_at, account_id
+     FROM orders
+     WHERE account_id = $1
+     ORDER BY created_at DESC
+     LIMIT 50`,
+    [session.accountId],
+  );
 
   return (
     <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">

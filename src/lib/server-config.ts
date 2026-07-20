@@ -1,4 +1,5 @@
 import "server-only";
+import { queryOneOptional } from "@/lib/db";
 
 /**
  * Server-side configuration.
@@ -51,7 +52,10 @@ export const NEXT_PUBLIC_SITE_URL =
 export const ADMIN_EMAIL = requireEnv("ADMIN_EMAIL") || "";
 
 /** True when Supabase is fully configured (URL + service key). */
-export const hasSupabase = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+export const hasSupabase = Boolean(process.env.DATABASE_URL || (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY));
+
+/** True when Neon/Postgres DATABASE_URL is configured. */
+export const hasDatabase = Boolean(process.env.DATABASE_URL?.trim());
 
 /** True when SMTP is fully configured. */
 export const hasSMTP = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS && SMTP_FROM);
@@ -65,16 +69,81 @@ export function isValidAddress(addr: string): boolean {
 export const receiveAddressValid =
   Boolean(QUESTPAY_RECEIVE_ADDRESS) && isValidAddress(QUESTPAY_RECEIVE_ADDRESS);
 
-import { createClient } from "@supabase/supabase-js";
+/**
+ * Minimum on-chain confirmations required for payment verification.
+ * Wired from PAYMENT_MIN_CONFIRMATIONS (default 5 — matches .env.example / gate docs).
+ */
+export const PAYMENT_MIN_CONFIRMATIONS = (() => {
+  const raw = process.env.PAYMENT_MIN_CONFIRMATIONS?.trim();
+  if (!raw) return 5;
+  const n = Number(raw);
+  if (Number.isFinite(n) && n >= 0) return Math.floor(n);
+  return 5;
+})();
+
+/**
+ * True when a custody release private key is present and well-formed.
+ * Does not return or log the key.
+ */
+export function hasReleaseSignerConfigured(): boolean {
+  const raw = QUESTPAY_RELEASE_PRIVATE_KEY;
+  if (!raw) return false;
+  const normalized = raw.startsWith("0x") ? raw : `0x${raw}`;
+  return /^0x[a-fA-F0-9]{64}$/.test(normalized);
+}
+
+/**
+ * Parse NEXT_PUBLIC_ENABLE_REAL_PAYMENTS.
+ * - explicit true/1/yes/on → enabled
+ * - explicit false/0/no/off → disabled
+ * - unset/empty → default enabled when custody is configured
+ *   (valid receive address + release signer). Explicit false always wins.
+ */
+function parseRealPaymentsEnabled(): boolean {
+  const raw = process.env.NEXT_PUBLIC_ENABLE_REAL_PAYMENTS?.trim().toLowerCase();
+  if (raw === "false" || raw === "0" || raw === "no" || raw === "off") return false;
+  if (raw === "true" || raw === "1" || raw === "yes" || raw === "on") return true;
+  // Unset: enable only when server custody path is fully configured.
+  return receiveAddressValid && hasReleaseSignerConfigured();
+}
+
+/**
+ * Server-side real-payment / release gate.
+ * Client UI still reads NEXT_PUBLIC_ENABLE_REAL_PAYMENTS at build time;
+ * operators should set it explicitly to "true" for wallet-pay CTAs.
+ */
+export const REAL_PAYMENTS_ENABLED = parseRealPaymentsEnabled();
+
+/** Sanitized readiness snapshot for health endpoints (no secrets). */
+export function getPaymentGateStatus() {
+  const flagRaw = process.env.NEXT_PUBLIC_ENABLE_REAL_PAYMENTS?.trim() ?? "";
+  return {
+    realPaymentsEnabled: REAL_PAYMENTS_ENABLED,
+    publicFlag: flagRaw === "" ? "unset" : flagRaw,
+    minConfirmations: PAYMENT_MIN_CONFIRMATIONS,
+    receiveAddressConfigured: receiveAddressValid,
+    releaseSignerConfigured: hasReleaseSignerConfigured(),
+    /** True when on-chain release can proceed (flag + custody). */
+    releaseReady: REAL_PAYMENTS_ENABLED && receiveAddressValid && hasReleaseSignerConfigured(),
+    /** True when inbound payment verification can run (receive + RPC path). */
+    paymentVerifyReady: receiveAddressValid,
+  };
+}
 
 /** Fetch a sanitized order by public_id (no brief/contact in response). */
 export async function getServerSideOrder(publicOrderId: string) {
-  if (!hasSupabase) return null;
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  const { data } = await supabase
-    .from("orders")
-    .select("public_order_id,slug,status,amount_human,token_symbol,created_at")
-    .eq("public_order_id", publicOrderId)
-    .single();
-  return data;
+  return queryOneOptional<{
+    public_order_id: string;
+    slug: string;
+    status: string;
+    amount_human: string;
+    token_symbol: string;
+    created_at: string;
+  }>(
+    `SELECT public_order_id, slug, status, amount_human, token_symbol, created_at
+     FROM orders
+     WHERE public_order_id = $1
+     LIMIT 1`,
+    [publicOrderId],
+  );
 }

@@ -1,16 +1,29 @@
 import Link from "next/link";
 import StudioShell from "@/components/StudioShell";
 import { requireStudioAdmin } from "@/lib/supabase-auth";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryManyOptional } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+type OrderRow = {
+  id: string;
+  public_order_id: string;
+  slug: string;
+  status: string;
+  token_symbol: string | null;
+  amount_human: string | null;
+  created_at: string;
+};
+
 export default async function StudioDashboard() {
   const user = await requireStudioAdmin();
-  const sb = getSupabase();
-  const { data: orders = [] } = sb ? await sb.from("orders").select("id,public_order_id,slug,status,token_symbol,amount_human,created_at").order("created_at",{ascending:false}).limit(50) : { data: [] };
-  const rows = orders || [];
-  const count=(...statuses:string[])=>rows.filter(order=>statuses.includes(order.status)).length;
+  const rows = await queryManyOptional<OrderRow>(
+    `SELECT id, public_order_id, slug, status, token_symbol, amount_human, created_at
+     FROM orders
+     ORDER BY created_at DESC
+     LIMIT 50`,
+  );
+  const count = (...statuses: string[]) => rows.filter((order) => statuses.includes(order.status)).length;
   return (
     <StudioShell email={user.email || "owner"} showAdmin={user.roles?.includes("super_admin")}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -79,4 +92,11 @@ function QuickLink({ href, title, body }: { href: string; title: string; body: s
     </Link>
   );
 }
-function Metric({label,value}:{label:string;value:number}){return <div className="rounded-2xl border border-white/10 bg-[#07070d] p-4"><p className="text-xs uppercase tracking-wider text-muted">{label}</p><p className="mt-2 text-3xl font-black">{value}</p></div>}
+function Metric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#07070d] p-4">
+      <p className="text-xs uppercase tracking-wider text-muted">{label}</p>
+      <p className="mt-2 text-3xl font-black">{value}</p>
+    </div>
+  );
+}

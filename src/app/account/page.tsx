@@ -34,7 +34,7 @@ export default async function AccountPage() {
                 {identities.length === 0 ? (
                   <p className="text-sm text-[var(--qp-text-muted)]">No linked identities found.</p>
                 ) : (
-                  identities.map((id, i) => (
+                  identities.map((id: any, i: number) => (
                     <div key={i} className="flex items-center justify-between rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] px-3 py-2 text-sm">
                       <span className="font-semibold capitalize text-[var(--qp-text-primary)]">{id.provider}</span>
                       <span className="truncate text-[var(--qp-text-muted)]">{id.normalized_email || id.normalized_wallet || "—"}</span>

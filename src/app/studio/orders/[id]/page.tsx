@@ -1,12 +1,62 @@
 import { notFound } from "next/navigation";
 import StudioShell from "@/components/StudioShell";
 import { requireStudioAdmin } from "@/lib/supabase-auth";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryManyOptional, queryOneOptional, hasDatabase } from "@/lib/db";
 import { STUDIO_ALLOWED_STATUSES } from "@/lib/payments/order-status";
 
 export const dynamic = "force-dynamic";
 
 const STUDIO_STATUS_OPTIONS = Array.from(STUDIO_ALLOWED_STATUSES);
+
+type OrderRow = Record<string, unknown> & {
+  id: string;
+  public_order_id: string;
+  slug: string;
+  status: string;
+  customer_name?: string | null;
+  contact_method?: string | null;
+  contact_value?: string | null;
+  project_link?: string | null;
+  deadline?: string | null;
+  brief?: string | null;
+  expected_output?: string | null;
+  ref_links?: string | null;
+  notes?: string | null;
+  amount_human?: string | null;
+  token_symbol?: string | null;
+  receive_address?: string | null;
+  creator_wallet?: string | null;
+};
+
+type PaymentRow = {
+  tx_hash?: string | null;
+  from_address?: string | null;
+};
+
+type EventRow = {
+  id: string;
+  event_type: string;
+  created_at: string;
+};
+
+type SubmissionRow = {
+  id: string;
+  note: string | null;
+  delivery_url: string | null;
+  submitted_at: string;
+  submitted_by: string | null;
+};
+
+type ReleaseRow = {
+  id: string;
+  status: string | null;
+  tx_hash: string | null;
+  to_address: string | null;
+  amount_human: string | null;
+  token_symbol: string | null;
+  released_at: string | null;
+  failure_reason: string | null;
+};
 
 export default async function StudioOrderDetail({
   params,
@@ -16,30 +66,31 @@ export default async function StudioOrderDetail({
   searchParams?: { error?: string };
 }) {
   const user = await requireStudioAdmin();
-  const sb = getSupabase();
-  if (!sb) notFound();
+  if (!hasDatabase) notFound();
 
-  const [{ data: order }, { data: payment }, { data: events }, { data: submissions }, { data: release }] =
-    await Promise.all([
-      sb.from("orders").select("*").eq("id", params.id).single(),
-      sb.from("payments").select("*").eq("order_id", params.id).maybeSingle(),
-      sb
-        .from("questpay_order_events")
-        .select("*")
-        .eq("order_id", params.id)
-        .order("created_at", { ascending: false }),
-      sb
-        .from("work_submissions")
-        .select("id, note, delivery_url, submitted_at, submitted_by")
-        .eq("order_id", params.id)
-        .order("submitted_at", { ascending: false })
-        .limit(5),
-      sb
-        .from("releases")
-        .select("id, status, tx_hash, to_address, amount_human, token_symbol, released_at, failure_reason")
-        .eq("order_id", params.id)
-        .maybeSingle(),
-    ]);
+  const [order, payment, events, submissions, release] = await Promise.all([
+    queryOneOptional<OrderRow>(`SELECT * FROM orders WHERE id = $1 LIMIT 1`, [params.id]),
+    queryOneOptional<PaymentRow>(`SELECT * FROM payments WHERE order_id = $1 LIMIT 1`, [params.id]),
+    queryManyOptional<EventRow>(
+      `SELECT * FROM questpay_order_events WHERE order_id = $1 ORDER BY created_at DESC`,
+      [params.id],
+    ),
+    queryManyOptional<SubmissionRow>(
+      `SELECT id, note, delivery_url, submitted_at, submitted_by
+       FROM work_submissions
+       WHERE order_id = $1
+       ORDER BY submitted_at DESC
+       LIMIT 5`,
+      [params.id],
+    ),
+    queryOneOptional<ReleaseRow>(
+      `SELECT id, status, tx_hash, to_address, amount_human, token_symbol, released_at, failure_reason
+       FROM releases
+       WHERE order_id = $1
+       LIMIT 1`,
+      [params.id],
+    ),
+  ]);
 
   if (!order) notFound();
 
@@ -136,7 +187,7 @@ export default async function StudioOrderDetail({
           <div className="rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5">
             <h2 className="font-sora text-xl font-black">Work submissions</h2>
             <div className="mt-3 space-y-2">
-              {(submissions || []).map((s) => (
+              {submissions.map((s) => (
                 <div key={s.id} className="rounded-xl bg-[rgba(8,8,14,.72)] p-3 text-sm">
                   <p className="text-xs text-muted">{new Date(s.submitted_at).toLocaleString()}</p>
                   <p className="mt-1 whitespace-pre-wrap">{s.note || "—"}</p>
@@ -145,7 +196,7 @@ export default async function StudioOrderDetail({
                   ) : null}
                 </div>
               ))}
-              {!submissions?.length && <p className="text-sm text-muted">No work submissions yet.</p>}
+              {!submissions.length && <p className="text-sm text-muted">No work submissions yet.</p>}
             </div>
           </div>
 
@@ -171,13 +222,13 @@ export default async function StudioOrderDetail({
           <div className="rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5">
             <h2 className="font-sora text-xl font-black">Timeline</h2>
             <div className="mt-3 space-y-2">
-              {(events || []).map((event) => (
+              {events.map((event) => (
                 <div key={event.id} className="rounded-xl bg-[rgba(8,8,14,.72)] p-3 text-sm">
                   <b>{event.event_type}</b>
                   <p className="text-xs text-muted">{new Date(event.created_at).toLocaleString()}</p>
                 </div>
               ))}
-              {!events?.length && <p className="text-sm text-muted">No events recorded yet.</p>}
+              {!events.length && <p className="text-sm text-muted">No events recorded yet.</p>}
             </div>
           </div>
         </section>

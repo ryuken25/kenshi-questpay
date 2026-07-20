@@ -1,28 +1,37 @@
 import Link from "next/link";
 import StudioShell from "@/components/StudioShell";
 import { requireStudioAdmin } from "@/lib/supabase-auth";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryManyOptional } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 const RELEASED = new Set(["released", "completed", "delivered"]);
 const IN_FLIGHT = new Set(["paid", "work_submitted", "accepted", "in_progress", "reviewing"]);
 
+type OrderRow = {
+  id: string;
+  public_order_id: string;
+  slug: string;
+  status: string;
+  token_symbol: string | null;
+  amount_human: string | null;
+  usd_price: number | null;
+  created_at: string;
+  paid_at: string | null;
+};
+
 export default async function StudioEarningsPage() {
   const user = await requireStudioAdmin();
-  const sb = getSupabase();
-  const { data: orders = [] } = sb
-    ? await sb
-        .from("orders")
-        .select("id,public_order_id,slug,status,token_symbol,amount_human,usd_price,created_at,paid_at")
-        .order("created_at", { ascending: false })
-        .limit(100)
-    : { data: [] };
+  const rows = await queryManyOptional<OrderRow>(
+    `SELECT id, public_order_id, slug, status, token_symbol, amount_human, usd_price, created_at, paid_at
+     FROM orders
+     ORDER BY created_at DESC
+     LIMIT 100`,
+  );
 
-  const rows = orders || [];
   const released = rows.filter((o) => RELEASED.has(o.status));
   const pending = rows.filter((o) => IN_FLIGHT.has(o.status));
-  const sumUsd = (list: typeof rows) =>
+  const sumUsd = (list: OrderRow[]) =>
     list.reduce((acc, o) => acc + (Number(o.usd_price) || 0), 0);
 
   return (

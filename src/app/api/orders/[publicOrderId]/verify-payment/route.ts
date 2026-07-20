@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase-server";
+import { getSupabase } from "@/lib/db";
 import { verifyPayment } from "@/lib/verify-payment";
 import { verifyPaymentSchema } from "@/lib/schemas";
 import { getTokenConfig, chainKeyFromId, type TokenSymbol, getServiceBySlug } from "@/lib/services";
@@ -150,7 +150,45 @@ export async function POST(
     p_confirmations: result.confirmations || 0,
     p_raw_receipt: result,
   };
-  const { error: rpcErr } = await sb.rpc("record_verified_payment", paymentPayload);
+  // Neon path: record payment + mark paid directly (exact amount already verified in-memory).
+  let rpcErr: { message: string } | null = null;
+  try {
+    const { query } = await import("@/lib/db");
+    await query(
+      `INSERT INTO payments (
+         order_id, chain_id, tx_hash, from_address, to_address, token_symbol, token_address,
+         amount_raw, amount_human, block_number, block_timestamp, confirmations, raw_receipt
+       ) VALUES (
+         $1,$2,lower($3),lower($4),lower($5),$6,lower(coalesce($7,'')),$8,$9,$10,$11,$12,$13::jsonb
+       )`,
+      [
+        paymentPayload.p_order_id,
+        paymentPayload.p_chain_id,
+        paymentPayload.p_tx_hash,
+        paymentPayload.p_from_address,
+        paymentPayload.p_to_address,
+        paymentPayload.p_token_symbol,
+        paymentPayload.p_token_address,
+        paymentPayload.p_amount_raw,
+        paymentPayload.p_amount_human,
+        paymentPayload.p_block_number,
+        paymentPayload.p_block_timestamp,
+        paymentPayload.p_confirmations,
+        JSON.stringify(paymentPayload.p_raw_receipt ?? {}),
+      ],
+    );
+    await query(
+      `UPDATE orders SET status='paid', paid_at=now(), updated_at=now() WHERE id=$1 AND status = ANY($2::text[])`,
+      [paymentPayload.p_order_id, ['awaiting_payment','payment_submitted','pending']],
+    );
+    await query(
+      `INSERT INTO questpay_order_events (order_id, event_type, from_status, to_status, metadata)
+       VALUES ($1,'payment_verified',$2,'paid',$3::jsonb)`,
+      [paymentPayload.p_order_id, order.status, JSON.stringify({ tx_hash: paymentPayload.p_tx_hash, exact_match: true })],
+    );
+  } catch (e) {
+    rpcErr = { message: e instanceof Error ? e.message : String(e) };
+  }
   if (rpcErr) {
     const msg = rpcErr.message || "";
     if (/payment_window_expired/i.test(msg)) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
-import { getSupabase } from "@/lib/supabase-server";
+import { getSupabase } from "@/lib/db";
 import { QUESTPAY_RECEIVE_ADDRESS, receiveAddressValid } from "@/lib/server-config";
 import { getServiceBySlug, isValidChainTokenPair } from "@/lib/services";
 import { createOrderSchema, profileSchema } from "@/lib/schemas";

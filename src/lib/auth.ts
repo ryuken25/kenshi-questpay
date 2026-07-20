@@ -1,7 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import crypto from "node:crypto";
-import { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } from "@/lib/server-config";
+import { getDb } from "@/lib/db";
 
 export const SESSION_COOKIE = "qp_session";
 export const SESSION_TTL_SECONDS = 604800; // 7 days
@@ -23,8 +22,8 @@ export interface QuestPaySession {
 }
 
 function getServiceClient() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) throw new Error("supabase_not_configured");
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  // Neon-backed compatibility client
+  return getDb() as any;
 }
 
 export function hashToken(token: string): string {
@@ -92,7 +91,7 @@ export async function getSession(): Promise<QuestPaySession | null> {
     .eq("account_id", session.account_id)
     .is("revoked_at", null);
 
-  const roleList = (roles || []).map((r) => r.role as Role);
+  const roleList = (roles || []).map((r: {role: string}) => r.role as Role);
 
   return {
     accountId: session.account_id,
@@ -109,7 +108,7 @@ export async function getActiveRoles(accountId: string): Promise<Role[]> {
     .select("role")
     .eq("account_id", accountId)
     .is("revoked_at", null);
-  return (data || []).map((r) => r.role as Role);
+  return (data || []).map((r: {role: string}) => r.role as Role);
 }
 
 export async function requireRole(role: Role): Promise<{ accountId: string; roles: Role[] }> {

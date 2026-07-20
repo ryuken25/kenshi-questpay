@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase-server";
+import { getSupabase } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import {
   releaseAcceptedOrder,
@@ -16,7 +16,9 @@ export const maxDuration = 60;
  * Server-authoritative custody release after buyer accept.
  * - Requires authenticated session (buyer owner, creator on order, or super_admin).
  * - Order must be status=accepted (idempotent if already released).
- * - On-chain send requires NEXT_PUBLIC_ENABLE_REAL_PAYMENTS=true + QUESTPAY_RELEASE_PRIVATE_KEY.
+ * - On-chain send requires REAL_PAYMENTS_ENABLED + QUESTPAY_RELEASE_PRIVATE_KEY.
+ *   REAL_PAYMENTS_ENABLED is true when NEXT_PUBLIC_ENABLE_REAL_PAYMENTS=true, or
+ *   when the flag is unset and custody (receive + signer) is fully configured.
  * - Never trusts client amount / address / status overrides.
  */
 export async function POST(

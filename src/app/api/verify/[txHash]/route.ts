@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase-server";
+import { queryOneOptional, hasDatabase } from "@/lib/db";
 import { verifyPayment } from "@/lib/verify-payment";
 import { chainKeyFromId, getEnabledTokensForChain, explorerTxUrl, type ChainKey } from "@/lib/services";
 import { receiveAddressValid, QUESTPAY_RECEIVE_ADDRESS } from "@/lib/server-config";
@@ -7,10 +7,26 @@ import { receiveAddressValid, QUESTPAY_RECEIVE_ADDRESS } from "@/lib/server-conf
 export const dynamic = "force-dynamic";
 export const maxDuration = 20;
 
+type PaymentJoinRow = {
+  tx_hash: string;
+  from_address: string | null;
+  to_address: string | null;
+  token_symbol: string | null;
+  amount_human: string | null;
+  chain_id: number | null;
+  block_number: string | number | null;
+  block_timestamp: string | null;
+  confirmations: number | null;
+  verified_at: string | null;
+  public_order_id: string | null;
+  slug: string | null;
+  order_status: string | null;
+};
+
 /**
  * Stateless public verification endpoint.
  *
- * If the tx is associated with a Supabase order, derives expected
+ * If the tx is associated with a DB order, derives expected
  * receiver/token/amount from the order and verifies on-chain.
  *
  * If no order is found, falls back to checking the tx against the
@@ -25,19 +41,18 @@ export async function GET(
     return NextResponse.json({ ok: false, reason: "Invalid transaction hash format." }, { status: 400 });
   }
 
-  const sb = getSupabase();
-
-  // Try to find a Supabase order/payment matching this tx hash
-  if (sb) {
-    const { data: payment } = await sb
-      .from("payments")
-      .select(`
-        tx_hash, from_address, to_address, token_symbol, amount_human, chain_id,
-        block_number, block_timestamp, confirmations, verified_at,
-        orders:order_id ( public_order_id, slug, status )
-      `)
-      .ilike("tx_hash", txHash)
-      .maybeSingle();
+  // Try to find a payment matching this tx hash
+  if (hasDatabase) {
+    const payment = await queryOneOptional<PaymentJoinRow>(
+      `SELECT p.tx_hash, p.from_address, p.to_address, p.token_symbol, p.amount_human,
+              p.chain_id, p.block_number, p.block_timestamp, p.confirmations, p.verified_at,
+              o.public_order_id, o.slug, o.status AS order_status
+       FROM payments p
+       LEFT JOIN orders o ON o.id = p.order_id
+       WHERE lower(p.tx_hash) = lower($1)
+       LIMIT 1`,
+      [txHash],
+    );
 
     if (payment) {
       return NextResponse.json({
@@ -47,14 +62,20 @@ export async function GET(
         to: payment.to_address,
         token: payment.token_symbol,
         amountHuman: payment.amount_human,
-        blockNumber: Number(payment.block_number),
+        blockNumber: payment.block_number != null ? Number(payment.block_number) : undefined,
         blockTimestamp: payment.block_timestamp
           ? Math.floor(new Date(payment.block_timestamp).getTime() / 1000)
           : undefined,
         confirmations: payment.confirmations,
         verifiedAt: payment.verified_at,
-        explorer: explorerTxUrl(chainKeyFromId(payment.chain_id), txHash),
-        order: payment.orders,
+        explorer: explorerTxUrl(chainKeyFromId(payment.chain_id ?? 137), txHash),
+        order: payment.public_order_id
+          ? {
+              public_order_id: payment.public_order_id,
+              slug: payment.slug,
+              status: payment.order_status,
+            }
+          : null,
       });
     }
   }
@@ -67,18 +88,14 @@ export async function GET(
     }, { status: 404 });
   }
 
-  // Try each enabled token on each network to see if this tx matches
   for (const chainKey of ["polygon", "bnb"] as ChainKey[]) {
     for (const token of getEnabledTokensForChain(chainKey)) {
-      // We don't know the exact expected amount without an order, so
-      // we just check that a transfer to the receive address exists
-      // with a positive amount. This is a "is this a payment to QuestPay?" check.
       try {
         const result = await verifyPayment(txHash, {
           chainKey,
           receiveAddress: QUESTPAY_RECEIVE_ADDRESS,
           token,
-          amountHuman: "0", // accept any positive amount in stateless mode
+          amountHuman: "0",
         });
 
         if (result.ok) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase-server";
+import { getSupabase } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import {
   markOrderAccepted,

@@ -1,6 +1,6 @@
 import "server-only";
 import { parseUnits } from "viem";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DbClient } from "@/lib/db";
 
 /** Unique 4-digit decimal suffix range (avoid 0000). */
 export const AMOUNT_SUFFIX_MIN = 1;
@@ -116,7 +116,7 @@ export function applyAmountSuffix(
  * chain+token via amount_raw unique index).
  */
 export async function allocateUniqueAmountSuffix(
-  sb: SupabaseClient,
+  sb: DbClient,
   opts?: { maxAttempts?: number; chainId?: number; tokenSymbol?: string },
 ): Promise<number> {
   const maxAttempts = opts?.maxAttempts ?? 12;
@@ -171,7 +171,7 @@ export async function allocateUniqueAmountSuffix(
  * Build a unique suffixed payment amount for a new order.
  */
 export async function createUniqueOrderAmount(
-  sb: SupabaseClient,
+  sb: DbClient,
   baseAmountHuman: string,
   decimals: number,
   opts?: { chainId?: number; tokenSymbol?: string },
@@ -194,7 +194,7 @@ export function applyUniqueSuffixToQuoteAmount(params: {
  * Safe to call on every order access / verify path (idempotent).
  */
 export async function cancelOrderIfPaymentExpired(
-  sb: SupabaseClient,
+  sb: DbClient,
   order: {
     id: string;
     status: string;

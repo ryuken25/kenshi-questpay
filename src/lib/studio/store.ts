@@ -109,7 +109,7 @@ export async function listApplicationsForAccount(accountId: string): Promise<Cre
       .select("*")
       .eq("account_id", accountId)
       .order("created_at", { ascending: false });
-    if (!error && data) return data.map((r) => mapApplication(r as Record<string, unknown>));
+    if (!error && data) return data.map((r: any) => mapApplication(r as Record<string, unknown>));
     if (error && !isMissingRelation(error)) {
       console.error("[studio] listApplicationsForAccount", error.message);
     }
@@ -139,7 +139,7 @@ export async function listAllApplications(opts?: {
     if (opts?.status) q = q.eq("status", opts.status);
     const { data, error } = await q;
     if (!error && data) {
-      return data.map((r) => {
+      return data.map((r: any) => {
         const row = r as Record<string, unknown>;
         const mapped = mapApplication(row);
         const accounts = row.accounts as { primary_email?: string } | null;
@@ -371,7 +371,7 @@ export async function listServicesForCreator(
       q = q.neq("status", "archived");
     }
     const { data, error } = await q;
-    if (!error && data) return data.map((r) => mapService(r as Record<string, unknown>));
+    if (!error && data) return data.map((r: any) => mapService(r as Record<string, unknown>));
     if (error && !isMissingRelation(error)) {
       console.error("[studio] listServicesForCreator", error.message);
     }
@@ -396,7 +396,7 @@ export async function listAllServices(opts?: {
       .limit(limit);
     if (opts?.status) q = q.eq("status", opts.status);
     const { data, error } = await q;
-    if (!error && data) return data.map((r) => mapService(r as Record<string, unknown>));
+    if (!error && data) return data.map((r: any) => mapService(r as Record<string, unknown>));
     if (error && !isMissingRelation(error)) {
       console.error("[studio] listAllServices", error.message);
     }

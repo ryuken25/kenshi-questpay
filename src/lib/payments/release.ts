@@ -10,12 +10,16 @@ import {
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { polygon, bsc } from "viem/chains";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DbClient } from "@/lib/db";
 import {
   QUESTPAY_RECEIVE_ADDRESS,
+  QUESTPAY_RELEASE_PRIVATE_KEY,
   receiveAddressValid,
   POLYGON_RPC_URL,
   isValidAddress,
+  REAL_PAYMENTS_ENABLED as SERVER_REAL_PAYMENTS_ENABLED,
+  hasReleaseSignerConfigured as serverHasReleaseSignerConfigured,
+  PAYMENT_MIN_CONFIRMATIONS,
 } from "@/lib/server-config";
 import { getChainClient } from "@/lib/viem-server";
 import {
@@ -25,19 +29,20 @@ import {
   NETWORKS,
 } from "@/lib/services";
 
-/** Real on-chain release is gated by the same public flag as payments. */
-export const REAL_PAYMENTS_ENABLED =
-  process.env.NEXT_PUBLIC_ENABLE_REAL_PAYMENTS === "true";
+/**
+ * Real on-chain release is gated by the same flag as payments.
+ * Defaults to enabled when NEXT_PUBLIC_ENABLE_REAL_PAYMENTS is unset and
+ * custody (receive address + release signer) is fully configured; explicit
+ * false always disables. See server-config.parseRealPaymentsEnabled.
+ */
+export const REAL_PAYMENTS_ENABLED = SERVER_REAL_PAYMENTS_ENABLED;
 
 /**
  * Server-only custody signer private key.
  * Must control QUESTPAY_RECEIVE_ADDRESS. Never import this module from client code.
  */
 function getReleasePrivateKey(): Hex | null {
-  const raw =
-    process.env.QUESTPAY_RELEASE_PRIVATE_KEY?.trim() ||
-    process.env.QUESTPAY_CUSTODY_PRIVATE_KEY?.trim() ||
-    "";
+  const raw = QUESTPAY_RELEASE_PRIVATE_KEY;
   if (!raw) return null;
   const normalized = raw.startsWith("0x") ? raw : `0x${raw}`;
   if (!/^0x[a-fA-F0-9]{64}$/.test(normalized)) return null;
@@ -45,7 +50,7 @@ function getReleasePrivateKey(): Hex | null {
 }
 
 export function hasReleaseSignerConfigured(): boolean {
-  return Boolean(getReleasePrivateKey());
+  return serverHasReleaseSignerConfigured();
 }
 
 export type ReleaseResult =
@@ -112,7 +117,7 @@ function getWalletClientForChain(chainId: number, privateKey: Hex): WalletClient
 }
 
 async function loadExistingRelease(
-  sb: SupabaseClient,
+  sb: DbClient,
   orderId: string,
 ): Promise<{
   id: string;
@@ -136,13 +141,14 @@ async function loadExistingRelease(
  *
  * Guards:
  * - order.status must be `accepted` (or already `released`/`completed` → idempotent)
- * - NEXT_PUBLIC_ENABLE_REAL_PAYMENTS must be true for on-chain send
+ * - REAL_PAYMENTS_ENABLED must be true for on-chain send
+ *   (NEXT_PUBLIC_ENABLE_REAL_PAYMENTS explicit true, or unset + custody configured)
  * - QUESTPAY_RELEASE_PRIVATE_KEY must be present for on-chain send
  * - one release row per order (unique order_id + idempotency_key)
  * - never trusts client-supplied amount / to_address / receive_address
  */
 export async function releaseAcceptedOrder(
-  sb: SupabaseClient,
+  sb: DbClient,
   opts: {
     orderId?: string;
     publicOrderId?: string;
@@ -276,7 +282,7 @@ export async function releaseAcceptedOrder(
     if (!opts.allowSkipWhenGated) {
       return {
         ok: false,
-        error: "Real payments are disabled (NEXT_PUBLIC_ENABLE_REAL_PAYMENTS≠true). Release refused.",
+        error: "Real payments are disabled (REAL_PAYMENTS_ENABLED=false / NEXT_PUBLIC_ENABLE_REAL_PAYMENTS kill-switch). Release refused.",
         code: "real_payments_disabled",
       };
     }
@@ -404,11 +410,16 @@ export async function releaseAcceptedOrder(
     }
 
     // Best-effort wait for inclusion (non-fatal if RPC times out).
+    // Use at least 1 confirmation; cap wait depth so release isn't blocked by high PAYMENT_MIN_CONFIRMATIONS.
     try {
+      const waitConfirmations = Math.max(
+        1,
+        Math.min(PAYMENT_MIN_CONFIRMATIONS, 3),
+      );
       await publicClient.waitForTransactionReceipt({
         hash: txHash as Hex,
-        confirmations: 1,
-        timeout: 60_000,
+        confirmations: waitConfirmations,
+        timeout: 90_000,
       });
     } catch {
       // Still mark broadcast; worker/cron can re-check later.
@@ -513,7 +524,7 @@ export async function releaseAcceptedOrder(
 }
 
 async function recordSkippedRelease(
-  sb: SupabaseClient,
+  sb: DbClient,
   args: {
     order: {
       id: string;
@@ -607,7 +618,7 @@ async function recordSkippedRelease(
  * Caller should invoke releaseAcceptedOrder afterwards.
  */
 export async function markOrderAccepted(
-  sb: SupabaseClient,
+  sb: DbClient,
   opts: {
     orderId: string;
     actorAccountId: string;
