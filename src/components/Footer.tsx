@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Github } from "lucide-react";
+import { Github } from "@/components/icons/BrandIcons";
 import TermsModalLink from "@/components/legal/TermsModalLink";
 import { SITE } from "@/lib/site";
 

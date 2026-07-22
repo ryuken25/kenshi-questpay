@@ -1,6 +1,7 @@
 import { getServerSideOrder } from '@/lib/server-config';
 export const dynamic = 'force-dynamic';
-export default async function OrderStatusPage({ params }: { params: { publicOrderId: string } }) {
+export default async function OrderStatusPage(props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   const order = await getServerSideOrder(params.publicOrderId);
   if (!order) return <div className="min-h-screen bg-[var(--qp-bg)] flex items-center justify-center text-white"><div className="text-center"><h1 className="text-2xl font-black">Order not found</h1><p className="mt-2 text-muted">Check your order ID and try again.</p></div></div>;
   return <div className="min-h-screen bg-[var(--qp-bg)] px-4 py-10 text-white sm:px-6 lg:px-8">

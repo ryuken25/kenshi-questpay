@@ -4,7 +4,8 @@ import { getSession, sanitizeNextPath } from "@/lib/auth";
 import { getProfile } from "@/lib/profile";
 import OnboardingForm from "@/components/onboarding/OnboardingForm";
 
-export default async function OnboardingPage({ searchParams }: { searchParams: { next?: string } }) {
+export default async function OnboardingPage(props: { searchParams: Promise<{ next?: string }> }) {
+  const searchParams = await props.searchParams;
   const next = sanitizeNextPath(searchParams.next) ?? "/account";
   const session = await getSession();
   if (!session) redirect(`/sign-in?next=${encodeURIComponent(`/onboarding?next=${next}`)}`);

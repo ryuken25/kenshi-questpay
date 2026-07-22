@@ -5,19 +5,21 @@ import { queryOneOptional } from "@/lib/db";
 import { getServiceBySlug } from "@/lib/services";
 
 interface Props {
-  params: { publicOrderId: string };
+  params: Promise<{ publicOrderId: string }>;
 }
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: `Pay — Order ${params.publicOrderId} — QuestPay`,
     description: "Complete your crypto payment on Polygon mainnet.",
   };
 }
 
-export default async function PayPage({ params }: Props) {
+export default async function PayPage(props: Props) {
+  const params = await props.params;
   const { publicOrderId } = params;
 
   const order = await queryOneOptional<any>(

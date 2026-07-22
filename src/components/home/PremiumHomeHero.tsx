@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { CircleCheck, FileLock2, ReceiptText } from "lucide-react";
@@ -14,11 +14,11 @@ const trustItems = [
   { label: "Public receipt proof", icon: ReceiptText },
 ];
 
-const heroContainer = {
+const heroContainer: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
 };
-const heroItem = {
+const heroItem: Variants = {
   hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } }
 };

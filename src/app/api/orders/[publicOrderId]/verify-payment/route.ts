@@ -12,10 +12,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { publicOrderId: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   const sb = getSupabase();
   if (!sb) {
     return NextResponse.json({ error: "Order system is not configured." }, { status: 503 });

@@ -21,10 +21,8 @@ export const maxDuration = 60;
  * Release is server-only and idempotent; if signer/gate missing, order stays accepted
  * and funds remain in custody until release is retried.
  */
-export async function POST(
-  _req: NextRequest,
-  { params }: { params: { publicOrderId: string } },
-) {
+export async function POST(_req: NextRequest, props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   const sb = getSupabase();
   if (!sb) {
     return NextResponse.json({ error: "Order system is not configured." }, { status: 503 });

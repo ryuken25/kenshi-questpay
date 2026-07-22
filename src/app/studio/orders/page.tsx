@@ -16,11 +16,12 @@ type OrderRow = {
   created_at: string;
 };
 
-export default async function StudioOrders({
-  searchParams,
-}: {
-  searchParams: { status?: string; q?: string };
-}) {
+export default async function StudioOrders(
+  props: {
+    searchParams: Promise<{ status?: string; q?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const user = await requireStudioAdmin();
 
   const clauses: string[] = [];

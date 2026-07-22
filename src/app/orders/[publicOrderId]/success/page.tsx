@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
-export default function SuccessPage({ params }: { params: { publicOrderId: string } }) {
+export default async function SuccessPage(props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   return <div className="min-h-screen bg-[var(--qp-bg)] flex items-center justify-center px-4 text-white">
     <section className="mx-auto max-w-xl rounded-[2rem] border border-green-400/30 bg-green-400/10 p-8 text-center">
       <h1 className="font-sora text-3xl font-black text-green-400">Payment Confirmed!</h1>

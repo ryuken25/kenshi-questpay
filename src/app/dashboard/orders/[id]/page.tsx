@@ -8,11 +8,12 @@ export const dynamic = "force-dynamic";
  * Legacy /dashboard/orders/[id] — redirect to /studio/orders/[id]
  * so status controls stay on the hardened studio surface.
  */
-export default async function DashboardOrderDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function DashboardOrderDetail(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   await requireStudioAdmin();
   if (!hasDatabase) notFound();
   const order = await queryOneOptional<{ id: string }>(

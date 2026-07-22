@@ -13,7 +13,7 @@ type Props = {
   onAuthenticated?: () => void | Promise<void>;
   intent?: AuthIntent;
   next?: string;
-  returnFocusRef?: RefObject<HTMLElement>;
+  returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
 export default function AuthModal({ open, onClose, onAuthenticated, intent = "signin", next, returnFocusRef }: Props) {

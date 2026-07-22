@@ -39,8 +39,14 @@ const nextConfig = {
       { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
     ] }];
   },
-  webpack: (config) => {
+  webpack: (config, { webpack }) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
+    // @wagmi/connectors re-exports a `baseAccount` connector (via its barrel) that
+    // pulls @base-org/account → @coinbase/cdp-sdk, which statically imports optional
+    // @x402/* payment modules that are not installed. We only use injected /
+    // coinbaseWallet / walletConnect, so this code path is dead — ignore the missing
+    // @x402 specifiers so the bundle builds instead of failing module resolution.
+    config.plugins.push(new webpack.IgnorePlugin({ resourceRegExp: /^@x402\// }));
     return config;
   },
 };

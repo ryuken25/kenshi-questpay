@@ -5,7 +5,7 @@ import { getApplicationById, reviewApplication } from "@/lib/studio/store";
 
 export const dynamic = "force-dynamic";
 
-type Ctx = { params: { id: string } };
+type Ctx = { params: Promise<{ id: string }> };
 
 function authError(status: number, error: string) {
   return NextResponse.json({ ok: false, error }, { status });
@@ -15,7 +15,8 @@ function authError(status: number, error: string) {
  * GET /api/studio/applications/[id]
  * Owner or super_admin.
  */
-export async function GET(_req: NextRequest, { params }: Ctx) {
+export async function GET(_req: NextRequest, props: Ctx) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) return authError(401, "Sign in is required.");
 
@@ -33,7 +34,8 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
  * PATCH /api/studio/applications/[id]
  * Super admin only — approve or reject. Approving grants creator role.
  */
-export async function PATCH(req: NextRequest, { params }: Ctx) {
+export async function PATCH(req: NextRequest, props: Ctx) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) return authError(401, "Sign in is required.");
   if (!session.roles.includes("super_admin")) return authError(403, "Super admin only.");

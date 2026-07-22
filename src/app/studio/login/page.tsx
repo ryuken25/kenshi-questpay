@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Web3Provider } from "@/components/Web3Provider";
 
-export default function StudioLogin({ searchParams }: { searchParams: { error?: string; sent?: string } }) {
+export default async function StudioLogin(props: { searchParams: Promise<{ error?: string; sent?: string }> }) {
+  const searchParams = await props.searchParams;
   return (
     <Web3Provider>
       <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">

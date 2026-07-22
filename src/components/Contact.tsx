@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Twitter, MessageCircle, Mail } from "lucide-react";
+import { MessageCircle, Mail } from "lucide-react";
+import { Github, Twitter } from "@/components/icons/BrandIcons";
 import { APP_CONFIG } from "@/lib/config";
 
 const contacts = [

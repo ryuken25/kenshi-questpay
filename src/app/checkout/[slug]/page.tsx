@@ -10,14 +10,15 @@ import { getProfile } from "@/lib/profile";
 import { ENABLED_TOKEN_SYMBOLS } from "@/lib/token-metadata";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export function generateStaticParams() {
   return SERVICES.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const svc = getServiceBySlug(params.slug);
   if (!svc) return { title: "Checkout — QuestPay" };
   return {
@@ -26,7 +27,8 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default async function CheckoutPage({ params }: Props) {
+export default async function CheckoutPage(props: Props) {
+  const params = await props.params;
   const svc = getServiceBySlug(params.slug);
   if (!svc) notFound();
 

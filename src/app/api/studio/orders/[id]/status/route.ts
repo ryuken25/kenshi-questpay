@@ -23,10 +23,8 @@ export const dynamic = "force-dynamic";
  * - released / completed                                  (release worker only)
  * - cancelled / expired / refunded / disputed             (admin/system)
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await requireStudioAdmin();
   const form = await request.formData();
   const status = String(form.get("status") || "").trim();

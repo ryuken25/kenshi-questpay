@@ -28,10 +28,8 @@ const SUBMITTABLE = new Set([
  * Creator submits work proof. Moves order → work_submitted.
  * Does not touch paid/accepted/released (those are system/buyer only).
  */
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { publicOrderId: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   const sb = getSupabase();
   if (!sb) {
     return NextResponse.json({ error: "Order system is not configured." }, { status: 503 });

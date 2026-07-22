@@ -24,10 +24,8 @@ export const maxDuration = 60;
  *   when the flag is unset and custody (receive + signer) is fully configured.
  * - Never trusts client amount / address / status overrides.
  */
-export async function POST(
-  _req: NextRequest,
-  { params }: { params: { publicOrderId: string } },
-) {
+export async function POST(_req: NextRequest, props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   const sb = getSupabase();
   if (!sb) {
     return NextResponse.json({ error: "Order system is not configured." }, { status: 503 });

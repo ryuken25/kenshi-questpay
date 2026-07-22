@@ -91,10 +91,8 @@ async function cancelOrderIfPaymentExpiredSql(
   return { expired: true, status: "cancelled", previousStatus };
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { publicOrderId: string } },
-) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ publicOrderId: string }> }) {
+  const params = await props.params;
   if (!hasDatabase) {
     return NextResponse.json({ error: "Order system is not configured." }, { status: 503 });
   }

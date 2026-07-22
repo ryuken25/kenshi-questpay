@@ -9,7 +9,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-type Ctx = { params: { id: string } };
+type Ctx = { params: Promise<{ id: string }> };
 
 function authError(status: number, error: string) {
   return NextResponse.json({ ok: false, error }, { status });
@@ -23,7 +23,8 @@ function hasStudioRole(roles: string[]): boolean {
  * GET /api/studio/products/[id]
  * Owner or super_admin.
  */
-export async function GET(_req: NextRequest, { params }: Ctx) {
+export async function GET(_req: NextRequest, props: Ctx) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) return authError(401, "Sign in is required.");
   if (!hasStudioRole(session.roles)) return authError(403, "Creator or super admin required.");
@@ -42,7 +43,8 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
  * PATCH /api/studio/products/[id]
  * Owner or super_admin updates fields / status.
  */
-export async function PATCH(req: NextRequest, { params }: Ctx) {
+export async function PATCH(req: NextRequest, props: Ctx) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) return authError(401, "Sign in is required.");
   if (!hasStudioRole(session.roles)) return authError(403, "Creator or super admin required.");
@@ -87,7 +89,8 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
  * DELETE /api/studio/products/[id]
  * Soft-delete → archive. Owner or super_admin.
  */
-export async function DELETE(_req: NextRequest, { params }: Ctx) {
+export async function DELETE(_req: NextRequest, props: Ctx) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) return authError(401, "Sign in is required.");
   if (!hasStudioRole(session.roles)) return authError(403, "Creator or super admin required.");

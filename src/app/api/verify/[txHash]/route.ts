@@ -35,10 +35,8 @@ type PaymentJoinRow = {
  * If no order is found, falls back to checking the tx against the
  * configured receive address with best-effort token detection.
  */
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { txHash: string } },
-) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ txHash: string }> }) {
+  const params = await props.params;
   const { txHash } = params;
   if (!/^0x[a-fA-F0-9]{64}$/.test(txHash)) {
     return NextResponse.json({ ok: false, reason: "Invalid transaction hash format." }, { status: 400 });

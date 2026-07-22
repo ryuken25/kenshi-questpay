@@ -8,11 +8,12 @@ export const dynamic = "force-dynamic";
 
 type SearchParams = { submitted?: string };
 
-export default async function RequestCreatorPage({
-  searchParams,
-}: {
-  searchParams?: SearchParams;
-}) {
+export default async function RequestCreatorPage(
+  props: {
+    searchParams?: Promise<SearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const session = await getSession();
   if (!session) redirect("/sign-in?next=/studio/request");
 

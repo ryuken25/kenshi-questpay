@@ -58,13 +58,14 @@ type ReleaseRow = {
   failure_reason: string | null;
 };
 
-export default async function StudioOrderDetail({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams?: { error?: string };
-}) {
+export default async function StudioOrderDetail(
+  props: {
+    params: Promise<{ id: string }>;
+    searchParams?: Promise<{ error?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const user = await requireStudioAdmin();
   if (!hasDatabase) notFound();
 

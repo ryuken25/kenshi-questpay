@@ -69,7 +69,7 @@ export async function createSession(
 }
 
 export async function getSession(): Promise<QuestPaySession | null> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
@@ -128,7 +128,7 @@ export async function requireAnyRole(roles: Role[]): Promise<{ accountId: string
 }
 
 export async function destroySession(): Promise<void> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return;
   const sb = getServiceClient();
