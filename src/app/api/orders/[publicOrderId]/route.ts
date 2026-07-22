@@ -6,6 +6,9 @@ import {
   type ActivePaymentStatus,
 } from "@/lib/payments/amount-suffix";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 
 type OrderRow = {

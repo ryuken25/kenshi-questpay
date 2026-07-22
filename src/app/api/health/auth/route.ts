@@ -3,6 +3,9 @@ import { hasDatabase, queryManyOptional } from "@/lib/db";
 import { hasSupabase } from "@/lib/server-config";
 import { ROOT_EMAIL } from "@/lib/auth";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 
 export async function GET() {

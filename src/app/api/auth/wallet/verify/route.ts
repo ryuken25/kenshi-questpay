@@ -3,6 +3,9 @@ import { getServiceClient, hashToken, normalizeWallet, findOrCreateAccountByWall
 import { recoverMessageAddress } from "viem";
 import crypto from "node:crypto";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

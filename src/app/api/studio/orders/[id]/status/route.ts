@@ -9,6 +9,9 @@ import {
   isStudioAllowedStatus,
 } from "@/lib/payments/order-status";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 
 /**

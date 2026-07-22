@@ -8,6 +8,9 @@ import {
   hasReleaseSignerConfigured,
 } from "@/lib/payments/release";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 

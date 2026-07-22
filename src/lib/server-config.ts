@@ -93,18 +93,14 @@ export function hasReleaseSignerConfigured(): boolean {
 }
 
 /**
- * Parse NEXT_PUBLIC_ENABLE_REAL_PAYMENTS.
- * - explicit true/1/yes/on → enabled
- * - explicit false/0/no/off → disabled
- * - unset/empty → default enabled when custody is configured
- *   (valid receive address + release signer). Explicit false always wins.
+ * Parse NEXT_PUBLIC_ENABLE_REAL_PAYMENTS (fail-safe).
+ * Real payments / on-chain release are enabled ONLY when the flag is the
+ * explicit string `true` (case-insensitive). Unset, empty, or anything else
+ * → disabled. No implicit "enable when secrets exist" path: a preview
+ * deployment that forgets the flag can never silently move real funds.
  */
 function parseRealPaymentsEnabled(): boolean {
-  const raw = process.env.NEXT_PUBLIC_ENABLE_REAL_PAYMENTS?.trim().toLowerCase();
-  if (raw === "false" || raw === "0" || raw === "no" || raw === "off") return false;
-  if (raw === "true" || raw === "1" || raw === "yes" || raw === "on") return true;
-  // Unset: enable only when server custody path is fully configured.
-  return receiveAddressValid && hasReleaseSignerConfigured();
+  return process.env.NEXT_PUBLIC_ENABLE_REAL_PAYMENTS?.trim().toLowerCase() === "true";
 }
 
 /**

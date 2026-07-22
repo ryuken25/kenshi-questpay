@@ -6,6 +6,9 @@ import { getTokenConfig, chainKeyFromId, type TokenSymbol, getServiceBySlug } fr
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
 import { cancelOrderIfPaymentExpired } from "@/lib/payments/order-expiry";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 

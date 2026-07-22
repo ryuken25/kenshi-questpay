@@ -171,7 +171,8 @@ test('hero reference repair keeps a compact obsidian core, exterior orbits, and 
   // Tighter exterior orbits (pol/usdt/verse/usdc) — keep medallions close to the cube core.
   assert.match(config, /radius: \[1\.95, 0\.98, 1\.28\]/);
   assert.match(config, /radius: \[2\.15, 1\.24, 1\.4\]/);
-  assert.match(config, /size: \.24/);
+  // Enlarged premium medallions (shipped design: ~.26–.28, per "enlarge coin center logos").
+  assert.match(config, /size: \.2[5-9]/);
   assert.match(cube, /questpay-mark-512\.png/);
   assert.match(cube, /RoundedBox/);
   assert.match(cube, /radius=\{\.055\}/);
@@ -395,8 +396,16 @@ test('custody release foundation: tables, server-only release, studio cannot for
   assert.match(serverConfig, /parseRealPaymentsEnabled|REAL_PAYMENTS_ENABLED/);
   assert.match(serverConfig, /hasReleaseSignerConfigured/);
   assert.match(serverConfig, /getPaymentGateStatus/);
-  // Default enabled when configured: unset flag + custody ready.
-  assert.match(serverConfig, /receiveAddressValid && hasReleaseSignerConfigured/);
+  // Fail-safe gate: real payments enabled ONLY on the explicit string `true`.
+  // Covers all three states — true → enabled; false → disabled; unset → disabled.
+  assert.match(
+    serverConfig,
+    /NEXT_PUBLIC_ENABLE_REAL_PAYMENTS\?\.trim\(\)\.toLowerCase\(\) === "true"/,
+  );
+  // The parser must NOT re-introduce an implicit "enable when custody configured" path.
+  const parseFnStart = serverConfig.indexOf('function parseRealPaymentsEnabled');
+  const parseFnBody = serverConfig.slice(parseFnStart, parseFnStart + 400);
+  assert.doesNotMatch(parseFnBody, /receiveAddressValid && hasReleaseSignerConfigured/);
 
   const verifyLibPayment = read('src/lib/verify-payment.ts');
   assert.match(verifyLibPayment, /PAYMENT_MIN_CONFIRMATIONS/);

@@ -15,6 +15,9 @@ import {
 import { getSession } from "@/lib/auth";
 import { getProfile, upsertProfile } from "@/lib/profile";
 
+// Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
+export const runtime = "nodejs";
+
 export const dynamic = "force-dynamic";
 
 function generatePublicOrderId(): string {
