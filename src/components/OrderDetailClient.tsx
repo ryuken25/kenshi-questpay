@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Copy, ExternalLink, Loader2, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { middle } from "@/lib/payment-utils-client";
+import OnChainReceipt, { type NftReceipt } from "@/components/nft/OnChainReceipt";
 
 interface Props {
   publicOrderId: string;
@@ -33,6 +34,8 @@ interface OrderResponse {
     confirmations: number;
     verified_at: string;
   } | null;
+  /** Present only when ENABLE_NFT_RECEIPTS is on (server omits it otherwise). */
+  nft?: NftReceipt | null;
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
@@ -132,6 +135,7 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
               >
                 View on Polygonscan <ExternalLink size={14} />
               </a>
+              <OnChainReceipt nft={order.nft} />
             </div>
           )}
 

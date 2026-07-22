@@ -5,7 +5,7 @@ import { ShieldCheck, Users, Truck } from "lucide-react";
 const steps = [
   { num: "1", text: "Choose a fixed-price service with clear scope." },
   { num: "2", text: "Submit a structured private brief instead of scattered DMs." },
-  { num: "3", text: "Pay directly to the creator wallet on Polygon." },
+  { num: "3", text: "Pay into QuestPay escrow on Polygon — released to the creator once you accept." },
   { num: "4", text: "Track work, delivery, and a verifiable public receipt." },
 ];
 const cards = [

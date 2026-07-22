@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 
 const sections = [
   ["Scope", "Each service package defines its deliverable, delivery target, included revisions, required inputs, and exclusions. Out-of-scope requests require a revised scope."],
-  ["Payment", "Payments are sent directly to the configured creator wallet on Polygon. QuestPay verifies the transfer but does not custody funds."],
+  ["Payment", "Payments are sent to a QuestPay-controlled receive address on Polygon (custodial escrow), not directly to the creator. The server verifies the transfer on-chain and releases the funds to the creator wallet after you accept the delivered work."],
   ["Network responsibility", "Send only the selected token on the network and to the receiver shown in the locked quote. Transfers made with another asset, network, or receiver may be unrecoverable."],
   ["Privacy", "Private briefs, contact details, references, and internal delivery notes stay off-chain and are excluded from public receipts."],
   ["Refunds and cancellations", "On-chain payments are irreversible. Refunds and cancellations are handled case-by-case according to the agreed service scope and creator communication."],

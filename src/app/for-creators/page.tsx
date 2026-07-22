@@ -66,7 +66,7 @@ export default function ForCreatorsPage() {
 
         <section className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-3 text-center text-sm font-bold text-[var(--qp-text-secondary)] sm:grid-cols-2 lg:grid-cols-4">
-            {["No custody", "No seed phrase", "Private brief off-chain", "Public proof redacted"].map((item) => <p key={item} className="rounded-xl border border-white/[.06] bg-black/20 px-4 py-3"><BadgeCheck className="mr-2 inline text-[var(--qp-violet-300)]" size={16} />{item}</p>)}
+            {["Escrow released on accept", "No seed phrase", "Private brief off-chain", "Public proof redacted"].map((item) => <p key={item} className="rounded-xl border border-white/[.06] bg-black/20 px-4 py-3"><BadgeCheck className="mr-2 inline text-[var(--qp-violet-300)]" size={16} />{item}</p>)}
           </div>
         </section>
 
@@ -97,7 +97,7 @@ export default function ForCreatorsPage() {
         </section>
 
         <section className="px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[radial-gradient(circle_at_50%_0%,rgba(139,77,255,.18),transparent_45%),rgba(8,7,15,.98)] p-7 text-center sm:p-12"><p className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Ready to organize paid work?</p><h2 className="mt-4 font-sora text-3xl font-black tracking-[-.045em] sm:text-5xl">Build a cleaner creator workflow.</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[var(--qp-text-muted)]">Create your account, complete onboarding, and request creator access. No custody claims, fake escrow, or hidden private brief exposure.</p><div className="mt-8 flex flex-col justify-center gap-3 min-[390px]:flex-row"><CreatorIntentButton className={primary}>Become a Creator</CreatorIntentButton><Link href="/services" className={secondary}>Explore Current Services</Link></div></div>
+          <div className="mx-auto max-w-4xl rounded-[2rem] border border-[var(--qp-border-default)] bg-[radial-gradient(circle_at_50%_0%,rgba(139,77,255,.18),transparent_45%),rgba(8,7,15,.98)] p-7 text-center sm:p-12"><p className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--qp-violet-300)]">Ready to organize paid work?</p><h2 className="mt-4 font-sora text-3xl font-black tracking-[-.045em] sm:text-5xl">Build a cleaner creator workflow.</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[var(--qp-text-muted)]">Create your account, complete onboarding, and request creator access. Payments are held in transparent, on-chain-verifiable escrow and released to you when the buyer accepts — no hidden private brief exposure.</p><div className="mt-8 flex flex-col justify-center gap-3 min-[390px]:flex-row"><CreatorIntentButton className={primary}>Become a Creator</CreatorIntentButton><Link href="/services" className={secondary}>Explore Current Services</Link></div></div>
         </section>
       </div>
     </Web3Provider>

@@ -10,6 +10,7 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { polygon, polygonAmoy } from "viem/chains";
 import { query, queryManyOptional } from "@/lib/db";
+import { isNftReceiptsEnabled } from "./flag";
 
 /**
  * NFT proof-of-purchase receipts (soulbound ERC-721).
@@ -46,9 +47,7 @@ const PAID_OR_LATER = [
   "completed",
 ];
 
-export function isNftReceiptsEnabled(): boolean {
-  return process.env.ENABLE_NFT_RECEIPTS?.trim().toLowerCase() === "true";
-}
+export { isNftReceiptsEnabled };
 
 export function getReceiptContractAddress(): Address | null {
   const raw = process.env.NFT_RECEIPT_CONTRACT_ADDRESS?.trim();

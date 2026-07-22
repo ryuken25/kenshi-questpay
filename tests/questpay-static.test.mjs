@@ -56,6 +56,30 @@ test('quote engine has no 1:1 VERSE or manual POL fallback', () => {
   assert.doesNotMatch(quote, /tokenSymbol\s*===\s*["']VERSE["']\).*1/);
 });
 
+test('public copy tells the truth about custodial escrow (no non-custodial claims)', () => {
+  // The live money path is custodial: buyers pay QUESTPAY_RECEIVE_ADDRESS and the
+  // server releases to the creator after accept. Any "non-custodial / paid directly
+  // to the creator" copy is false and must not come back.
+  const files = [
+    'src/app/terms/page.tsx',
+    'src/components/legal/TermsModalLink.tsx',
+    'src/components/FAQ.tsx',
+    'src/components/HomeHowItWorks.tsx',
+    'src/app/for-creators/page.tsx',
+  ];
+  for (const f of files) {
+    const src = read(f);
+    assert.doesNotMatch(src, /never takes custody/i, f);
+    assert.doesNotMatch(src, /does not custody/i, f);
+    assert.doesNotMatch(src, /\bno custody\b/i, f);
+    assert.doesNotMatch(src, /payments? (are|is) made directly to the creator/i, f);
+    assert.doesNotMatch(src, /pay directly to the creator/i, f);
+  }
+  // And the honest model is actually stated where it matters.
+  assert.match(read('src/app/terms/page.tsx'), /custodial escrow/i);
+  assert.match(read('src/components/FAQ.tsx'), /custodial escrow/i);
+});
+
 test('public copy removes Base Sepolia and emoji branding from active app source', () => {
   const files = [
     'src/app/layout.tsx',
