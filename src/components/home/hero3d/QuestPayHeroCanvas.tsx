@@ -62,7 +62,9 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
   }, []);
 
   useEffect(() => {
-    const query = window.matchMedia("(max-width: 767px)");
+    // 3D hero is desktop-only: below 1024px we render the static fallback and
+    // let the lite GSAP tier handle motion. Keeps phones light and battery-safe.
+    const query = window.matchMedia("(max-width: 1023px)");
     const update = () => setMobile(query.matches);
     update(); query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
@@ -83,6 +85,8 @@ export default function QuestPayHeroCanvas({ variant = "home" }: { variant?: Var
 
   const fallback = <Hero3DFallback variant={variant} />;
   if (webgl !== true) return fallback;
+  // Desktop-only WebGL: phones/tablets get the static hero image.
+  if (mobile) return fallback;
   const active = pageVisible && inView && !reducedMotion;
 
   return (

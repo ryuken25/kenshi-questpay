@@ -495,6 +495,24 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   background: rgba(124, 92, 255, 0.06);
 }
 
+/* ── Mobile-lite animation tier ───────────────────────────────
+   Checkout steps swap in place (not a scroll reveal), so their entrance is a
+   tiered CSS animation that replays on each remount. ≥1024px: no animation
+   (desktop unchanged). <1024px: short transform+opacity. reduce: fade only.
+   The scroll-revealed surfaces (service cards, etc.) use the GSAP tier via
+   [data-reveal] in MobileReveal.tsx. */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .qp-step-enter { animation: qp-step-in 0.42s var(--qp-ease-out) both; }
+}
+@keyframes qp-step-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qp-step-enter { animation: qp-fade-in 0.3s ease both; }
+}
+@keyframes qp-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
 /* ── Badge (status pill) ──────────────────────────────────── */
 .qp-badge {
   display: inline-flex;

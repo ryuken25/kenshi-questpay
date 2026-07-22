@@ -55,6 +55,7 @@ export default function HomeServicesPreview() {
             <motion.article
               key={service.slug}
               initial={false}
+              data-reveal
               className="group relative min-w-0 overflow-hidden rounded-[1.25rem] border border-[rgba(173,119,255,.14)] bg-[radial-gradient(circle_at_88%_18%,rgba(103,48,198,.10),transparent_36%),linear-gradient(145deg,rgba(10,8,22,.98),rgba(5,5,13,.99))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.025)] transition duration-300 hover:-translate-y-0.5 hover:border-[rgba(181,128,255,.32)] hover:shadow-[0_20px_60px_rgba(0,0,0,.38)] sm:p-6"
             >
               <div className="flex items-center justify-between gap-3">

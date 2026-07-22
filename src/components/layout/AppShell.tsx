@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { ChevronRight, X, LogOut, User as UserIcon, Menu } from "lucide-react";
+import MobileReveal from "@/components/anim/MobileReveal";
 import {
   questPayNav,
   mobileMoreNav,
@@ -245,7 +246,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [moreOpen]);
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="qp-app-shell">
+      {/* Mobile-lite GSAP reveal tier (no-op ≥1024px; fade-only under reduce). */}
+      <MobileReveal />
+
       {/* Desktop sidebar */}
       <div className="qp-app-shell__sidebar">
         <DesktopSidebar roles={roles} pathname={pathname} session={session} />
@@ -264,5 +269,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {/* Mobile navigation stays available from the top-bar More button. */}
       <MobileMoreDrawer open={moreOpen} onClose={() => setMoreOpen(false)} pathname={pathname} roles={roles} session={session} />
     </div>
+    </MotionConfig>
   );
 }

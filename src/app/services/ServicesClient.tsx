@@ -262,7 +262,7 @@ function Chip({
 function ServiceCard({ svc }: { svc: ServicePackage }) {
   const category = deriveCategory(svc);
   return (
-    <article className="group flex flex-col rounded-[1.5rem] p-5 glass-panel transition-all duration-300 hover:border-[var(--qp-violet-500)]/30 hover:bg-[var(--qp-surface-hover)] sm:p-6">
+    <article data-reveal className="group flex flex-col rounded-[1.5rem] p-5 glass-panel transition-all duration-300 hover:border-[var(--qp-violet-500)]/30 hover:bg-[var(--qp-surface-hover)] sm:p-6">
       {/* Top row: category badge + price */}
       <div className="flex items-start justify-between gap-3">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[var(--qp-surface)] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-secondary">

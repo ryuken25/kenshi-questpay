@@ -190,7 +190,7 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
 
       {/* Step 1: Project */}
       {step === "project" && (
-        <div className="space-y-5">
+        <div className="space-y-5 qp-step-enter">
           <div>
             <label className={labelClass} htmlFor="goal">What should this service help you achieve? <span className="text-[var(--qp-danger)]">*</span></label>
             <textarea
@@ -248,7 +248,7 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
 
       {/* Step 2: Details */}
       {step === "details" && (
-        <div className="space-y-5">
+        <div className="space-y-5 qp-step-enter">
           <div>
             <label className={labelClass} htmlFor="contact-method">Preferred contact method</label>
             <select id="contact-method" className={inputClass} value={values.contactMethod} onChange={(e) => update("contactMethod", e.target.value)}>
@@ -305,7 +305,7 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
 
       {/* Step 3: Review */}
       {step === "review" && authenticated && (
-        <div className="space-y-5">
+        <div className="space-y-5 qp-step-enter">
           <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-[var(--qp-border-faint)] pb-2">
               <h3 className="font-sora text-sm font-bold text-white">Review your brief</h3>
