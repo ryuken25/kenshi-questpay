@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { queryOneOptional, hasDatabase, query } from "@/lib/db";
-import { getServiceBySlug } from "@/lib/services";
+import { getServiceBySlug, chainKeyFromId, explorerTxUrl } from "@/lib/services";
+import { isNftReceiptsEnabled } from "@/lib/nft/receipt-mint";
 import {
   ACTIVE_PAYMENT_STATUSES,
   type ActivePaymentStatus,
@@ -29,6 +30,11 @@ type OrderRow = {
   created_at: string;
   paid_at: string | null;
   payment_expires_at: string | null;
+  nft_status: string | null;
+  nft_token_id: string | null;
+  nft_mint_tx: string | null;
+  nft_contract: string | null;
+  nft_chain_id: number | null;
 };
 
 type PaymentRow = {
@@ -106,7 +112,8 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ publicOr
     `SELECT id, public_order_id, slug, status, receive_address, chain_id,
             token_symbol, token_address, token_decimals, amount_human, amount_raw,
             amount_suffix, unique_amount_suffix, usd_price, created_at, paid_at,
-            payment_expires_at
+            payment_expires_at, nft_status, nft_token_id, nft_mint_tx,
+            nft_contract, nft_chain_id
      FROM orders
      WHERE public_order_id = $1
      LIMIT 1`,
@@ -135,6 +142,26 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ publicOr
 
   const service = getServiceBySlug(order.slug);
 
+  // On-chain receipt block. Present only when the feature flag is on AND the
+  // order has an NFT lifecycle state; omitted entirely when the flag is off so
+  // the payload is byte-for-byte identical to before.
+  const nftState = order.nft_status && order.nft_status !== "none" ? order.nft_status : null;
+  const nft =
+    isNftReceiptsEnabled() && nftState
+      ? {
+          status: nftState,
+          tokenId: order.nft_token_id,
+          mintTx: order.nft_mint_tx,
+          contract: order.nft_contract,
+          chainId: order.nft_chain_id,
+          mintTxUrl: order.nft_mint_tx
+            ? explorerTxUrl(chainKeyFromId(order.nft_chain_id), order.nft_mint_tx)
+            : null,
+          metadataUrl: order.nft_token_id ? `/api/receipts/${order.nft_token_id}/metadata` : null,
+          soulbound: true,
+        }
+      : null;
+
   return NextResponse.json({
     publicOrderId: order.public_order_id,
     slug: order.slug,
@@ -155,5 +182,6 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ publicOr
     createdAt: order.created_at,
     paidAt: order.paid_at,
     payment: payment || null,
+    ...(nft ? { nft } : {}),
   });
 }

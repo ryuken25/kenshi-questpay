@@ -104,8 +104,19 @@ CREATE TABLE IF NOT EXISTS orders (
   accepted_at timestamptz,
   released_at timestamptz,
   delivered_at timestamptz,
+  -- NFT proof-of-purchase receipt (soulbound ERC-721). Decoupled from payment:
+  -- an async sweeper mints for paid orders. Never affects order.status.
+  nft_status text NOT NULL DEFAULT 'none',
+  nft_token_id text,
+  nft_mint_tx text,
+  nft_contract text,
+  nft_chain_id integer,
+  nft_minted_at timestamptz,
+  nft_attempts integer NOT NULL DEFAULT 0,
+  nft_last_error text,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT orders_nft_status_check CHECK (nft_status IN ('none','pending','minted','failed')),
   CONSTRAINT orders_status_check CHECK (status IN (
     'pending','awaiting_payment','payment_submitted','paid','work_submitted','reviewing','accepted',
     'in_progress','awaiting_client','ready_for_review','delivered','released','completed','expired','cancelled','disputed','refunded'
@@ -119,6 +130,21 @@ CREATE UNIQUE INDEX IF NOT EXISTS orders_active_payment_amount_unique
 CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_active_unique_amount_suffix
   ON orders (chain_id, token_symbol, unique_amount_suffix)
   WHERE status IN ('awaiting_payment','payment_submitted','pending') AND unique_amount_suffix IS NOT NULL;
+
+-- NFT receipt columns for pre-existing orders tables (CREATE TABLE above is a
+-- no-op once the table exists, so add them explicitly — safe to re-run).
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_status text NOT NULL DEFAULT 'none';
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_token_id text;
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_mint_tx text;
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_contract text;
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_chain_id integer;
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_minted_at timestamptz;
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_attempts integer NOT NULL DEFAULT 0;
+ALTER TABLE IF EXISTS orders ADD COLUMN IF NOT EXISTS nft_last_error text;
+CREATE UNIQUE INDEX IF NOT EXISTS orders_nft_token_id_unique
+  ON orders (nft_token_id) WHERE nft_token_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS orders_nft_pending_idx
+  ON orders (status, nft_status) WHERE nft_status IN ('none','pending','failed');
 
 CREATE TABLE IF NOT EXISTS payments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
