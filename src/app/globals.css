@@ -90,6 +90,38 @@
   --qp-radius-lg: 18px;
   --qp-radius-xl: 22px;
   --qp-radius-2xl: 28px;
+  --qp-radius-pill: 999px;
+
+  /* ── Design-system typography tokens (Kenshi QuestPay DS) ──── */
+  --qp-font-display: 'Sora', system-ui, sans-serif;
+  --qp-font-sans: 'Inter', system-ui, sans-serif;
+  --qp-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --qp-weight-light: 300;
+  --qp-weight-regular: 400;
+  --qp-weight-medium: 500;
+  --qp-weight-semibold: 600;
+  --qp-weight-bold: 700;
+  --qp-weight-black: 800;
+
+  --qp-text-3xl: 1.9rem;
+  --qp-text-4xl: 2.55rem;
+
+  --qp-display-hero: clamp(2.85rem, 4.2vw, 4rem);
+  --qp-display-section: clamp(1.9rem, 5vw, 3.1rem);
+  --qp-display-huge: clamp(2.55rem, 5.1vw, 5.2rem);
+
+  --qp-leading-tight: 0.98;
+  --qp-leading-snug: 1.08;
+  --qp-leading-normal: 1.5;
+  --qp-leading-relaxed: 1.6;
+
+  --qp-tracking-display: -0.055em;
+  --qp-tracking-title: -0.035em;
+  --qp-tracking-tight: -0.025em;
+  --qp-tracking-normal: 0;
+  --qp-tracking-eyebrow: 0.14em;
+  --qp-tracking-wide: 0.2em;
 
   --qp-shadow-card: 0 18px 55px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.025);
   --qp-shadow-violet: 0 14px 44px rgba(87, 41, 190, 0.32), 0 0 0 1px rgba(174, 139, 255, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -423,6 +455,12 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
 .qp-button:active { transform: translateY(0); }
 .qp-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+/* DS size scale — base rule above is the `md` size (44px target). */
+.qp-button { min-height: 44px; }
+.qp-button--sm { padding: 0.5rem 0.9rem; min-height: 36px; font-size: var(--qp-text-xs); border-radius: var(--qp-radius-sm); }
+.qp-button--lg { padding: 0.95rem 1.75rem; min-height: 52px; font-size: var(--qp-text-base); }
+.qp-button--block { width: 100%; }
+
 .qp-button--primary {
   background: linear-gradient(135deg, var(--qp-violet-500), var(--qp-violet-700));
   border-color: var(--qp-line-violet-strong);
@@ -456,6 +494,73 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   color: var(--qp-text-primary);
   background: rgba(124, 92, 255, 0.06);
 }
+
+/* ── Badge (status pill) ──────────────────────────────────── */
+.qp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--qp-radius-pill);
+  border: 1px solid var(--qp-border-soft);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--qp-text-secondary);
+  font-family: var(--qp-font-sans);
+  font-size: var(--qp-text-xs);
+  font-weight: var(--qp-weight-semibold);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+.qp-badge--mono { font-family: var(--qp-font-mono); letter-spacing: 0.04em; }
+.qp-badge__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.qp-badge--violet  { color: var(--qp-violet-300); background: rgba(124, 92, 255, .10); border-color: var(--qp-line-violet); }
+.qp-badge--success { color: #8ef0bd; background: rgba(66, 215, 135, .12); border-color: rgba(66, 215, 135, .28); }
+.qp-badge--warning { color: #f5cf94; background: rgba(233, 170, 80, .12); border-color: rgba(233, 170, 80, .28); }
+.qp-badge--danger  { color: #f5a3aa; background: rgba(240, 103, 114, .12); border-color: rgba(240, 103, 114, .30); }
+.qp-badge--info    { color: #a9dcf3; background: rgba(105, 189, 232, .12); border-color: rgba(105, 189, 232, .28); }
+
+/* ── HashChip (copyable tx / address) ─────────────────────── */
+.qp-hash {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  max-width: 100%;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--qp-radius-sm);
+  border: 1px solid var(--qp-line);
+  background: var(--qp-surface-1);
+  color: var(--qp-violet-300);
+  font-family: var(--qp-font-mono);
+  font-size: var(--qp-text-sm);
+  cursor: pointer;
+  transition: border-color .18s var(--qp-ease-out), background .18s var(--qp-ease-out);
+}
+.qp-hash:hover { border-color: var(--qp-line-violet); background: var(--qp-surface-2); }
+.qp-hash__label { color: var(--qp-text-muted); }
+.qp-hash__value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qp-hash__action { color: var(--qp-text-muted); font-size: var(--qp-text-xs); }
+.qp-hash__action--copied { color: var(--qp-success); }
+
+/* ── StatTile (metric) ────────────────────────────────────── */
+.qp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--qp-radius-lg);
+  border: 1px solid var(--qp-border-soft);
+  background: var(--qp-surface);
+}
+.qp-stat__value {
+  font-family: var(--qp-font-display);
+  font-size: var(--qp-text-2xl);
+  font-weight: var(--qp-weight-black);
+  letter-spacing: var(--qp-tracking-tight);
+  color: var(--qp-text-strong);
+  line-height: 1.05;
+}
+.qp-stat__value--accent { color: var(--qp-violet-300); }
+.qp-stat__label { font-size: var(--qp-text-sm); color: var(--qp-text-muted); font-weight: var(--qp-weight-medium); }
 
 /* ── Forms ────────────────────────────────────────────────── */
 .qp-field-group {

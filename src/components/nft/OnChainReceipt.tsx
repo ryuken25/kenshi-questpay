@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink, ShieldCheck, Loader2 } from "lucide-react";
+import { Badge, HashChip } from "@/components/ui";
 
 /**
  * On-chain (soulbound) receipt block.
@@ -29,12 +30,23 @@ export default function OnChainReceipt({ nft }: { nft?: NftReceipt | null }) {
         data-testid="nft-receipt"
         className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-green-400" aria-hidden="true" />
           <span className="text-sm font-medium text-white">
             On-chain receipt #{nft.tokenId}
           </span>
+          <Badge tone="success" dot>
+            Minted
+          </Badge>
+          <Badge tone="violet" mono>
+            Soulbound
+          </Badge>
         </div>
+        {nft.contract && (
+          <div className="mt-3">
+            <HashChip value={nft.contract} label="Contract" head={8} tail={6} />
+          </div>
+        )}
         <p className="mt-1 text-xs text-muted">
           A non-transferable (soulbound) proof of purchase minted to your wallet. No brief
           or contact details are stored on-chain.
