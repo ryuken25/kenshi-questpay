@@ -604,6 +604,25 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   background: var(--qp-surface-2);
 }
 
+/* Error / hint states (DS Input, Textarea, Select) */
+.qp-field--error,
+.qp-field--error:focus { border-color: var(--qp-danger); box-shadow: none; }
+.qp-field-error { font-size: var(--qp-text-xs); color: var(--qp-danger); }
+.qp-field-hint { font-size: var(--qp-text-xs); color: var(--qp-text-muted); }
+.qp-label__required { color: var(--qp-danger); }
+
+/* Checkbox — violet accent with inline label */
+.qp-checkbox { display: inline-flex; align-items: center; gap: 0.55rem; cursor: pointer; }
+.qp-checkbox input[type="checkbox"] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--qp-violet-500);
+  cursor: pointer;
+}
+.qp-checkbox__label { color: var(--qp-text-secondary); font-size: var(--qp-text-sm); line-height: 1.5; }
+.qp-checkbox input[type="checkbox"]:disabled,
+.qp-checkbox input[type="checkbox"]:disabled + .qp-checkbox__label { opacity: .5; cursor: not-allowed; }
+
 /* ── Choice grid (network / token pickers) ────────────────── */
 .qp-choice-grid {
   display: grid;
@@ -639,6 +658,20 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
   color: var(--qp-text-primary);
   box-shadow: 0 0 0 1px var(--qp-line-violet-strong), 0 12px 32px rgba(91, 45, 217, 0.22);
 }
+
+/* Staged / disabled tile — visible but not selectable (e.g. BNB Chain). */
+.qp-choice[data-staged="true"],
+.qp-choice:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.qp-choice[data-staged="true"]:hover,
+.qp-choice:disabled:hover {
+  transform: none;
+  border-color: var(--qp-line);
+  background: var(--qp-surface-1);
+}
+.qp-choice__meta { margin-left: auto; font-size: var(--qp-text-xs); color: var(--qp-text-muted); }
 
 /* ── True WebGL hero scene ──────────────────────────────── */
 .qp-hero3d {
