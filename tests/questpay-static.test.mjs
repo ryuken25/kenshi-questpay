@@ -39,6 +39,20 @@ test('wallet config includes Polygon and staged BNB Chain, no testnets, and no B
   assert.match(polyBlock, /POLYGON_USDT_DECIMALS \|\| 6/);
   assert.match(polyBlock, /POLYGON_USDC_DECIMALS \|\| 6/);
   assert.match(polyBlock, /POLYGON_VERSE_DECIMALS \|\| 18/);
+
+  // Contest requirement: checkout must offer EXACTLY the tokens the server can
+  // verify — every CHECKOUT_TOKENS entry must exist in the polygon matrix and be enabled.
+  const checkoutRaw = (services.match(/CHECKOUT_TOKENS[^=]*=\s*\[([^\]]*)\]/) || [, ''])[1];
+  const listed = [...checkoutRaw.matchAll(/"([A-Z]+)"/g)].map((m) => m[1]).sort();
+  assert.deepEqual(listed, ['POL', 'USDC', 'USDT', 'VERSE']);
+  for (const sym of listed) {
+    // Each matrix entry is a single line; slice to end-of-line rather than to the
+    // first "}" (the address cast contains a `0x${string}` template literal).
+    const idx = polyBlock.indexOf(`${sym}: {`);
+    assert.ok(idx !== -1, `polygon matrix is missing ${sym} offered at checkout`);
+    const entryLine = polyBlock.slice(idx).split('\n')[0];
+    assert.match(entryLine, /enabled:\s*true/, `${sym} is offered at checkout so it must be enabled`);
+  }
 });
 
 test('payment page does not use direct window.ethereum transaction path', () => {

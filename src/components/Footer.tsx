@@ -34,6 +34,11 @@ export default function Footer() {
         <div className="text-center md:text-left">
           <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={124} height={28} className="mx-auto h-7 w-auto md:mx-0" />
           <p className="mt-2 text-sm text-[var(--qp-text-muted)]">© {new Date().getFullYear()} ryuken25</p>
+          {/* VERSE ecosystem attribution on every page. The community disclaimer
+              intentionally lives in the hero, not here (footer stays minimal). */}
+          <p className="mt-1 text-xs text-[var(--qp-text-muted)]">
+            Built for the <span className="font-semibold text-[var(--qp-violet-300)]">VERSE</span> ecosystem · Payments on Polygon
+          </p>
         </div>
 
         <div className="flex max-w-2xl flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end">
