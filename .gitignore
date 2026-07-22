@@ -31,3 +31,9 @@ typechain-types/
 .env*
 test-results
 qa-shots
+
+# local deploy credentials — NEVER commit
+creds.txt
+*.creds
+secrets.txt
+.secrets/
