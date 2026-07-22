@@ -112,6 +112,9 @@ export async function POST(req: NextRequest, props: { params: Promise<{ publicOr
     token: { ...token, address: order.token_address ? order.token_address as `0x${string}` : token.address },
     amountHuman: String(order.amount_human),
     amountRaw: String(order.amount_raw),
+    // Reject a tx mined before this order existed (unique amount is only known
+    // after creation) — blocks claiming a pre-existing/unrelated same-amount transfer.
+    notBeforeUnix: order.created_at ? Math.floor(new Date(order.created_at).getTime() / 1000) : undefined,
   });
 
   if (!result.ok) {

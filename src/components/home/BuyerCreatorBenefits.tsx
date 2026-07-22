@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ShoppingBag, Sparkles } from "lucide-react";
+import { Check, ShoppingBag, Sparkles } from "lucide-react";
 import CreatorIntentButton from "@/components/CreatorIntentButton";
+import { Eyebrow } from "@/components/ui";
 
 const creatorBenefits = [
   "Scope and payment proof stay connected",
@@ -33,7 +34,7 @@ export default function BuyerCreatorBenefits() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(116,67,236,.09),transparent_48%)]" aria-hidden="true" />
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-9 max-w-3xl">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--qp-violet-300)]">One order, two clear views</p>
+          <Eyebrow>One order, two clear views</Eyebrow>
           <h2 className="mt-3 font-sora text-3xl font-black tracking-[-.04em] text-white sm:text-5xl">Built for the buyer and the creator.</h2>
         </div>
         <div className="grid gap-5 lg:grid-cols-2">
@@ -48,7 +49,7 @@ export default function BuyerCreatorBenefits() {
               <Image src="/assets/how-it-works/creator-flow-illustration.svg" alt="Creator workflow illustration" width={360} height={250} className="h-auto w-full" />
             </div>
             <motion.ul initial="hidden" whileInView="visible" viewport={{ once: true, amount: .35 }} className="mt-7 grid gap-3 text-sm leading-6 text-[var(--qp-text-secondary)] sm:grid-cols-2">
-              {creatorBenefits.map((item, index) => <motion.li key={item} variants={reduced ? undefined : { hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0, transition: { delay: index * .08 } } }} className="rounded-xl border border-[var(--qp-border-soft)] bg-black/20 px-4 py-3"><span className="mr-2 text-[var(--qp-violet-300)]">•</span>{item}</motion.li>)}
+              {creatorBenefits.map((item, index) => <motion.li key={item} variants={reduced ? undefined : { hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0, transition: { delay: index * .08 } } }} className="flex items-center gap-2.5 rounded-xl border border-[var(--qp-border-soft)] bg-black/20 px-4 py-3"><Check size={15} strokeWidth={2.4} className="shrink-0 text-[var(--qp-violet-300)]" aria-hidden="true" />{item}</motion.li>)}
             </motion.ul>
             <div className="mt-7 flex flex-col gap-3 min-[370px]:flex-row">
               <Link href="/for-creators" aria-label="Learn about becoming a QuestPay creator" className={secondaryAction}>Learn more</Link>
@@ -67,7 +68,7 @@ export default function BuyerCreatorBenefits() {
               <Image src="/assets/how-it-works/buyer-flow-illustration.svg" alt="Buyer workflow illustration" width={360} height={250} className="h-auto w-full" />
             </div>
             <motion.ul initial="hidden" whileInView="visible" viewport={{ once: true, amount: .35 }} className="mt-7 grid gap-3 text-sm leading-6 text-[var(--qp-text-secondary)] sm:grid-cols-2">
-              {buyerBenefits.map((item, index) => <motion.li key={item} variants={reduced ? undefined : { hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0, transition: { delay: index * .08 } } }} className="rounded-xl border border-[var(--qp-border-soft)] bg-black/20 px-4 py-3"><span className="mr-2 text-[var(--qp-violet-300)]">•</span>{item}</motion.li>)}
+              {buyerBenefits.map((item, index) => <motion.li key={item} variants={reduced ? undefined : { hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0, transition: { delay: index * .08 } } }} className="flex items-center gap-2.5 rounded-xl border border-[var(--qp-border-soft)] bg-black/20 px-4 py-3"><Check size={15} strokeWidth={2.4} className="shrink-0 text-[var(--qp-violet-300)]" aria-hidden="true" />{item}</motion.li>)}
             </motion.ul>
             <div className="mt-7 flex flex-col gap-3 min-[370px]:flex-row">
               <Link href="/how-it-works#buyer-workflow" aria-label="View buyer details" className={secondaryAction}>View details</Link>

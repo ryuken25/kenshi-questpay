@@ -1,0 +1,31 @@
+/* Ported CSS-3D hero cube (kit HeroCube) — desktop-only decorative rig.
+   Only static layout + keyframes live here; all motion transforms are applied
+   imperatively from KitHeroCube.tsx. */
+
+.kit-hero-cube {
+  position: relative;
+  /* Match the fallback's footprint (.qp-hero3d--home) so swapping in the cube
+     after the desktop gate resolves does not shift the hero layout. The concrete
+     720px anchors the width — the wrapper (.qp-hero-scene-wrap) has no defined
+     width, so a bare `width:100%` would collapse to zero (invisible cube). */
+  width: min(100%, 720px);
+  height: clamp(430px, 38vw, 560px);
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  /* Decorative: never intercept clicks. Cursor-follow uses window mousemove,
+     which fires regardless of pointer-events. */
+  pointer-events: none;
+}
+
+@keyframes kitCubeTwinkle {
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.25);
+  }
+}

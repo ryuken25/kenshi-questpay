@@ -892,6 +892,10 @@ body {
 /* ── Hero scene wrapper ─────────────────────────────────── */
 .qp-hero-scene-wrap {
   position: relative;
+  /* Fill the hero visual column. Without this the wrap shrink-fits (it sits in a
+     place-items:center grid), which is fine for the fallback <img> — it has an
+     intrinsic width — but collapses to 0 for the all-absolute CSS-3D cube. */
+  width: 100%;
   overflow: visible;
   background: transparent;
   isolation: isolate;

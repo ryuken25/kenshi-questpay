@@ -80,6 +80,8 @@ test('public copy tells the truth about custodial escrow (no non-custodial claim
     'src/components/FAQ.tsx',
     'src/components/HomeHowItWorks.tsx',
     'src/app/for-creators/page.tsx',
+    'src/components/home/PremiumHomeHero.tsx',
+    'src/app/page.tsx',
   ];
   for (const f of files) {
     const src = read(f);
@@ -88,6 +90,8 @@ test('public copy tells the truth about custodial escrow (no non-custodial claim
     assert.doesNotMatch(src, /\bno custody\b/i, f);
     assert.doesNotMatch(src, /payments? (are|is) made directly to the creator/i, f);
     assert.doesNotMatch(src, /pay directly to the creator/i, f);
+    assert.doesNotMatch(src, /direct[- ]to[- ]creator/i, f);
+    assert.doesNotMatch(src, /direct creator pay/i, f);
   }
   // And the honest model is actually stated where it matters.
   assert.match(read('src/app/terms/page.tsx'), /custodial escrow/i);
@@ -341,6 +345,27 @@ test('order create allocates unique 4-digit amount suffix and payment window exp
   assert.match(orderGet, /paymentExpiresAt/);
   assert.match(verifyLib, /value !== expectedRaw/);
   assert.match(verifyLib, /transferredRaw !== expectedRaw/);
+});
+
+test('payment verification rejects a tx mined before the order was created (no pre-order/replayed deposit)', () => {
+  const verifyLib = read('src/lib/verify-payment.ts');
+  const verifyRoute = read('src/app/api/orders/[publicOrderId]/verify-payment/route.ts');
+
+  // The verify lib accepts an order-creation lower bound and rejects earlier-mined txs.
+  // The unique payment amount is only revealed after order creation, so any tx mined
+  // before it (minus clock-skew grace) cannot be this order's payment — this blocks
+  // claiming a pre-existing / unrelated / replayed same-amount transfer to the custody
+  // address, which the exact-amount + tx-hash-uniqueness checks alone do not prevent.
+  assert.match(verifyLib, /notBeforeUnix/);
+  assert.match(verifyLib, /TIMESTAMP_SKEW_SECONDS/);
+  assert.match(
+    verifyLib,
+    /blockTimestamp\s*<\s*ctx\.notBeforeUnix\s*-\s*TIMESTAMP_SKEW_SECONDS/,
+  );
+  assert.match(verifyLib, /mined before the order was created/i);
+
+  // The verify route feeds the order's created_at (unix seconds) as the lower bound.
+  assert.match(verifyRoute, /notBeforeUnix:\s*order\.created_at/);
 });
 
 test('checkout lets guests draft privately, requires auth before review, and redirects incomplete profiles', () => {

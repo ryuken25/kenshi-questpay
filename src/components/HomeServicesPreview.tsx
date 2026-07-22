@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { BadgeCheck, Blocks, ClipboardCheck, FileCheck2, LayoutTemplate, LockKeyhole, PanelsTopLeft, Rocket, ShieldCheck, Wrench, Zap } from "lucide-react";
+import { Badge, Eyebrow } from "@/components/ui";
 import { SERVICES } from "@/lib/services";
 
 const trustItems = [
@@ -31,9 +32,7 @@ export default function HomeServicesPreview() {
     <section id="pricing" className="relative overflow-hidden qp-blend-section px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-28" style={{'--blend-x': '82%', '--blend-color': 'rgba(118,55,225,.075)'} as React.CSSProperties}>
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(91,35,180,.08),transparent_42%)]" />
       <div className="relative mx-auto w-full max-w-7xl">
-        <div className="inline-flex max-w-full items-center rounded-full border border-[rgba(168,111,255,.23)] bg-[rgba(105,55,191,.055)] px-4 py-2 font-mono text-[10px] font-black uppercase leading-5 tracking-[.14em] text-[#c8b5ec] sm:px-5 sm:text-xs sm:tracking-[.17em]">
-          Real payment ladder&nbsp; · &nbsp;Polygon live&nbsp; · &nbsp;BNB Chain payment-gated
-        </div>
+        <Eyebrow>Real payment ladder&nbsp; · &nbsp;Polygon live&nbsp; · &nbsp;BNB Chain payment-gated</Eyebrow>
 
         <div className="mt-6 grid gap-6 border-b border-white/[.07] pb-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end lg:gap-14 lg:pb-10">
           <h2 className="max-w-3xl text-balance font-sora text-[clamp(2.55rem,5.1vw,5.2rem)] font-black leading-[.98] tracking-[-.065em] text-white">Service packages<br className="hidden sm:block" /> that can <span className="bg-[linear-gradient(90deg,#9c62ff,#c18cff)] bg-clip-text text-transparent">actually sell.</span></h2>
@@ -59,7 +58,7 @@ export default function HomeServicesPreview() {
               className="group relative min-w-0 overflow-hidden rounded-[1.25rem] border border-[rgba(173,119,255,.14)] bg-[radial-gradient(circle_at_88%_18%,rgba(103,48,198,.10),transparent_36%),linear-gradient(145deg,rgba(10,8,22,.98),rgba(5,5,13,.99))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.025)] transition duration-300 hover:-translate-y-0.5 hover:border-[rgba(181,128,255,.32)] hover:shadow-[0_20px_60px_rgba(0,0,0,.38)] sm:p-6"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="rounded-full border border-white/[.08] bg-white/[.025] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[.09em] text-[var(--qp-text-secondary)]">{service.delivery}</span>
+                <Badge mono>{service.delivery}</Badge>
                 <span className="font-mono text-lg font-black text-[#a96aff] drop-shadow-[0_0_14px_rgba(155,81,255,.35)]">${service.usd}</span>
               </div>
               <div className="mt-4 flex min-w-0 items-end justify-between gap-4">

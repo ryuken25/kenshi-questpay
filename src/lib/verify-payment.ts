@@ -10,6 +10,9 @@ const TRANSFER_TOPIC =
 /** On-chain confirmations required; sourced from PAYMENT_MIN_CONFIRMATIONS (default 5). */
 const MIN_CONFIRMATIONS = PAYMENT_MIN_CONFIRMATIONS;
 
+/** Clock-skew grace (seconds) between chain block time and the server's order time. */
+const TIMESTAMP_SKEW_SECONDS = 300;
+
 export interface VerifyContext {
   chainKey: ChainKey;
   receiveAddress: string;
@@ -17,6 +20,12 @@ export interface VerifyContext {
   amountHuman: string;
   /** Optional raw units; when set, preferred over re-parsing amountHuman. */
   amountRaw?: string;
+  /**
+   * Unix seconds of order creation. When set, a tx mined meaningfully earlier
+   * than this is rejected: the unique payment amount is only revealed after the
+   * order exists, so a payment for THIS order can never be mined before it.
+   */
+  notBeforeUnix?: number;
 }
 
 export interface VerifyResult {
@@ -103,6 +112,23 @@ export async function verifyPayment(
   // Fetch block for timestamp
   const block = await client.getBlock({ blockNumber: receipt.blockNumber }).catch(() => null);
   const blockTimestamp = block ? Number(block.timestamp) : 0;
+
+  // Reject a tx mined before the order existed. The unique payment amount is only
+  // revealed after order creation, so a payment for THIS order can never be mined
+  // earlier; an earlier same-amount transfer is unrelated (a pre-seeded or replayed
+  // deposit) and must not settle the order. Enforced only when the block timestamp
+  // was readable — fail-open on RPC gaps, since exact amount + global tx-hash
+  // uniqueness still bind the payment.
+  if (
+    ctx.notBeforeUnix &&
+    blockTimestamp > 0 &&
+    blockTimestamp < ctx.notBeforeUnix - TIMESTAMP_SKEW_SECONDS
+  ) {
+    return {
+      ...base,
+      reason: "This transaction was mined before the order was created and cannot be its payment.",
+    };
+  }
 
   // ── Native POL ──────────────────────────────────────────────
   if (ctx.token.kind === "native") {
