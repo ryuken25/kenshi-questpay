@@ -24,6 +24,21 @@ test('wallet config includes Polygon and staged BNB Chain, no testnets, and no B
   assert.ok(bnbStart !== -1 && matrixEnd !== -1, 'expected a bnb block inside CHAIN_TOKENS');
   const bnbBlock = services.slice(bnbStart, matrixEnd);
   assert.doesNotMatch(bnbBlock, /enabled:\s*true/);
+
+  // Polygon token matrix: verified addresses + correct decimals.
+  // Decimals feed parseUnits() for the exact-amount verify, so a wrong value
+  // shifts the expected raw amount by 10^(delta) and must not regress.
+  const polyStart = services.indexOf('polygon:', chainTokensStart);
+  const polyBlock = services.slice(polyStart, bnbStart);
+  // Native USDC by Circle (verified on-chain: symbol USDC, 6 decimals).
+  assert.match(polyBlock, /0x3c499c542cef5e3811e1192ce70d8cc03d5c3359/i);
+  // Bridged USDC.e (0x2791...84174) is a DIFFERENT token and must not be used.
+  assert.doesNotMatch(polyBlock, /0x2791bca1f2de4661ed88a30c99a7a9449aa84174/i);
+  // Official fxVERSE (verified on-chain: symbol fxVERSE, 18 decimals).
+  assert.match(polyBlock, /0xc708d6f2153933daa50b2d0758955be0a93a8fec/i);
+  assert.match(polyBlock, /POLYGON_USDT_DECIMALS \|\| 6/);
+  assert.match(polyBlock, /POLYGON_USDC_DECIMALS \|\| 6/);
+  assert.match(polyBlock, /POLYGON_VERSE_DECIMALS \|\| 18/);
 });
 
 test('payment page does not use direct window.ethereum transaction path', () => {
@@ -420,6 +435,12 @@ test('custody release foundation: tables, server-only release, studio cannot for
   assert.match(verifyLibPayment, /PAYMENT_MIN_CONFIRMATIONS/);
   assert.doesNotMatch(verifyLibPayment, /MIN_CONFIRMATIONS = 3/);
   assert.doesNotMatch(verifyLibPayment, /PAYMENT_MIN_CONFIRMATIONS \|\| 3/);
+  // Separate native vs ERC-20 verify paths, each exact-match (not >=), per-token decimals.
+  assert.match(verifyLibPayment, /kind === "native"/);        // native POL: tx.to + tx.value
+  assert.match(verifyLibPayment, /TRANSFER_TOPIC/);           // ERC-20: Transfer log match
+  assert.match(verifyLibPayment, /value !== expectedRaw/);    // native exact amount
+  assert.match(verifyLibPayment, /transferredRaw !== expectedRaw/); // erc-20 exact amount
+  assert.match(verifyLibPayment, /ctx\.token\.decimals/);     // per-token decimals
 
   const healthRoute = read('src/app/api/health/route.ts');
   assert.match(healthRoute, /getPaymentGateStatus/);
