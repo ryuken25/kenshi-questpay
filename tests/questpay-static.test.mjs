@@ -407,6 +407,15 @@ test('custody release foundation: tables, server-only release, studio cannot for
   const parseFnBody = serverConfig.slice(parseFnStart, parseFnStart + 400);
   assert.doesNotMatch(parseFnBody, /receiveAddressValid && hasReleaseSignerConfigured/);
 
+  // RPC resilience: POLYGON_RPC_URLS parsed, primary alias kept, fallback() failover, 4s timeout.
+  const viemServer = read('src/lib/viem-server.ts');
+  assert.match(viemServer, /POLYGON_RPC_URLS/);
+  assert.match(viemServer, /buildRpcUrls/);
+  assert.match(viemServer, /fallback\(/);
+  assert.match(viemServer, /timeout: 4_000/);
+  // Env template documents the comma-separated list.
+  assert.match(envExample, /POLYGON_RPC_URLS/);
+
   const verifyLibPayment = read('src/lib/verify-payment.ts');
   assert.match(verifyLibPayment, /PAYMENT_MIN_CONFIRMATIONS/);
   assert.doesNotMatch(verifyLibPayment, /MIN_CONFIRMATIONS = 3/);

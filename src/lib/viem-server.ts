@@ -10,26 +10,41 @@ import type { ChainKey } from "./services";
  * one public RPC is rate-limiting — viem's fallback() transport fails over.
  * These clients are server-only, so requests are not subject to the browser CSP.
  */
-function dedupe(urls: (string | undefined)[]): string[] {
-  return [...new Set(urls.map((u) => u?.trim()).filter((u): u is string => Boolean(u)))];
+/**
+ * Build an ordered, deduped RPC endpoint list.
+ * Priority: POLYGON_RPC_URLS (comma-separated, in order) → single POLYGON_RPC_URL
+ * alias → hardcoded public fallbacks. Exported pure for unit testing.
+ */
+export function buildRpcUrls(
+  csv: string | undefined,
+  primary: string | undefined,
+  fallbacks: string[],
+): string[] {
+  const fromCsv = (csv || "").split(",");
+  const all = [...fromCsv, primary, ...fallbacks].map((u) => u?.trim());
+  return [...new Set(all.filter((u): u is string => Boolean(u)))];
 }
 
-const POLYGON_RPCS = dedupe([
-  POLYGON_RPC_URL,
-  process.env.POLYGON_RPC_URL_FALLBACK,
-  "https://polygon-bor-rpc.publicnode.com",
-  "https://polygon-rpc.com",
-  "https://polygon.llamarpc.com",
-  "https://1rpc.io/matic",
-]);
+const POLYGON_RPCS = buildRpcUrls(
+  process.env.POLYGON_RPC_URLS,
+  POLYGON_RPC_URL, // alias / primary
+  [
+    "https://polygon-bor-rpc.publicnode.com",
+    "https://polygon-rpc.com",
+    "https://polygon.llamarpc.com",
+    "https://1rpc.io/matic",
+  ],
+);
 
-const BSC_RPCS = dedupe([
+const BSC_RPCS = buildRpcUrls(
+  process.env.BSC_RPC_URLS,
   process.env.BSC_RPC_URL,
-  process.env.BSC_RPC_URL_FALLBACK,
-  "https://bsc-dataseed.binance.org",
-  "https://bsc.publicnode.com",
-  "https://bsc-dataseed1.defibit.io",
-]);
+  [
+    "https://bsc-dataseed.binance.org",
+    "https://bsc.publicnode.com",
+    "https://bsc-dataseed1.defibit.io",
+  ],
+);
 
 let _polygonClient: PublicClient | null = null;
 let _bscClient: PublicClient | null = null;
@@ -37,8 +52,9 @@ let _bscClient: PublicClient | null = null;
 function makeTransport(urls: string[]) {
   // rank:false keeps the configured order as priority (env URL first),
   // failing over to the next endpoint on error/timeout.
+  // 4s per-endpoint timeout; fallback() fails over on timeout / 429 / 5xx / network error.
   return fallback(
-    urls.map((u) => http(u, { timeout: 12_000 })),
+    urls.map((u) => http(u, { timeout: 4_000 })),
     { rank: false, retryCount: 2 },
   );
 }
