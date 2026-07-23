@@ -90,11 +90,13 @@ export async function POST(req: NextRequest, props: { params: Promise<{ publicOr
     );
   }
 
-  // If order is assigned to a specific creator, enforce ownership (super_admin bypass).
+  // Enforce assigned-creator ownership (super_admin bypass). Fail CLOSED when the
+  // order has no assigned creator: an unassigned order is submittable by NO creator
+  // (mirrors the status/progress routes). New orders always carry a creator (create
+  // fails closed); this guards legacy / off-catalog null-creator rows. (R re-sweep NEW-1.)
   if (
-    order.creator_account_id &&
-    order.creator_account_id !== session.accountId &&
-    !session.roles.includes("super_admin")
+    !session.roles.includes("super_admin") &&
+    order.creator_account_id !== session.accountId
   ) {
     return NextResponse.json({ error: "Not the assigned creator for this order." }, { status: 403 });
   }

@@ -118,6 +118,13 @@ test('work-submit + progress enforce assigned-creator ownership (F3, now live vi
   assert.match(ws, /Creator role required/); // non-creator → 403
   assert.match(ws, /order\.creator_account_id !== session\.accountId/); // wrong creator → 403
   assert.match(ws, /Not the assigned creator/);
+  // Fail CLOSED on a null creator (R re-sweep NEW-1): the ownership check must NOT be
+  // guarded by a truthy `order.creator_account_id &&` that would skip it when null.
+  assert.doesNotMatch(
+    ws,
+    /order\.creator_account_id\s*&&\s*[\r\n]+\s*order\.creator_account_id !== session\.accountId/,
+    'work-submit must fail CLOSED on null creator_account_id',
+  );
   const pr = read('src/app/api/orders/[publicOrderId]/progress/route.ts');
   assert.match(pr, /creator_account_id === session\.accountId/);
   assert.match(pr, /403/);
