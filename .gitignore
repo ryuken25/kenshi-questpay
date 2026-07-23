@@ -38,5 +38,6 @@ creds.txt
 secrets.txt
 .secrets/
 priv.txt
+creator.txt
 *.key
 mnemonic*.txt
