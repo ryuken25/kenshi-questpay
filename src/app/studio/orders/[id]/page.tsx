@@ -114,11 +114,11 @@ export default async function StudioOrderDetail(
   return (
     <StudioShell email={user.email || "owner"} showAdmin={user.roles?.includes("super_admin")}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-sm text-[var(--qp-violet-300)]">{order.public_order_id}</p>
-          <h1 className="font-sora text-3xl font-black">{order.slug}</h1>
+          <h1 className="font-sora text-3xl font-black break-words">{order.slug}</h1>
         </div>
-        <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black">{order.status}</span>
+        <span className="w-fit shrink-0 rounded-full bg-white/10 px-4 py-2 text-sm font-black">{order.status}</span>
       </div>
 
       {searchParams?.error ? (

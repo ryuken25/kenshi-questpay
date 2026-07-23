@@ -38,6 +38,7 @@ function SignInContent() {
             </div>
             <div className="mx-auto w-full max-w-md">
               <Link href="/" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--qp-text-muted)] hover:text-white"><ArrowLeft size={16} /> Back to homepage</Link>
+              <p className="qp-work-eyebrow mb-3 lg:hidden">Welcome back</p>
               <AuthPanel compact error={error} next={next} />
             </div>
           </div>

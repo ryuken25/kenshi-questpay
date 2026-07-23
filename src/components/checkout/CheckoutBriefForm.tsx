@@ -176,12 +176,12 @@ export default function CheckoutBriefForm({ service, next, authenticated, profil
 
       {/* Service summary */}
       <div className="mb-6 rounded-2xl border border-[var(--qp-border-default)] bg-[rgba(135,82,255,.06)] p-4">
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <h2 className="font-sora text-lg font-bold text-white">{service.name}</h2>
-            <p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><Clock3 size={13} /> {service.delivery} · {service.revisions} revisions</p>
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><Clock3 size={13} className="shrink-0" /> {service.delivery} · {service.revisions} revisions</p>
           </div>
-          <div className="text-right">
+          <div className="text-right shrink-0">
             <p className="font-mono text-xl font-black text-white">${service.usd}</p>
             <p className="text-[10px] text-subtle">from · {ENABLED_TOKEN_SYMBOLS.join(", ")}</p>
           </div>

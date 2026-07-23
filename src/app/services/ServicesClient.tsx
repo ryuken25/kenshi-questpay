@@ -109,22 +109,22 @@ export default function ServicesClient() {
   return (
     <section id="pricing" className="scroll-mt-28 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
-        {/* Header */}
-        <div className="mb-8 text-center sm:mb-10">
+        {/* Header — left-aligned on mobile (consistent with every other screen); centered on desktop (lg) */}
+        <div className="mb-8 text-left sm:mb-10 lg:text-center">
           <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--qp-violet-300)]">
             {SITE.realNetwork}
           </p>
           <h1 className="section-title mt-3 font-sora font-black text-white">
             Service <span className="gradient-text">Catalog</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-muted lg:mx-auto">
             Productized services with clear scope, delivery targets, and fixed starting prices.
           </p>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-subtle">{SITE.disclaimer}</p>
+          <p className="mt-2 max-w-xl text-sm text-subtle lg:mx-auto">{SITE.disclaimer}</p>
         </div>
 
         {/* Token / network summary */}
-        <div className="mx-auto mb-8 flex max-w-2xl flex-wrap items-center justify-center gap-2 text-center">
+        <div className="mb-8 flex max-w-2xl flex-wrap items-center gap-2 text-left lg:mx-auto lg:justify-center lg:text-center">
           <span className="text-xs font-medium text-subtle">Pay with:</span>
           <div className="flex flex-wrap items-center gap-1.5">
             {ENABLED_TOKEN_SYMBOLS.map((symbol) => (

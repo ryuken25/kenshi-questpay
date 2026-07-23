@@ -68,7 +68,7 @@ export default async function StudioOrders(
         <select
           name="status"
           defaultValue={searchParams.status}
-          className="min-h-11 rounded-xl bg-[rgba(8,11,24,.56)] px-4"
+          className="min-h-11 rounded-xl bg-[rgba(8,11,24,.56)] px-4 text-base"
         >
           <option value="">All statuses</option>
           {["pending", "paid", "reviewing", "accepted", "in_progress", "delivered", "completed", "cancelled"].map(
@@ -77,9 +77,12 @@ export default async function StudioOrders(
             ),
           )}
         </select>
-        <button className="rounded-xl bg-verse-purple px-5 font-black">Filter</button>
+        <button className="min-h-11 rounded-xl bg-verse-purple px-5 font-black">Filter</button>
       </form>
-      <div className="mt-5 overflow-x-auto rounded-2xl border border-white/10">
+      {/* Desktop: wide data table (frozen). Hidden below lg so it never
+          horizontally scrolls on mobile; the card list below renders the same
+          rows for small screens. */}
+      <div className="mt-5 hidden overflow-x-auto rounded-2xl border border-white/10 lg:block">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="bg-[var(--qp-surface)] text-xs uppercase text-muted">
             <tr>
@@ -113,6 +116,42 @@ export default async function StudioOrders(
           </tbody>
         </table>
         {!orders.length && <p className="p-8 text-center text-muted">No orders match this view.</p>}
+      </div>
+
+      {/* Mobile: same rows as the table above, rendered as stacked cards so
+          nothing scrolls sideways at 360px. */}
+      <div className="mt-5 flex flex-col gap-2.5 lg:hidden">
+        {orders.map((order) => (
+          <Link
+            key={order.id}
+            href={`/studio/orders/${order.id}`}
+            className="block rounded-2xl border border-white/10 bg-[var(--qp-surface)] p-4 active:bg-[var(--qp-surface-hover)]"
+          >
+            <div className="flex items-center gap-2">
+              <span className="min-w-0 truncate font-mono text-sm font-bold text-[var(--qp-violet-300)]">
+                {order.public_order_id}
+              </span>
+              <span className="ml-auto shrink-0 rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold">
+                {order.status}
+              </span>
+            </div>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{order.slug}</span>
+              <span className="shrink-0 font-mono text-sm text-[var(--qp-violet-400)]">
+                {order.amount_human} {order.token_symbol}
+              </span>
+            </div>
+            <p className="mt-2 font-mono text-[11px] text-[var(--qp-text-subtle)]">
+              {new Date(order.created_at).toLocaleDateString()}
+              {order.customer_name ? ` · ${order.customer_name}` : ""}
+            </p>
+          </Link>
+        ))}
+        {!orders.length && (
+          <p className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-muted">
+            No orders match this view.
+          </p>
+        )}
       </div>
     </StudioShell>
   );

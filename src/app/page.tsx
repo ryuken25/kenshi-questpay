@@ -49,9 +49,9 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <div data-reveal className="glass-panel-strong rounded-[1.5rem] p-8 sm:p-12">
               <h2 className="font-sora text-2xl font-bold text-white sm:text-3xl">Ready to start with a <span className="gradient-text">clear scope</span>?</h2>
-              <div className="mt-7 flex flex-wrap justify-center gap-3">
-                <Button href="/services" size="lg" iconRight={<ArrowRight size={16} aria-hidden="true" />}>Browse Services</Button>
-                <Button href="/sign-in?next=/studio" size="lg" variant="secondary">Sign In / Start Selling</Button>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
+                <Button href="/services" size="lg" className="w-full sm:w-auto" iconRight={<ArrowRight size={16} aria-hidden="true" />}>Browse Services</Button>
+                <Button href="/sign-in?next=/studio" size="lg" variant="secondary" className="w-full sm:w-auto">Sign In / Start Selling</Button>
               </div>
             </div>
           </div>

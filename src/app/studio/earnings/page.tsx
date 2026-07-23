@@ -73,13 +73,13 @@ export default async function StudioEarningsPage() {
               href={`/studio/orders/${order.id}`}
               className="flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-[rgba(8,8,14,.72)] px-4"
             >
-              <span>
+              <span className="min-w-0">
                 <b className="block font-mono text-sm">{order.public_order_id}</b>
-                <span className="text-xs text-muted">
+                <span className="block break-words text-xs text-muted">
                   {order.slug} · {order.amount_human} {order.token_symbol}
                 </span>
               </span>
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">
+              <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-xs font-black">
                 {order.status}
               </span>
             </Link>

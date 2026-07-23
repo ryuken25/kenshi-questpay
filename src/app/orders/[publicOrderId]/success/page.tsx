@@ -24,10 +24,10 @@ export default async function SuccessPage(props: {
   const { publicOrderId } = await props.params;
 
   return (
-    <div className="min-h-screen px-4 py-16 text-white sm:px-6">
+    <div className="min-h-screen px-4 py-12 text-white sm:px-6 sm:py-16">
       <section className="mx-auto max-w-xl">
         <div className="qp-receipt-card qp-receipt-card--success text-center">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl border border-green-400/30 bg-green-400/10">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full border border-green-400/30 bg-green-400/10 lg:h-14 lg:w-14 lg:rounded-2xl">
             <CheckCircle2 size={28} className="text-[var(--qp-success)]" />
           </div>
           <p className="qp-work-eyebrow text-[var(--qp-success)]">Payment settled · Polygon Mainnet</p>

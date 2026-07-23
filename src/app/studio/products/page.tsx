@@ -52,11 +52,11 @@ export default async function StudioProductsPage() {
               className="rounded-[1.6rem] border border-white/10 bg-[var(--qp-surface)] p-5"
             >
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-sora text-lg font-black">{service.name}</h3>
-                  <p className="mt-1 font-mono text-xs text-[var(--qp-violet-300)]">{service.slug}</p>
+                <div className="min-w-0">
+                  <h3 className="font-sora text-lg font-black break-words">{service.name}</h3>
+                  <p className="mt-1 break-all font-mono text-xs text-[var(--qp-violet-300)]">{service.slug}</p>
                 </div>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-black">
+                <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-sm font-black">
                   ${service.usd}
                 </span>
               </div>
@@ -64,13 +64,13 @@ export default async function StudioProductsPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   href={`/services/${service.slug}`}
-                  className="rounded-xl bg-verse-purple px-4 py-2 text-sm font-black"
+                  className="rounded-xl bg-verse-purple px-4 py-2.5 text-sm font-black sm:py-2"
                 >
                   Open listing
                 </Link>
                 <Link
                   href={`/checkout/${service.slug}`}
-                  className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-[var(--qp-text-secondary)] hover:bg-white/5"
+                  className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[var(--qp-text-secondary)] hover:bg-white/5 sm:py-2"
                 >
                   Checkout flow
                 </Link>

@@ -11,7 +11,7 @@ const HASH_RE = /^0x[a-fA-F0-9]{64}$/;
 export default function VerifyPage() {
   return (
     <PublicShell>
-      <div className="min-screen-safe px-4 py-24 text-[var(--qp-text-primary)] sm:px-6 lg:px-8">
+      <div className="min-screen-safe px-4 py-14 text-[var(--qp-text-primary)] sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <section className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[var(--qp-surface)] p-5 shadow-2xl sm:p-8">
           <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[var(--qp-violet-300)]">
             QuestPay Public Verify
@@ -95,7 +95,7 @@ function VerifyForm() {
         <button
           type="submit"
           disabled={loading || !txHash.trim()}
-          className="flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-2xl bg-verse-purple px-5 font-black text-white disabled:opacity-40"
+          className="flex min-h-[52px] w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-verse-purple px-5 font-black text-white disabled:opacity-40 sm:min-h-12 sm:w-auto"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />}
           Verify

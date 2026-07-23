@@ -40,7 +40,7 @@ export default async function StudioDashboard() {
             Custody → work submit → buyer accept → server release. Not a legacy /dashboard shell.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           <Link href="/studio/products" className="rounded-2xl border border-white/10 bg-[var(--qp-surface)] px-5 py-3 text-center text-sm font-black hover:bg-[var(--qp-surface-hover)]">
             Products
           </Link>
@@ -69,13 +69,13 @@ export default async function StudioDashboard() {
               href={`/studio/orders/${order.id}`}
               className="flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-[rgba(8,8,14,.72)] px-4"
             >
-              <span>
+              <span className="min-w-0">
                 <b className="block">{order.public_order_id}</b>
-                <span className="text-xs text-muted">
+                <span className="block break-words text-xs text-muted">
                   {order.slug} · {new Date(order.created_at).toLocaleString()}
                 </span>
               </span>
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">{order.status}</span>
+              <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-xs font-black">{order.status}</span>
             </Link>
           ))}
           {!rows.length && (

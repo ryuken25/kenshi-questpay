@@ -20,7 +20,8 @@ export default async function AccountPage() {
   return (
     <Web3Provider>
       <div className="min-h-screen bg-[var(--qp-bg)] text-[var(--qp-text-primary)]">
-        <section className="mx-auto max-w-4xl px-4 py-24 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 lg:py-24">
+          <p className="qp-work-eyebrow mb-2 lg:hidden">Your account</p>
           <h1 className="font-sora text-3xl font-black">Account</h1>
 
           <div className="mt-8">
@@ -35,9 +36,9 @@ export default async function AccountPage() {
                   <p className="text-sm text-[var(--qp-text-muted)]">No linked identities found.</p>
                 ) : (
                   identities.map((id: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] px-3 py-2 text-sm">
-                      <span className="font-semibold capitalize text-[var(--qp-text-primary)]">{id.provider}</span>
-                      <span className="truncate text-[var(--qp-text-muted)]">{id.normalized_email || id.normalized_wallet || "—"}</span>
+                    <div key={i} className="flex items-center justify-between gap-3 rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-bg-elevated)] px-3 py-2 text-sm">
+                      <span className="shrink-0 font-semibold capitalize text-[var(--qp-text-primary)]">{id.provider}</span>
+                      <span className="min-w-0 truncate text-[var(--qp-text-muted)]">{id.normalized_email || id.normalized_wallet || "—"}</span>
                     </div>
                   ))
                 )}

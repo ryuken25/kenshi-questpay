@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const navItem =
-  "rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] px-3 py-2 text-sm font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white";
+  "shrink-0 whitespace-nowrap rounded-xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] px-3.5 py-3 text-sm font-medium text-[var(--qp-text-secondary)] hover:bg-[var(--qp-surface-hover)] hover:text-white sm:px-3 sm:py-2";
 
 export default function StudioShell({
   email,
@@ -23,7 +23,10 @@ export default function StudioShell({
             </Link>
             <p className="mt-1 text-sm text-[var(--qp-text-muted)]">Creator operations · custody → accept → release</p>
           </div>
-          <nav className="flex flex-wrap items-center gap-2" aria-label="Studio navigation">
+          <nav
+            className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+            aria-label="Studio navigation"
+          >
             <Link className={navItem} href="/studio">
               Overview
             </Link>
@@ -44,11 +47,11 @@ export default function StudioShell({
                 Admin
               </Link>
             ) : null}
-            <span className="max-w-48 truncate px-2 text-sm text-[var(--qp-text-muted)]">{email}</span>
-            <form action="/api/auth/logout" method="post">
+            <span className="max-w-48 shrink-0 truncate px-2 text-sm text-[var(--qp-text-muted)]">{email}</span>
+            <form action="/api/auth/logout" method="post" className="shrink-0">
               <button
                 type="submit"
-                className="rounded-xl border border-red-300/35 bg-red-400/15 px-3 py-2 text-sm font-bold text-red-100 hover:bg-red-400/25"
+                className="whitespace-nowrap rounded-xl border border-red-300/35 bg-red-400/15 px-3 py-3 text-sm font-bold text-red-100 hover:bg-red-400/25 sm:py-2"
               >
                 Logout
               </button>

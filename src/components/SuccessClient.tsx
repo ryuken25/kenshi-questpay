@@ -41,7 +41,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
   const txHash = payment?.tx_hash || "";
 
   return (
-    <section className="px-4 py-14 sm:px-6 lg:px-8">
+    <section className="px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
@@ -80,17 +80,17 @@ export default function SuccessClient({ publicOrderId }: Props) {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-3 pt-4">
+              <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
                 <a
                   href={`/orders/${publicOrderId}`}
-                  className="flex min-h-11 items-center justify-center rounded-2xl bg-[var(--qp-surface)] px-5 font-bold text-secondary"
+                  className="flex min-h-11 w-full items-center justify-center rounded-2xl bg-[var(--qp-surface)] px-5 font-bold text-secondary sm:w-auto"
                 >
                   View order →
                 </a>
                 {txHash && (
                   <a
                     href={`/verify/${txHash}`}
-                    className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-green-400 px-5 font-bold text-black"
+                    className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-green-400 px-5 font-bold text-black sm:w-auto"
                   >
                     <CheckCircle2 size={18} />
                     Public verify
@@ -98,7 +98,7 @@ export default function SuccessClient({ publicOrderId }: Props) {
                 )}
                 <Link
                   href="/services"
-                  className="flex min-h-11 items-center justify-center rounded-2xl bg-verse-purple px-5 font-bold text-white"
+                  className="flex min-h-11 w-full items-center justify-center rounded-2xl bg-verse-purple px-5 font-bold text-white sm:w-auto"
                 >
                   New quest →
                 </Link>

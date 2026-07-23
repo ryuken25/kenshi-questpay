@@ -152,7 +152,7 @@ export default function OrderDetailClient({ order, viewerRole, initialEvents }: 
   const canAccept = viewerRole === "buyer" && ACCEPTABLE_STATUSES.has(status);
 
   return (
-    <section className="px-4 py-12 sm:px-6 lg:px-8">
+    <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="text-center">
@@ -436,7 +436,7 @@ function AcceptWork({
         onClick={accept}
         disabled={busy}
         data-testid="accept-work-button"
-        className="mt-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-green-400 px-5 font-black text-black disabled:opacity-50"
+        className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-green-400 px-5 font-black text-black disabled:opacity-50 sm:w-auto"
       >
         {busy ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
         Accept work &amp; release payment
