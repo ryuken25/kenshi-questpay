@@ -5,6 +5,7 @@ import { CheckCircle2, Copy, ExternalLink, FileText } from "lucide-react";
 import { PACKAGES } from "@/lib/config";
 import { middle } from "@/lib/payment-utils-client";
 import InlineVerify from "@/components/verify/InlineVerify";
+import HashChip from "@/components/ui/HashChip";
 
 const polygonScanTx = (tx: string) => `https://polygonscan.com/tx/${tx}`;
 
@@ -44,12 +45,11 @@ export default function Receipt({ receipt }: ReceiptProps) {
             <Row label="Buyer" value={middle(receipt.buyerAddress)} raw={receipt.buyerAddress} onCopy={copyToClipboard} />
             <Row label="Network" value={receipt.network} />
             <Row label="Brief ID" value={receipt.briefId} icon={<FileText className="h-3 w-3"/>} raw={receipt.briefId} onCopy={copyToClipboard} />
-            <div className="rounded-2xl border border-[var(--qp-border-soft)] bg-[var(--qp-surface)] p-4">
-              <p className="mb-2 text-xs uppercase tracking-wider text-muted">Tx Hash</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <code className="hash-chip text-sm text-[var(--qp-violet-300)]">{middle(receipt.txHash, 10, 8)}</code>
-                <button onClick={() => copyToClipboard(receipt.txHash)} className="rounded-xl bg-white/10 p-2"><Copy className="h-4 w-4" /></button>
-                <a href={explorer} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black">Explorer <ExternalLink className="h-4 w-4" /></a>
+            <div className="qp-tile">
+              <p className="qp-tile__label">Tx Hash</p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <HashChip value={receipt.txHash} label="Tx" />
+                <a href={explorer} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black">Explorer <ExternalLink className="h-4 w-4" /></a>
               </div>
             </div>
             {isPolygon && (

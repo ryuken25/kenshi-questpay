@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { ChevronRight, X, LogOut, User as UserIcon, Menu } from "lucide-react";
@@ -21,6 +20,69 @@ type SessionState = { authenticated: boolean; roles: string[] } | null;
 
 const NAV_WIDTH = 264;
 const RAIL_WIDTH = 80;
+
+/**
+ * Brand marks rendered as inline SVG (crisp at any DPR, no next/image raster).
+ * `id` namespaces each instance's gradient/filter defs so multiple marks can
+ * coexist in the DOM (sidebar + mobile top-bar) without id collisions.
+ */
+function QuestPayWordmark({ id, width = 150 }: { id: string; width?: number }) {
+  const height = Math.round((width * 240) / 960);
+  return (
+    <svg width={width} height={height} viewBox="0 0 960 240" fill="none" role="img" aria-label="QuestPay">
+      <defs>
+        <linearGradient id={`${id}-g`} x1="22" y1="18" x2="208" y2="220" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#B487FF" />
+          <stop offset="0.52" stopColor="#8048F6" />
+          <stop offset="1" stopColor="#5528C4" />
+        </linearGradient>
+        <filter id={`${id}-glow`} x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="6" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <rect x="12" y="12" width="216" height="216" rx="58" fill="#06050D" />
+      <rect x="13" y="13" width="214" height="214" rx="57" stroke={`url(#${id}-g)`} strokeOpacity=".48" strokeWidth="2" />
+      <circle cx="112" cy="108" r="61" stroke="#EADFFF" strokeWidth="16" />
+      <path d="M151 148L194 191" stroke={`url(#${id}-g)`} strokeWidth="20" strokeLinecap="round" />
+      <path d="M78 108L102 132L148 86" stroke={`url(#${id}-g)`} strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${id}-glow)`} />
+      <text x="264" y="151" fill="#F8F6FB" fontFamily="Inter, Arial, sans-serif" fontSize="108" fontWeight="750" letterSpacing="-5">QuestPay</text>
+    </svg>
+  );
+}
+
+function QuestPayMark({ id, size = 32 }: { id: string; size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 256 256" fill="none" role="img" aria-label="QuestPay">
+      <defs>
+        <linearGradient id={`${id}-bg`} x1="36" y1="26" x2="224" y2="232" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#A977FF" />
+          <stop offset="0.52" stopColor="#7C45F4" />
+          <stop offset="1" stopColor="#4F25B8" />
+        </linearGradient>
+        <linearGradient id={`${id}-ring`} x1="54" y1="48" x2="193" y2="205" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F3E9FF" />
+          <stop offset="1" stopColor="#C8A7FF" />
+        </linearGradient>
+        <filter id={`${id}-glow`} x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="9" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <rect x="16" y="16" width="224" height="224" rx="64" fill="#06050D" />
+      <rect x="17" y="17" width="222" height="222" rx="63" stroke={`url(#${id}-bg)`} strokeOpacity="0.55" strokeWidth="2" />
+      <circle cx="120" cy="116" r="67" stroke={`url(#${id}-ring)`} strokeWidth="18" />
+      <path d="M163 161L207 207" stroke={`url(#${id}-bg)`} strokeWidth="22" strokeLinecap="round" />
+      <path d="M82 116L108 142L158 91" stroke={`url(#${id}-bg)`} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${id}-glow)`} />
+    </svg>
+  );
+}
 
 
 function isActive(pathname: string, href: string): boolean {
@@ -54,9 +116,9 @@ function DesktopSidebar({ roles, pathname, session }: { roles: QuestPayRole[]; p
       <div className="qp-sidebar__brand">
         <Link href="/" className="qp-sidebar__logo" aria-label="QuestPay home">
           {collapsed ? (
-            <Image src="/brand/questpay/questpay-mark-256.png" alt="QuestPay" width={32} height={32} />
+            <QuestPayMark id="qp-side-mark" size={34} />
           ) : (
-            <Image src="/brand/questpay/questpay-logo-horizontal.svg" alt="QuestPay" width={130} height={28} />
+            <QuestPayWordmark id="qp-side-word" width={150} />
           )}
         </Link>
         {!collapsed && (
@@ -127,7 +189,7 @@ function MobileTopBar({ pathname, session, onMore }: { pathname: string; session
   return (
     <header className="qp-mobile-topbar">
       <Link href="/" className="qp-mobile-topbar__logo" aria-label="QuestPay home">
-        <Image src="/brand/questpay/questpay-mark-256.png" alt="QuestPay" width={28} height={28} />
+        <QuestPayMark id="qp-top-mark" size={30} />
       </Link>
       <span className="qp-mobile-topbar__title">{pageName}</span>
       <button type="button" onClick={onMore} className="qp-mobile-topbar__action" aria-label="More menu">

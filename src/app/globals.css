@@ -962,3 +962,179 @@ body {
   .qp-public-ambient__glow--1,
   .qp-public-ambient__glow--2 { animation: none; }
 }
+
+/* ═══ Workspace restyle — receipts · orders · order-detail (Agent S) ═══
+   Visual layer for the buyer workspace. Reuses the --qp-* tokens + DS
+   primitives; adds only the reference's signature receipt-card family
+   (shimmer heading, status pills, mono amount, mini rail, disclosure). */
+
+/* Violet shimmer for the second display word. Animated background-position;
+   held static under reduced-motion / forced-colors. */
+.qp-shimmer {
+  background: linear-gradient(100deg, #8b4dff 0%, #a567ff 42%, #c9a8ff 52%, #a567ff 66%, #8b4dff 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: qp-shimmer-slide 7s linear infinite;
+}
+@keyframes qp-shimmer-slide { to { background-position: 220% center; } }
+@media (prefers-reduced-motion: reduce) { .qp-shimmer { animation: none; } }
+@media (forced-colors: active) {
+  .qp-shimmer { background: none; color: CanvasText; -webkit-text-fill-color: currentColor; }
+}
+
+/* Mono UPPERCASE workspace eyebrow. */
+.qp-work-eyebrow {
+  font-family: var(--qp-font-mono);
+  font-size: var(--qp-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--qp-violet-300);
+}
+
+/* Status filter pills (All / Active / Delivered / Completed / Closed). */
+.qp-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0 0.95rem;
+  border-radius: var(--qp-radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: transparent;
+  color: var(--qp-text-secondary);
+  font-family: var(--qp-font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color .18s var(--qp-ease-out), border-color .18s var(--qp-ease-out),
+    background .18s var(--qp-ease-out), box-shadow .18s var(--qp-ease-out);
+}
+.qp-filter:hover { color: var(--qp-text-strong); border-color: var(--qp-border-hover); }
+.qp-filter[aria-pressed="true"] {
+  background: rgba(135, 82, 255, 0.20);
+  border-color: rgba(135, 82, 255, 0.50);
+  color: #fff;
+  box-shadow: 0 0 22px rgba(135, 82, 255, 0.22);
+}
+.qp-filter__count { font-family: var(--qp-font-mono); font-size: 11px; font-weight: 600; }
+
+/* Receipt / order card — the core element. */
+.qp-receipt-card {
+  position: relative;
+  border-radius: var(--qp-radius-xl);
+  border: 1px solid rgba(174, 139, 255, 0.15);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(103, 48, 198, 0.09), transparent 34%),
+    linear-gradient(165deg, rgba(12, 11, 20, 0.96), rgba(5, 5, 11, 0.99));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  padding: clamp(16px, 2.2vw, 22px);
+  transition: transform .2s var(--qp-ease-out), border-color .2s var(--qp-ease-out),
+    box-shadow .2s var(--qp-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .qp-receipt-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(135, 82, 255, 0.40);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qp-receipt-card { transition: none; }
+  .qp-receipt-card:hover { transform: none; }
+}
+/* Settled-payment variant — green success border for the confirmation card. */
+.qp-receipt-card--success { border-color: rgba(66, 215, 135, 0.32); }
+
+/* Mono amount with a soft violet glow (reference #a96aff ≈ --qp-violet-400). */
+.qp-amount {
+  font-family: var(--qp-font-mono);
+  font-weight: 600;
+  color: var(--qp-violet-400);
+  text-shadow: 0 0 18px rgba(135, 82, 255, 0.35);
+}
+
+/* Compact 4-node progress rail (list card). */
+.qp-rail { display: inline-flex; align-items: center; }
+.qp-rail__node { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); flex-shrink: 0; }
+.qp-rail__node--on { background: var(--qp-violet-400); box-shadow: 0 0 9px rgba(135, 82, 255, 0.65); }
+.qp-rail__line { width: 20px; height: 2px; background: rgba(255, 255, 255, 0.10); }
+.qp-rail__line--on { background: rgba(135, 82, 255, 0.55); }
+
+/* Disclosure ("Receipt details") + grid-rows reveal panel. */
+.qp-disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 40px;
+  padding: 0 0.35rem;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--qp-text-secondary);
+  font-size: var(--qp-text-sm);
+  font-weight: 600;
+  transition: color .16s var(--qp-ease-out);
+}
+.qp-disclosure:hover { color: var(--qp-text-strong); }
+.qp-disclosure__chevron { transition: transform .24s var(--qp-ease-out); }
+.qp-disclosure[aria-expanded="true"] .qp-disclosure__chevron { transform: rotate(180deg); }
+
+.qp-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s var(--qp-ease-out); }
+.qp-reveal[data-open="true"] { grid-template-rows: 1fr; }
+.qp-reveal__inner { overflow: hidden; min-height: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .qp-disclosure__chevron { transition: none; }
+  .qp-reveal { transition: none; }
+}
+
+/* Detail tile (Network / Locked amount / Transaction). */
+.qp-tile {
+  border-radius: var(--qp-radius-md);
+  border: 1px solid var(--qp-border-soft);
+  background: var(--qp-surface-1);
+  padding: 0.8rem 0.95rem;
+}
+.qp-tile--dashed { border-style: dashed; border-color: rgba(255, 255, 255, 0.15); background: transparent; }
+.qp-tile__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qp-text-muted);
+}
+.qp-tile__value { margin-top: 0.3rem; color: var(--qp-text-primary); font-size: var(--qp-text-sm); }
+
+/* Lifecycle stepper node states (order-detail restyle). */
+.qp-step-node {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid var(--qp-border-soft);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--qp-text-muted);
+  font-size: var(--qp-text-xs);
+  font-weight: 800;
+}
+.qp-step-node--done { border-color: rgba(66, 215, 135, 0.55); background: rgba(66, 215, 135, 0.16); color: #8ef0bd; }
+.qp-step-node--current {
+  border-color: var(--qp-violet-300);
+  background: rgba(135, 82, 255, 0.22);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(135, 82, 255, 0.16), 0 0 18px rgba(135, 82, 255, 0.4);
+}
+
+/* Sidebar inline-SVG logo sizing. */
+.qp-sidebar__logo svg,
+.qp-mobile-topbar__logo svg { display: block; height: auto; }

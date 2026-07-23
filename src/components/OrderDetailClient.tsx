@@ -14,8 +14,8 @@ import {
   Send,
   ShieldCheck,
 } from "lucide-react";
-import { middle } from "@/lib/payment-utils-client";
 import InlineVerify from "@/components/verify/InlineVerify";
+import HashChip from "@/components/ui/HashChip";
 
 export type ViewerRole = "buyer" | "creator" | "admin";
 
@@ -156,9 +156,7 @@ export default function OrderDetailClient({ order, viewerRole, initialEvents }: 
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[var(--qp-violet-300)]">
-            Order workspace
-          </p>
+          <p className="qp-work-eyebrow">Order workspace · Polygon Mainnet</p>
           <h1 className="mt-3 font-sora text-2xl font-black text-white">
             <span className="font-mono text-lg text-[var(--qp-violet-300)]">{order.publicOrderId}</span>
           </h1>
@@ -201,10 +199,10 @@ export default function OrderDetailClient({ order, viewerRole, initialEvents }: 
             const done = step.state === "done";
             const current = step.state === "current";
             const nodeCls = done
-              ? "border-green-400/60 bg-green-400/20 text-green-300"
+              ? "qp-step-node qp-step-node--done"
               : current
-                ? "border-[var(--qp-violet-300)] bg-[var(--qp-violet-strong)]/30 text-white ring-2 ring-[var(--qp-violet-300)]/50"
-                : "border-white/15 bg-white/5 text-muted";
+                ? "qp-step-node qp-step-node--current"
+                : "qp-step-node";
             const lineDone = i > 0 && steps[i - 1].state === "done";
             return (
               <li
@@ -231,11 +229,7 @@ export default function OrderDetailClient({ order, viewerRole, initialEvents }: 
                     }`}
                   />
                 )}
-                <span
-                  className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-black ${nodeCls}`}
-                >
-                  {done ? <Check size={16} /> : i + 1}
-                </span>
+                <span className={nodeCls}>{done ? <Check size={16} /> : i + 1}</span>
                 <span className="min-w-0 md:mt-2">
                   <span
                     className={`block text-sm font-bold ${
@@ -258,7 +252,7 @@ export default function OrderDetailClient({ order, viewerRole, initialEvents }: 
         {canPay && (
           <Link
             href={`/pay/${order.publicOrderId}`}
-            className="mt-8 flex min-h-12 items-center justify-center rounded-2xl bg-verse-purple px-5 font-black text-white"
+            className="qp-button qp-button--primary qp-button--block mt-8"
           >
             Go to payment →
           </Link>
@@ -289,23 +283,25 @@ export default function OrderDetailClient({ order, viewerRole, initialEvents }: 
                 View all receipts
               </Link>
             </div>
-            <div className="mt-3 space-y-2">
-              <Row label="Tx hash" value={middle(txHash, 10, 8)} />
-              {order.payment?.fromAddress && (
-                <Row label="From" value={middle(order.payment.fromAddress)} />
-              )}
-              {order.payment?.blockNumber != null && (
-                <Row label="Block" value={String(order.payment.blockNumber)} />
-              )}
-              {order.payment?.confirmations != null && (
-                <Row label="Confirmations" value={String(order.payment.confirmations)} />
-              )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <HashChip value={txHash} label="Tx" />
+              {order.payment?.fromAddress && <HashChip value={order.payment.fromAddress} label="From" />}
             </div>
+            {(order.payment?.blockNumber != null || order.payment?.confirmations != null) && (
+              <div className="mt-2 space-y-2">
+                {order.payment?.blockNumber != null && (
+                  <Row label="Block" value={String(order.payment.blockNumber)} />
+                )}
+                {order.payment?.confirmations != null && (
+                  <Row label="Confirmations" value={String(order.payment.confirmations)} />
+                )}
+              </div>
+            )}
             <a
               href={`https://polygonscan.com/tx/${txHash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black"
+              className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black"
             >
               View on Polygonscan <ExternalLink size={14} />
             </a>
@@ -518,7 +514,7 @@ function ProgressComposer({
           onClick={submit}
           disabled={!trimmed || busy}
           data-testid="progress-submit"
-          className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-purple px-4 text-sm font-black text-white disabled:opacity-50"
+          className="qp-button qp-button--primary qp-button--sm"
         >
           {busy ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
           Post update
