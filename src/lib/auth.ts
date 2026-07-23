@@ -1,15 +1,37 @@
 import { cookies } from "next/headers";
 import crypto from "node:crypto";
-import { getDb } from "@/lib/db";
+import { getDb, queryOneOptional } from "@/lib/db";
 
 export const SESSION_COOKIE = "qp_session";
 export const SESSION_TTL_SECONDS = 604800; // 7 days
 export const ROOT_ACCOUNT_ID = "00000000-0000-4000-8000-000000000001";
 export const ROOT_EMAIL = "winayaarya@gmail.com";
-export const ROOT_WALLETS = [
-  "0xea8ab08eabbead7e3d28cb067ec7f638d40b39cf",
-  "0xa111a8c806b1fac9d27650455344f5c2f144a743",
-];
+
+/**
+ * @deprecated NOT an authorization source. Super-admin is env-driven via
+ * ROOT_SUPER_ADMIN_WALLETS (see {@link getRootSuperAdminWallets}). The old
+ * "both wallets are super_admin" hardcode has been removed — the escrow wallet
+ * in the env allowlist is the ONLY super-admin wallet; the creator wallet
+ * (0xEa8A…) resolves to `creator` via account_roles, never admin.
+ */
+export const ROOT_WALLETS: readonly string[] = [];
+
+/** Env var carrying the comma-separated super-admin (escrow) wallet allowlist. */
+export const ROOT_SUPER_ADMIN_WALLETS_ENV = "ROOT_SUPER_ADMIN_WALLETS";
+
+/**
+ * Lowercased super-admin wallet allowlist read from ROOT_SUPER_ADMIN_WALLETS.
+ * Comma-separated; blank and malformed entries are dropped. There is NO
+ * hardcoded fallback: if the env var is unset, no wallet is authorized as
+ * super_admin (fail-closed).
+ */
+export function getRootSuperAdminWallets(): string[] {
+  const raw = process.env[ROOT_SUPER_ADMIN_WALLETS_ENV] || "";
+  return raw
+    .split(",")
+    .map((entry) => normalizeWallet(entry))
+    .filter((entry) => /^0x[a-f0-9]{40}$/.test(entry));
+}
 
 export type Role = "buyer" | "creator" | "super_admin";
 export type AuthProvider = "google" | "email" | "wallet";
@@ -68,6 +90,58 @@ export async function createSession(
   return { token, expiresAt };
 }
 
+/**
+ * Env-driven super-admin test for an account. True iff the account owns a
+ * wallet listed in ROOT_SUPER_ADMIN_WALLETS (the escrow admin) OR its primary
+ * email is ROOT_EMAIL (legacy owner). One round-trip; fail-closed (returns
+ * false) when the DB is unreachable or the env allowlist is empty.
+ */
+export async function isEnvSuperAdmin(accountId: string): Promise<boolean> {
+  const adminWallets = getRootSuperAdminWallets();
+  const rootEmail = ROOT_EMAIL ? normalizeEmail(ROOT_EMAIL) : "";
+  if (adminWallets.length === 0 && !rootEmail) return false;
+
+  const row = await queryOneOptional<{ is_admin: boolean }>(
+    `SELECT (
+        EXISTS (
+          SELECT 1 FROM account_identities ai
+          WHERE ai.account_id = $1
+            AND ai.provider = 'wallet'
+            AND lower(ai.normalized_wallet) = ANY($2::text[])
+        )
+        OR EXISTS (
+          SELECT 1 FROM accounts a
+          WHERE a.id = $1
+            AND $3 <> ''
+            AND lower(a.primary_email) = $3
+        )
+     ) AS is_admin`,
+    [accountId, adminWallets, rootEmail],
+  );
+  return Boolean(row?.is_admin);
+}
+
+/**
+ * Resolve an account's effective roles. `buyer`/`creator` come from
+ * account_roles; `super_admin` is ALWAYS re-derived from env
+ * (ROOT_SUPER_ADMIN_WALLETS / ROOT_EMAIL) and never trusted from a stored grant.
+ * A stale or seeded DB super_admin row therefore cannot escalate — the escrow
+ * wallet in the env allowlist is the single admin authorization source.
+ */
+export async function deriveRoles(accountId: string): Promise<Role[]> {
+  const sb = getServiceClient();
+  const { data } = await sb
+    .from("account_roles")
+    .select("role")
+    .eq("account_id", accountId)
+    .is("revoked_at", null);
+  const roles = new Set<Role>((data || []).map((r: { role: string }) => r.role as Role));
+  // super_admin is env-derived, not DB-derived: drop any grant then re-add.
+  roles.delete("super_admin");
+  if (await isEnvSuperAdmin(accountId)) roles.add("super_admin");
+  return [...roles];
+}
+
 export async function getSession(): Promise<QuestPaySession | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
@@ -85,13 +159,7 @@ export async function getSession(): Promise<QuestPaySession | null> {
   if (session.revoked_at) return null;
   if (new Date(session.expires_at).getTime() <= Date.now()) return null;
 
-  const { data: roles } = await sb
-    .from("account_roles")
-    .select("role")
-    .eq("account_id", session.account_id)
-    .is("revoked_at", null);
-
-  const roleList = (roles || []).map((r: {role: string}) => r.role as Role);
+  const roleList = await deriveRoles(session.account_id);
 
   return {
     accountId: session.account_id,
@@ -102,13 +170,7 @@ export async function getSession(): Promise<QuestPaySession | null> {
 }
 
 export async function getActiveRoles(accountId: string): Promise<Role[]> {
-  const sb = getServiceClient();
-  const { data } = await sb
-    .from("account_roles")
-    .select("role")
-    .eq("account_id", accountId)
-    .is("revoked_at", null);
-  return (data || []).map((r: {role: string}) => r.role as Role);
+  return deriveRoles(accountId);
 }
 
 export async function requireRole(role: Role): Promise<{ accountId: string; roles: Role[] }> {

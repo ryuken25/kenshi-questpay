@@ -1,46 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Copy, ExternalLink, Loader2, XCircle } from "lucide-react";
-import { middle } from "@/lib/payment-utils-client";
+import VerifyResult, { type VerifyResultData } from "@/components/verify/VerifyResult";
 
 interface Props {
   txHash: string;
 }
 
-interface VerifyResult {
-  ok: boolean;
-  reason?: string;
-  txHash: string;
-  from?: string;
-  to?: string;
-  token?: string;
-  amountHuman?: string;
-  blockNumber?: number;
-  blockTimestamp?: number;
-  confirmations?: number;
-  explorer?: string;
-  order?: { public_order_id: string; slug: string; status: string } | null;
-}
-
 export default function VerifyTxClient({ txHash }: Props) {
-  const [result, setResult] = useState<VerifyResult | null>(null);
+  const [result, setResult] = useState<VerifyResultData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     async function verify() {
+      setLoading(true);
       try {
         const res = await fetch(`/api/verify/${txHash}`);
-        const data = await res.json();
-        setResult(data);
+        const data = (await res.json()) as VerifyResultData;
+        if (active) setResult({ ...data, txHash: data.txHash || txHash });
       } catch {
-        setResult({ ok: false, txHash, reason: "Request failed." });
+        if (active) setResult({ ok: false, txHash, reason: "Request failed. Please try again." });
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }
     verify();
+    return () => {
+      active = false;
+    };
   }, [txHash]);
 
   return (
@@ -57,79 +46,11 @@ export default function VerifyTxClient({ txHash }: Props) {
             Verifying transaction on Polygon mainnet.
           </p>
 
-          <div className="mt-4 rounded-xl bg-[rgba(8,8,14,.72)] p-3">
-            <code className="hash-chip text-sm text-[var(--qp-violet-300)]">{txHash}</code>
+          <div className="mt-4 overflow-hidden rounded-xl bg-[rgba(8,8,14,.72)] p-3">
+            <code className="hash-chip block text-sm text-[var(--qp-violet-300)]">{txHash}</code>
           </div>
 
-          {loading && (
-            <div className="mt-8 flex items-center gap-3 rounded-2xl bg-[var(--qp-surface)] p-5">
-              <Loader2 className="animate-spin" /> Verifying on Polygon...
-            </div>
-          )}
-
-          {result && !loading && (
-            <div
-              className={`mt-8 rounded-2xl border p-5 ${
-                result.ok
-                  ? "border-green-400/30 bg-green-400/10"
-                  : "border-red-400/30 bg-red-400/10"
-              }`}
-            >
-              <div className="mb-5 flex items-center gap-3">
-                {result.ok ? (
-                  <CheckCircle2 className="text-green-400" />
-                ) : (
-                  <XCircle className="text-red-400" />
-                )}
-                <b>{result.ok ? "Payment verified" : "Verification failed"}</b>
-              </div>
-              {!result.ok && <p className="text-sm text-red-100">{result.reason}</p>}
-              {result.ok && (
-                <div className="space-y-3 text-sm">
-                  <Row label="Token" value={result.token || ""} />
-                  <Row label="Amount" value={result.amountHuman || ""} />
-                  <Row label="From" value={middle(result.from || "")} raw={result.from} />
-                  <Row label="To" value={middle(result.to || "")} raw={result.to} />
-                  <Row label="Block" value={result.blockNumber ? String(result.blockNumber) : ""} />
-                  <Row
-                    label="Time"
-                    value={
-                      result.blockTimestamp
-                        ? new Date(result.blockTimestamp * 1000).toLocaleString()
-                        : ""
-                    }
-                  />
-                  {result.order && (
-                    <div>
-                      <Row label="Order" value={result.order.public_order_id} />
-                      <Link
-                        href={`/orders/${result.order.public_order_id}`}
-                        className="mt-2 inline-flex min-h-10 items-center rounded-xl bg-white/10 px-3 text-xs text-white"
-                      >
-                        View order →
-                      </Link>
-                    </div>
-                  )}
-                  <div className="flex flex-wrap items-center gap-3 rounded-xl bg-[rgba(8,8,14,.72)] p-3">
-                    <code className="hash-chip text-[var(--qp-violet-300)]">{middle(txHash, 10, 8)}</code>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(txHash)}
-                      className="rounded-lg bg-white/10 p-2"
-                    >
-                      <Copy size={14} />
-                    </button>
-                    <a
-                      href={`https://polygonscan.com/tx/${txHash}`}
-                      target="_blank"
-                      className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 font-black text-black"
-                    >
-                      Polygonscan <ExternalLink size={14} />
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <VerifyResult txHash={txHash} result={result} loading={loading} />
 
           <div className="mt-6">
             <Link href="/verify" className="text-sm text-muted hover:text-[#C1B6FF]">
@@ -138,22 +59,6 @@ export default function VerifyTxClient({ txHash }: Props) {
           </div>
         </div>
       </section>
-    </div>
-  );
-}
-
-function Row({ label, value, raw }: { label: string; value: string; raw?: string }) {
-  return (
-    <div className="flex flex-col gap-1 rounded-xl bg-[rgba(8,8,14,.72)] p-3 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-muted">{label}</span>
-      <span className="flex min-w-0 items-center gap-2 font-mono text-white">
-        <span className="hash-chip">{value}</span>
-        {raw && (
-          <button onClick={() => navigator.clipboard.writeText(raw)} className="rounded-lg bg-white/10 p-2">
-            <Copy size={14} />
-          </button>
-        )}
-      </span>
     </div>
   );
 }

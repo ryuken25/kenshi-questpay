@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -219,12 +219,36 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<SessionState>(null);
   const [moreOpen, setMoreOpen] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/auth/session")
+  const refreshSession = useCallback(() => {
+    fetch("/api/auth/session", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setSession({ authenticated: Boolean(d.authenticated), roles: d.roles ?? [] }))
       .catch(() => setSession({ authenticated: false, roles: [] }));
   }, []);
+
+  // Re-derive the session on mount AND on every route change so the navbar
+  // reflects the current role immediately after SIWE login or logout. AppShell
+  // lives in the root layout and does NOT remount on client navigations, so a
+  // mount-only fetch would leave the nav stale until a hard reload.
+  useEffect(() => {
+    refreshSession();
+  }, [refreshSession, pathname]);
+
+  // Refresh on tab focus / when an auth flow dispatches `questpay:session`.
+  useEffect(() => {
+    const onFocus = () => refreshSession();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refreshSession();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("questpay:session", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("questpay:session", onFocus);
+    };
+  }, [refreshSession]);
 
   // Close drawer on route change
   useEffect(() => {

@@ -608,8 +608,17 @@ function serializeValue(value: unknown): unknown {
 
 // ────────────────────────────── Pool ──────────────────────────────
 
+// Cache the Pool on globalThis (NOT a per-request/per-module Client). On Vercel a
+// warm serverless instance reuses the same `__qpPgPool` across invocations, so we
+// pay TCP+TLS+auth once and then just check out idle connections. A fresh Pool per
+// request would exhaust Postgres/PgBouncer connection slots under load.
 const globalForPg = globalThis as unknown as { __qpPgPool?: Pool };
 
+/**
+ * Base Postgres URL. Resolution order preserved for backward-compat:
+ * DATABASE_URL → NEON_DATABASE_URL → POSTGRES_URL. This may be a *direct*
+ * (non-pooled) Neon endpoint; the runtime Pool prefers the pooled variant below.
+ */
 export function getDatabaseUrl(): string {
   return (
     process.env.DATABASE_URL?.trim() ||
@@ -619,20 +628,66 @@ export function getDatabaseUrl(): string {
   );
 }
 
+/**
+ * Rewrite a Neon *direct* host to its PgBouncer *pooled* host by inserting the
+ * `-pooler` suffix into the endpoint label:
+ *   ep-cool-name-123456.ap-southeast-1.aws.neon.tech
+ *   → ep-cool-name-123456-pooler.ap-southeast-1.aws.neon.tech
+ * Serverless (many short-lived instances) MUST talk to the pooled endpoint or it
+ * quickly exhausts Postgres' ~100 backend slots. No-op for non-Neon hosts or hosts
+ * that are already pooled. Any parse failure returns the input unchanged — we never
+ * break an otherwise-working connection string for the sake of the rewrite.
+ */
+function toPooledUrl(rawUrl: string): string {
+  if (!rawUrl) return rawUrl;
+  try {
+    const u = new URL(rawUrl);
+    const host = u.hostname;
+    if (!host.endsWith(".neon.tech")) return rawUrl; // only Neon has a -pooler host
+    if (host.includes("-pooler.")) return rawUrl; // already pooled
+    const dot = host.indexOf(".");
+    if (dot <= 0) return rawUrl;
+    const label = host.slice(0, dot);
+    if (label.endsWith("-pooler")) return rawUrl;
+    u.hostname = `${label}-pooler${host.slice(dot)}`;
+    return u.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
+/**
+ * Connection string used for the runtime Pool. Prefers an explicitly-provisioned
+ * pooled endpoint, then derives the pooled host from the base URL, then falls back
+ * to the base URL as-is. Vercel's Neon integration already sets POSTGRES_URL to the
+ * pooled host — that flows through getDatabaseUrl() and passes the rewrite untouched.
+ */
+export function getPooledDatabaseUrl(): string {
+  const explicit =
+    process.env.DATABASE_URL_POOLED?.trim() ||
+    process.env.NEON_POOLED_URL?.trim() ||
+    "";
+  if (explicit) return explicit;
+  return toPooledUrl(getDatabaseUrl());
+}
+
 export const hasDatabase = Boolean(getDatabaseUrl());
 
 export function getPool(): Pool {
-  const url = getDatabaseUrl();
+  const url = getPooledDatabaseUrl();
   if (!url) {
     throw new Error("DATABASE_URL is not configured");
   }
   if (!globalForPg.__qpPgPool) {
+    const maxEnv = Number(process.env.PGPOOL_MAX);
     globalForPg.__qpPgPool = new Pool({
       connectionString: url,
       ssl: url.includes("sslmode=require") || url.includes("neon.tech")
         ? { rejectUnauthorized: false }
         : undefined,
-      max: 10,
+      // Per-instance ceiling. With the shared PgBouncer pooler in front of Neon
+      // this stays modest so N warm instances don't collectively overrun Postgres.
+      max: Number.isFinite(maxEnv) && maxEnv > 0 ? maxEnv : 10,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 10_000,
     });

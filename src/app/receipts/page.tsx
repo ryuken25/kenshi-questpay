@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { queryManyOptional } from "@/lib/db";
+import InlineVerify from "@/components/verify/InlineVerify";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ type ReceiptOrder = {
   created_at: string;
   paid_at: string | null;
   account_id: string | null;
+  tx_hash: string | null;
 };
 
 export default async function ReceiptsPage() {
@@ -23,11 +25,19 @@ export default async function ReceiptsPage() {
   if (!session) redirect("/sign-in?next=/receipts");
 
   const rows = await queryManyOptional<ReceiptOrder>(
-    `SELECT id, public_order_id, slug, status, token_symbol, amount_human,
-            usd_price, created_at, paid_at, account_id
-     FROM orders
-     WHERE account_id = $1
-     ORDER BY created_at DESC
+    `SELECT o.id, o.public_order_id, o.slug, o.status, o.token_symbol, o.amount_human,
+            o.usd_price, o.created_at, o.paid_at, o.account_id,
+            pm.tx_hash
+     FROM orders o
+     LEFT JOIN LATERAL (
+       SELECT tx_hash
+       FROM payments
+       WHERE order_id = o.id
+       ORDER BY verified_at DESC NULLS LAST
+       LIMIT 1
+     ) pm ON true
+     WHERE o.account_id = $1
+     ORDER BY o.created_at DESC
      LIMIT 50`,
     [session.accountId],
   );
@@ -74,18 +84,18 @@ export default async function ReceiptsPage() {
                   </span>
                   <Link
                     href={`/orders/${order.public_order_id}`}
-                    className="rounded-xl bg-verse-purple px-4 py-2 text-sm font-black"
+                    className="inline-flex min-h-11 items-center rounded-xl bg-verse-purple px-4 text-sm font-black"
                   >
                     Open order
                   </Link>
-                  <Link
-                    href={`/verify`}
-                    className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-[var(--qp-text-secondary)] hover:bg-white/5"
-                  >
-                    Public verify
-                  </Link>
                 </div>
               </div>
+
+              {order.tx_hash && (
+                <div className="mt-4 border-t border-white/10 pt-4">
+                  <InlineVerify txHash={order.tx_hash} />
+                </div>
+              )}
             </article>
           ))}
 

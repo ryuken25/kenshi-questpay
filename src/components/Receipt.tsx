@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, Copy, ExternalLink, FileText, Shield } from "lucide-react";
+import { CheckCircle2, Copy, ExternalLink, FileText } from "lucide-react";
 import { PACKAGES } from "@/lib/config";
 import { middle } from "@/lib/payment-utils-client";
+import InlineVerify from "@/components/verify/InlineVerify";
 
 const polygonScanTx = (tx: string) => `https://polygonscan.com/tx/${tx}`;
 
@@ -26,7 +27,6 @@ export default function Receipt({ receipt }: ReceiptProps) {
   const copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
   const isPolygon = receipt.network.toLowerCase().includes('polygon');
   const explorer = isPolygon ? polygonScanTx(receipt.txHash) : `https://sepolia.basescan.org/tx/${receipt.txHash}`;
-  const verifyLink = `/verify?tx=${receipt.txHash}&package=${receipt.packageId}&token=${receipt.token || 'USDT'}`;
 
   return (
     <section id="receipt" className="relative py-16 sm:py-20">
@@ -52,7 +52,11 @@ export default function Receipt({ receipt }: ReceiptProps) {
                 <a href={explorer} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-verse-blue px-3 text-sm font-black text-black">Explorer <ExternalLink className="h-4 w-4" /></a>
               </div>
             </div>
-            {isPolygon && <a href={verifyLink} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-green-400 px-4 font-black text-black"><Shield size={18}/> Open Public Verify Page</a>}
+            {isPolygon && (
+              <div className="border-t border-white/10 pt-4">
+                <InlineVerify txHash={receipt.txHash} />
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

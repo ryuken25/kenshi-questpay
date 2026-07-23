@@ -3,6 +3,30 @@ const nextConfig = {
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+  // Two lockfiles (npm + pnpm) live in this folder; pin the tracing root so Next
+  // doesn't walk up and mis-detect a workspace root when computing function bundles.
+  outputFileTracingRoot: __dirname,
+  // The Hardhat/contracts toolchain is dev-only and never imported by app code —
+  // keep it out of every serverless function bundle as insurance (smaller cold starts).
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/hardhat/**',
+      'node_modules/@nomicfoundation/**',
+      'node_modules/@typechain/**',
+      'node_modules/typechain/**',
+      'node_modules/solc/**',
+      'contracts/**',
+      'artifacts/**',
+      'cache/**',
+      'typechain-types/**',
+      'scripts/**',
+    ],
+  },
+  experimental: {
+    // lucide-react is a huge icon barrel imported across dozens of files; rewrite
+    // to per-icon deep imports so only used glyphs land in the bundle.
+    optimizePackageImports: ['lucide-react'],
+  },
   async redirects() {
     return [
       // Legacy dashboard paths → canonical Creator Studio (vNext)
@@ -31,13 +55,35 @@ const nextConfig = {
       "form-action 'self'",
       "frame-ancestors 'none'",
     ].join('; ');
-    return [{ source: '/(.*)', headers: [
-      { key: 'Content-Security-Policy', value: csp },
-      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-      { key: 'X-Content-Type-Options', value: 'nosniff' },
-      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-      { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
-    ] }];
+    // Security headers apply to every route. Cache-Control is scoped to public,
+    // non-personal, statically-rendered pages ONLY. The app shell reads the session
+    // client-side (fetch /api/auth/session), so this HTML carries no per-user data
+    // and is safe to serve from the edge. Personal/dynamic routes (/orders,
+    // /receipts, /account, /studio/*, /admin/*, /checkout/*, /pay/*, /my-orders,
+    // /faq [force-dynamic]) are intentionally omitted and keep Next's no-store default.
+    const cacheLong = 'public, s-maxage=3600, stale-while-revalidate=86400';
+    const cacheShort = 'public, s-maxage=300, stale-while-revalidate=3600';
+    const cacheHeader = (value) => [{ key: 'Cache-Control', value }];
+    return [
+      { source: '/(.*)', headers: [
+        { key: 'Content-Security-Policy', value: csp },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+      ] },
+      // Evergreen marketing / legal pages — long edge cache, background revalidate.
+      { source: '/privacy', headers: cacheHeader(cacheLong) },
+      { source: '/terms', headers: cacheHeader(cacheLong) },
+      { source: '/how-it-works', headers: cacheHeader(cacheLong) },
+      { source: '/for-creators', headers: cacheHeader(cacheLong) },
+      { source: '/contact', headers: cacheHeader(cacheLong) },
+      // Catalog surfaces — static shell (data hydrates client-side); short cache so
+      // service copy/price edits propagate quickly.
+      { source: '/', headers: cacheHeader(cacheShort) },
+      { source: '/services', headers: cacheHeader(cacheShort) },
+      { source: '/services/:slug*', headers: cacheHeader(cacheShort) },
+    ];
   },
   webpack: (config, { webpack }) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };

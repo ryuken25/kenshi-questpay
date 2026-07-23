@@ -37,3 +37,6 @@ creds.txt
 *.creds
 secrets.txt
 .secrets/
+priv.txt
+*.key
+mnemonic*.txt

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, ExternalLink, Loader2, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import Link from "next/link";
+import { ExternalLink, Loader2, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { middle } from "@/lib/payment-utils-client";
 import OnChainReceipt, { type NftReceipt } from "@/components/nft/OnChainReceipt";
+import InlineVerify from "@/components/verify/InlineVerify";
 
 interface Props {
   publicOrderId: string;
@@ -84,9 +86,9 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
         <div className="mx-auto max-w-lg text-center">
           <AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-400" />
           <h1 className="font-sora text-2xl font-bold text-white">{error || "Order not found"}</h1>
-          <a href="/services" className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-verse-purple px-6 py-3 font-bold text-white">
+          <Link href="/services" className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-verse-purple px-6 py-3 font-bold text-white">
             Browse Services
-          </a>
+          </Link>
         </div>
       </section>
     );
@@ -136,6 +138,10 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
                 View on Polygonscan <ExternalLink size={14} />
               </a>
               <OnChainReceipt nft={order.nft} />
+
+              <div className="mt-4 border-t border-green-400/20 pt-4">
+                <InlineVerify txHash={order.payment.tx_hash} showOrderLink={false} />
+              </div>
             </div>
           )}
 
@@ -145,16 +151,6 @@ export default function OrderDetailClient({ publicOrderId }: Props) {
               className="flex min-h-12 items-center justify-center rounded-2xl bg-verse-purple px-5 font-bold text-white"
             >
               Go to payment →
-            </a>
-          )}
-
-          {order.status === "paid" && order.payment && (
-            <a
-              href={`/verify/${order.payment.tx_hash}`}
-              className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-green-400 px-5 font-bold text-black"
-            >
-              <CheckCircle2 size={18} />
-              Public verify page
             </a>
           )}
         </div>
