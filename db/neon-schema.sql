@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS root_identity_claims (
   UNIQUE(provider, normalized_identifier)
 );
 
-CREATE TABLE IF NOT EXISTS profiles (
+-- NOTE: the code (src/lib/profile.ts) uses table name `account_profiles`.
+CREATE TABLE IF NOT EXISTS account_profiles (
   account_id uuid PRIMARY KEY REFERENCES accounts(id) ON DELETE CASCADE,
   display_name text,
   public_handle text,
@@ -291,3 +292,41 @@ VALUES
   ('wallet', '0xea8ab08eabbead7e3d28cb067ec7f638d40b39cf', '00000000-0000-4000-8000-000000000001'),
   ('wallet', '0xa111a8c806b1fac9d27650455344f5c2f144a743', '00000000-0000-4000-8000-000000000001')
 ON CONFLICT (provider, normalized_identifier) DO NOTHING;
+
+-- ─────────────────────────────────────────────────────────────────────
+-- Auth-schema reconciliation (see supabase/migrations/*_v11_neon_auth_schema_fix).
+-- These tables/columns are required by src/lib/auth.ts but were absent from
+-- earlier consolidated schemas (the Supabase migrations wrap them in RLS/auth.uid()
+-- which is invalid on Neon — omitted here; access is server-only). Idempotent.
+-- ─────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS wallet_nonces (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet_address text NOT NULL,
+  nonce_hash text NOT NULL UNIQUE,
+  domain text NOT NULL,
+  chain_id integer NOT NULL DEFAULT 137,
+  expires_at timestamptz NOT NULL,
+  consumed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS wallet_nonces_wallet_idx ON wallet_nonces(wallet_address);
+CREATE INDEX IF NOT EXISTS wallet_nonces_expires_idx ON wallet_nonces(expires_at);
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  actor_account_id uuid NOT NULL REFERENCES accounts(id),
+  action text NOT NULL,
+  target_account_id uuid REFERENCES accounts(id),
+  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE IF EXISTS account_identities ADD COLUMN IF NOT EXISTS normalized_wallet text;
+ALTER TABLE IF EXISTS account_identities ADD COLUMN IF NOT EXISTS verified_at timestamptz;
+ALTER TABLE IF EXISTS account_identities ADD COLUMN IF NOT EXISTS is_primary boolean NOT NULL DEFAULT false;
+ALTER TABLE IF EXISTS account_identities ADD COLUMN IF NOT EXISTS metadata jsonb NOT NULL DEFAULT '{}'::jsonb;
+CREATE INDEX IF NOT EXISTS account_identities_wallet_idx ON account_identities(normalized_wallet);
+
+ALTER TABLE IF EXISTS account_roles ADD COLUMN IF NOT EXISTS grant_reason text;
+ALTER TABLE IF EXISTS account_roles ADD COLUMN IF NOT EXISTS granted_by uuid REFERENCES accounts(id);
+ALTER TABLE IF EXISTS account_roles ADD COLUMN IF NOT EXISTS revoked_by uuid REFERENCES accounts(id);
