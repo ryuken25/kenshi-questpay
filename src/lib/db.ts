@@ -668,7 +668,11 @@ export function getPooledDatabaseUrl(): string {
     process.env.NEON_POOLED_URL?.trim() ||
     "";
   if (explicit) return explicit;
-  return toPooledUrl(getDatabaseUrl());
+  // Use the operator-provided DATABASE_URL AS-IS. Auto-rewriting the host to the
+  // Neon `-pooler` variant broke prod (the pooled endpoint rejected the existing
+  // connection params → every query 500'd). Pooling is now strictly opt-in via
+  // DATABASE_URL_POOLED / NEON_POOLED_URL with a known-good pooled string.
+  return getDatabaseUrl();
 }
 
 export const hasDatabase = Boolean(getDatabaseUrl());
