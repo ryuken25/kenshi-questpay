@@ -1138,3 +1138,49 @@ body {
 /* Sidebar inline-SVG logo sizing. */
 .qp-sidebar__logo svg,
 .qp-mobile-topbar__logo svg { display: block; height: auto; }
+
+/* ═══════════════ QuestPay Mobile redesign layer ═══════════════ */
+/* Desktop unchanged. Same --qp-* tokens. Mobile-only rules gate at <=1023px. */
+
+/* ── CSS-3D hero fallback (Android motion; desktop keeps the WebGL cube) ── */
+@keyframes qpCube { from { transform: rotateX(-24deg) rotateY(0deg); } to { transform: rotateX(-24deg) rotateY(360deg); } }
+@keyframes qpFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes qpOrbit {
+  from { transform: rotateX(72deg) rotate(0deg) translateX(112px) rotate(0deg) rotateX(-72deg); }
+  to   { transform: rotateX(72deg) rotate(360deg) translateX(112px) rotate(-360deg) rotateX(-72deg); }
+}
+.qp-cube3d { position: relative; display: grid; place-items: center; width: 100%; min-height: 300px; perspective: 900px; }
+.qp-cube3d__glow { position: absolute; width: 160px; height: 160px; border-radius: 44px; background: radial-gradient(circle, rgba(135, 82, 255, 0.42), transparent 70%); filter: blur(4px); }
+.qp-cube3d__float { position: relative; width: 84px; height: 84px; transform-style: preserve-3d; animation: qpFloat 6s ease-in-out infinite; }
+.qp-cube3d__cube { position: absolute; inset: 0; transform-style: preserve-3d; animation: qpCube 17s linear infinite; }
+.qp-cube3d__face {
+  position: absolute; inset: 0; border-radius: 13px;
+  border: 1px solid rgba(190, 167, 255, 0.34);
+  background: linear-gradient(160deg, rgba(103, 48, 198, 0.94), rgba(48, 20, 110, 0.97));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.qp-cube3d__glyph { position: absolute; inset: 22%; background-size: contain; background-position: center; background-repeat: no-repeat; opacity: 0.96; }
+.qp-cube3d__coin {
+  position: absolute; width: 42px; height: 42px; left: calc(50% - 21px); top: calc(50% - 21px);
+  border-radius: 50%; background-color: #0b0b15;
+  background-size: 60%; background-position: center; background-repeat: no-repeat;
+  border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+  animation: qpOrbit 18s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .qp-cube3d__float, .qp-cube3d__cube, .qp-cube3d__coin { animation: none; }
+  .qp-cube3d__cube { transform: rotateX(-24deg) rotateY(-32deg); }
+}
+
+/* ── Sticky thumb-reachable CTA dock (per-screen primary action, mobile only) ── */
+.qp-cta-dock { position: static; }
+@media (max-width: 1023px) {
+  .qp-cta-dock {
+    position: sticky; bottom: 0; z-index: 40; margin-top: 20px;
+    padding: 12px 0 calc(14px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, var(--qp-bg-000) 58%, rgba(3, 3, 9, 0));
+  }
+  .qp-cta-dock--bleed { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+  /* Give scrollable pages breathing room above the dock. */
+  .qp-safe-bottom { padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+}
