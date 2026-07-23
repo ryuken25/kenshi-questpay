@@ -66,12 +66,20 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
 
   const { data: order } = await sb
     .from("orders")
-    .select("id, status")
+    .select("id, status, creator_account_id")
     .eq("id", params.id)
     .single();
 
   if (!order) {
     return fail("Order not found.", 404);
+  }
+
+  // Per-order ownership (Agent R F2): a creator may only drive orders assigned to
+  // them; a real env super_admin may act on any order. Prevents cross-order status
+  // writes now that orders carry creator_account_id (Task 2).
+  const isSuper = user.roles.includes("super_admin");
+  if (!isSuper && order.creator_account_id !== user.id) {
+    return fail("You are not the assigned creator for this order.", 403);
   }
 
   // Terminal / money statuses cannot be moved by studio at all.

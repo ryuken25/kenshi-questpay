@@ -38,6 +38,12 @@ export default async function StudioOrders(
     );
   }
 
+  // Per-creator scoping (Agent R F1): creator sees only their own; super_admin all.
+  if (!user.roles?.includes("super_admin")) {
+    params.push(user.id);
+    clauses.push(`creator_account_id = $${params.length}`);
+  }
+
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
   const orders = await queryManyOptional<OrderRow>(
     `SELECT id, public_order_id, slug, status, token_symbol, amount_human, customer_name, created_at

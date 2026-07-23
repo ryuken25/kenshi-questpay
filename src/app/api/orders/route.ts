@@ -62,6 +62,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `${tokenSymbol} is not enabled on ${chainKey}.` }, { status: 400 });
   }
 
+  // Resolve the creator that owns this service (SERVER-side; the client cannot
+  // supply or influence it). Every order MUST carry a creator so custody release
+  // and studio scoping work; a service with no mapped creator fails CLOSED rather
+  // than creating an unreleasable order. (Agent R F1/F2/F3 root-cause fix.)
+  const { data: serviceCreator } = await sb
+    .from("service_creators")
+    .select("creator_account_id, creator_wallet")
+    .eq("service_slug", slug)
+    .maybeSingle();
+  if (!serviceCreator?.creator_account_id || !serviceCreator?.creator_wallet) {
+    return NextResponse.json(
+      { error: "This service is not currently available for orders.", reason: "service_creator_unmapped" },
+      { status: 409 },
+    );
+  }
+
   let quote;
   try {
     quote = await createPaymentQuote({ slug, chainKey, tokenSymbol });
@@ -116,6 +132,8 @@ export async function POST(req: NextRequest) {
     public_order_id: publicOrderId,
     slug,
     account_id: session.accountId,
+    creator_account_id: serviceCreator.creator_account_id,
+    creator_wallet: serviceCreator.creator_wallet,
     status: "awaiting_payment",
     receive_address: QUESTPAY_RECEIVE_ADDRESS,
     chain_id: quote.chainId,

@@ -22,11 +22,15 @@ type OrderRow = {
 
 export default async function StudioEarningsPage() {
   const user = await requireStudioAdmin();
+  // Per-creator scoping (Agent R F1): creator sees only their own; super_admin all.
+  const scoped = !user.roles?.includes("super_admin");
   const rows = await queryManyOptional<OrderRow>(
     `SELECT id, public_order_id, slug, status, token_symbol, amount_human, usd_price, created_at, paid_at
      FROM orders
+     ${scoped ? "WHERE creator_account_id = $1" : ""}
      ORDER BY created_at DESC
      LIMIT 100`,
+    scoped ? [user.id] : [],
   );
 
   const released = rows.filter((o) => RELEASED.has(o.status));

@@ -270,6 +270,18 @@ CREATE TABLE IF NOT EXISTS work_submissions (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- Service → creator mapping (v14). Server-side source of truth for which creator
+-- account owns each service; POST /api/orders stamps every order's creator from it.
+-- Without this, orders.creator_account_id/creator_wallet stay null and custody
+-- release + studio scoping break (Agent R F1/F2/F3).
+CREATE TABLE IF NOT EXISTS service_creators (
+  service_slug text PRIMARY KEY,
+  creator_account_id uuid NOT NULL REFERENCES accounts(id),
+  creator_wallet text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS releases (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id uuid NOT NULL REFERENCES orders(id) ON DELETE CASCADE,

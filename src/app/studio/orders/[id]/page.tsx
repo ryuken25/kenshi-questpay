@@ -26,6 +26,7 @@ type OrderRow = Record<string, unknown> & {
   token_symbol?: string | null;
   receive_address?: string | null;
   creator_wallet?: string | null;
+  creator_account_id?: string | null;
 };
 
 type PaymentRow = {
@@ -94,6 +95,12 @@ export default async function StudioOrderDetail(
   ]);
 
   if (!order) notFound();
+
+  // Per-order ownership (Agent R F1 IDOR): only the assigned creator or a real env
+  // super_admin may view an order's private brief / contact / payment. notFound (not
+  // 403) so a creator cannot even probe another creator's order ids.
+  const isSuper = user.roles?.includes("super_admin");
+  if (!isSuper && order.creator_account_id !== user.id) notFound();
 
   const systemLocked = ["accepted", "released", "completed", "cancelled", "expired", "refunded", "disputed"].includes(
     order.status,
