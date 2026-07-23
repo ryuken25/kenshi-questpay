@@ -1,60 +1,50 @@
 import { NextResponse } from "next/server";
+import {
+  hasSupabase,
+  hasSMTP,
+  receiveAddressValid,
+  getPaymentGateStatus,
+} from "@/lib/server-config";
+import { NETWORKS, getEnabledTokensForChain } from "@/lib/services";
 
 export const dynamic = "force-dynamic";
 
-// TEMPORARY DIAGNOSTIC — replaces the normal health payload so we can see the
-// real error that is 500'ing production. Each suspect is imported dynamically
-// inside its own try/catch so a module-load throw is CAUGHT and reported as JSON
-// instead of crashing the route. Revert to the static health payload once fixed.
 export async function GET() {
-  const steps: Record<string, unknown> = {};
+  const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_BUILD_SHA || "unknown";
+  const paymentGate = getPaymentGateStatus();
+  const provider = process.env.DATABASE_URL ? "neon" : hasSupabase ? "supabase" : "none";
 
-  const run = async (name: string, fn: () => Promise<unknown>) => {
-    try {
-      steps[name] = { ok: true, value: await fn() };
-    } catch (e) {
-      const err = e as Error;
-      steps[name] = { ok: false, error: err?.message ?? String(e), stack: (err?.stack ?? "").split("\n").slice(0, 6) };
-    }
-  };
-
-  await run("env", async () => ({
-    hasDATABASE_URL: Boolean(process.env.DATABASE_URL),
-    dbUrlLen: (process.env.DATABASE_URL || "").length,
-    hasPOSTGRES_URL: Boolean(process.env.POSTGRES_URL),
-    hasRELEASE_KEY: Boolean(process.env.QUESTPAY_RELEASE_PRIVATE_KEY),
-    realPayments: process.env.NEXT_PUBLIC_ENABLE_REAL_PAYMENTS ?? null,
-    region: process.env.VERCEL_REGION ?? null,
-    sha: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
-  }));
-
-  await run("import server-config", async () => {
-    const m = await import("@/lib/server-config");
-    return { keys: Object.keys(m).length, gate: m.getPaymentGateStatus() };
+  return NextResponse.json({
+    ok: true,
+    app: "Kenshi QuestPay",
+    version: "v7-neon",
+    buildSha,
+    buildTime: process.env.NEXT_PUBLIC_BUILD_TIME || "unknown",
+    networks: {
+      polygon: {
+        ...NETWORKS.polygon,
+        enabledTokens: getEnabledTokensForChain("polygon").map((t) => t.symbol),
+      },
+      bnb: {
+        ...NETWORKS.bnb,
+        enabledTokens: getEnabledTokensForChain("bnb").map((t) => t.symbol),
+      },
+    },
+    services: {
+      database: Boolean(process.env.DATABASE_URL) || hasSupabase,
+      provider,
+      email: hasSMTP,
+      polygonRpc: Boolean(process.env.POLYGON_RPC_URL || process.env.NEXT_PUBLIC_POLYGON_RPC_URL),
+      bscRpc: Boolean(process.env.BSC_RPC_URL),
+      receiver: receiveAddressValid,
+      analytics: true,
+      quoteProvider: true,
+      realPayments: paymentGate.realPaymentsEnabled,
+      releaseSigner: paymentGate.releaseSignerConfigured,
+      releaseReady: paymentGate.releaseReady,
+      paymentVerifyReady: paymentGate.paymentVerifyReady,
+      minConfirmations: paymentGate.minConfirmations,
+    },
+    paymentGate,
   });
-
-  await run("import services", async () => {
-    const m = await import("@/lib/services");
-    return { polygonTokens: m.getEnabledTokensForChain("polygon").map((t) => t.symbol) };
-  });
-
-  await run("import db", async () => {
-    const m = await import("@/lib/db");
-    return { hasDatabase: m.hasDatabase, pooledHost: (m.getPooledDatabaseUrl() || "").replace(/^(postgres[^:]*:\/\/)[^@]*@([^/?]+).*/, "$1***@$2") };
-  });
-
-  await run("db SELECT 1", async () => {
-    const { query } = await import("@/lib/db");
-    const r = await query<{ one: number }>("select 1 as one");
-    return r.rows[0];
-  });
-
-  await run("db wallet_nonces probe", async () => {
-    const { query } = await import("@/lib/db");
-    const r = await query<{ c: string }>("select count(*)::text as c from wallet_nonces");
-    return { count: r.rows[0]?.c };
-  });
-
-  const allOk = Object.values(steps).every((s) => (s as { ok: boolean }).ok);
-  return NextResponse.json({ diagnostic: true, allOk, steps }, { status: 200 });
 }
