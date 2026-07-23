@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertCircle, CheckCircle2, Copy, ExternalLink, Loader2, Wallet } from "lucide-react";
 import { NETWORKS, chainKeyFromId, type TokenSymbol } from "@/lib/services";
@@ -99,7 +100,7 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
           <AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-400" />
           <h1 className="font-sora text-2xl font-bold text-white">Order not found</h1>
           <p className="mt-2 text-muted">This order does not exist or has expired.</p>
-          <a href="/services" className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-verse-purple px-6 py-3 font-bold text-white">Browse Services</a>
+          <Link href="/services" className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-verse-purple px-6 py-3 font-bold text-white">Browse Services</Link>
         </div>
       </section>
     );

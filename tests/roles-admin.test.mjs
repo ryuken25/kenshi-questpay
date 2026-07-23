@@ -236,3 +236,75 @@ test('v12 migration splits the creator wallet off the super_admin account', () =
   assert.match(migration, /archived_at timestamptz/);
   assert.match(migration, /'archived'/);
 });
+
+// ─────────────── Task 1 hardening: F4 role inflation + F6 email-test ───────────
+
+/**
+ * Mirror of the FIXED src/lib/supabase-auth.ts resolveStudioIdentity() role
+ * resolution: never inflate. Session roles pass through as-is; the ONLY extra
+ * elevation is the env owner-email allowlist (ADMIN_EMAIL / ROOT_EMAIL) → super_admin.
+ */
+function studioEffectiveRolesSpec({ sessionRoles, email = '', allowlistedEmails = [] }) {
+  const isAllowlisted =
+    !!email && allowlistedEmails.map((e) => e.toLowerCase()).includes(email.toLowerCase());
+  return isAllowlisted
+    ? [...new Set([...sessionRoles, 'super_admin'])]
+    : [...new Set(sessionRoles)];
+}
+
+test('F4: a plain creator studio user is NOT inflated to super_admin', () => {
+  const roles = studioEffectiveRolesSpec({
+    sessionRoles: ['buyer', 'creator'],
+    email: 'someone-creator@example.com',
+    allowlistedEmails: ['winayaarya@gmail.com'],
+  });
+  assert.ok(roles.includes('creator'), 'creator kept');
+  assert.ok(!roles.includes('super_admin'), 'creator must NOT be inflated to super_admin');
+});
+
+test('F4: only the env owner-email allowlist elevates to super_admin', () => {
+  const owner = studioEffectiveRolesSpec({
+    sessionRoles: ['buyer'],
+    email: 'winayaarya@gmail.com',
+    allowlistedEmails: ['winayaarya@gmail.com'],
+  });
+  assert.ok(owner.includes('super_admin'), 'env owner-email → super_admin');
+});
+
+test('F4 end-to-end: a stale super_admin DB grant on a non-env account resolves NON-admin', () => {
+  // Upstream: deriveRoles strips the stored super_admin (not in env allowlist)…
+  const sessionRoles = deriveRolesSpec({
+    dbRoles: ['buyer', 'creator', 'super_admin'],
+    walletAddrs: [CREATOR_WALLET],
+    envWallets: [ESCROW_ADMIN_WALLET],
+  });
+  assert.ok(!sessionRoles.includes('super_admin'), 'deriveRoles drops stale grant');
+  // …downstream: the studio identity does not re-add it either.
+  const studioRoles = studioEffectiveRolesSpec({
+    sessionRoles,
+    email: 'creator@example.com',
+    allowlistedEmails: ['winayaarya@gmail.com'],
+  });
+  assert.ok(!studioRoles.includes('super_admin'), 'studio identity stays non-admin');
+});
+
+test('F4 source-guard: resolveStudioIdentity no longer inflates roles', () => {
+  const src = read('src/lib/supabase-auth.ts');
+  // The old blanket inflation must be gone.
+  assert.doesNotMatch(
+    src,
+    /\[\s*\.\.\.roles\s*,\s*"super_admin"\s*,\s*"creator"\s*,\s*"buyer"\s*\]/,
+    'must not inflate a studio user to super_admin+creator+buyer',
+  );
+  // Elevation is gated on the env owner-email allowlist only.
+  assert.match(src, /isAllowlistedEmail\(email\)\s*\n?\s*\?\s*\(Array\.from\(new Set\(\[\s*\.\.\.roles\s*,\s*"super_admin"\s*\]\)\)/);
+});
+
+test('F6 source-guard: studio email-test route is super_admin only (env session role)', () => {
+  const route = read('src/app/api/studio/email/test/route.ts');
+  assert.match(route, /getSession/);
+  assert.match(route, /roles\.includes\("super_admin"\)/);
+  assert.match(route, /status:\s*403/);
+  // Must NOT authorize via the any-creator studio gate anymore.
+  assert.doesNotMatch(route, /requireStudioAdmin/);
+});

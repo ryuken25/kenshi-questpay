@@ -101,11 +101,15 @@ async function resolveStudioIdentity(accountId: string, roles: Role[]): Promise<
     if (!label || label === "studio-user") label = email || "super-admin";
   }
 
-  // Legacy email allowlist elevates to full studio roles when DB roles are incomplete.
-  const effectiveRoles =
-    hasStudioRole(roles) || isAllowlistedEmail(email)
-      ? (Array.from(new Set([...roles, "super_admin", "creator", "buyer"])) as Role[])
-      : roles;
+  // Roles are env-derived: deriveRoles() (in the caller's session) already re-derives
+  // `super_admin` from the env allowlist / ROOT_EMAIL and drops any stored grant.
+  // NEVER inflate here — a plain `creator` must not gain `super_admin` (Agent R F4),
+  // and buyer/creator are taken from the real session roles as-is. The ONLY extra
+  // elevation is the env owner-email allowlist (ADMIN_EMAIL / ROOT_EMAIL) → super_admin,
+  // which is itself env-derived (not a stored/seeded row).
+  const effectiveRoles = isAllowlistedEmail(email)
+    ? (Array.from(new Set([...roles, "super_admin"])) as Role[])
+    : (Array.from(new Set(roles)) as Role[]);
 
   return {
     id: accountId,

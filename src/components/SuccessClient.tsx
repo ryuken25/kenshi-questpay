@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2, Copy, ExternalLink, Loader2 } from "lucide-react";
 import { middle } from "@/lib/payment-utils-client";
@@ -95,12 +96,12 @@ export default function SuccessClient({ publicOrderId }: Props) {
                     Public verify
                   </a>
                 )}
-                <a
+                <Link
                   href="/services"
                   className="flex min-h-11 items-center justify-center rounded-2xl bg-verse-purple px-5 font-bold text-white"
                 >
                   New quest →
-                </a>
+                </Link>
               </div>
             </div>
           )}
