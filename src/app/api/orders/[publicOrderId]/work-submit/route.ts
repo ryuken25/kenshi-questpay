@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSupabase } from "@/lib/supabase-server";
 import { getSession } from "@/lib/auth";
+import { recordOrderEvent } from "@/lib/order-events";
 
 export const dynamic = "force-dynamic";
 
@@ -152,6 +153,15 @@ export async function POST(req: NextRequest, props: { params: Promise<{ publicOr
       link_count: (links || []).length,
       file_count: (fileUrls || []).length,
     },
+  });
+
+  // Additive buyer/creator-facing lifecycle-feed hook (after the commit above).
+  await recordOrderEvent({
+    orderId: order.id,
+    actorRole: session.roles.includes("creator") ? "creator" : "admin",
+    eventType: "status_change",
+    fromStatus: order.status,
+    toStatus: "work_submitted",
   });
 
   return NextResponse.json({

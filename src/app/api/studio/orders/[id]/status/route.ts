@@ -8,6 +8,7 @@ import {
   canStudioTransition,
   isStudioAllowedStatus,
 } from "@/lib/payments/order-status";
+import { recordOrderEvent } from "@/lib/order-events";
 
 // Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
 export const runtime = "nodejs";
@@ -120,6 +121,15 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
       channel: "studio",
       allowed_set: Array.from(STUDIO_ALLOWED_STATUSES),
     },
+  });
+
+  // Additive buyer/creator-facing lifecycle-feed hook (after the commit above).
+  await recordOrderEvent({
+    orderId: params.id,
+    actorRole: user.roles.includes("creator") ? "creator" : "admin",
+    eventType: "status_change",
+    fromStatus: order.status,
+    toStatus: status,
   });
 
   if (wantsJson) {

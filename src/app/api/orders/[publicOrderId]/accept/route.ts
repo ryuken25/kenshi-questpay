@@ -7,6 +7,7 @@ import {
   REAL_PAYMENTS_ENABLED,
   hasReleaseSignerConfigured,
 } from "@/lib/payments/release";
+import { recordOrderEvent } from "@/lib/order-events";
 
 // Node-only deps (pg / nodemailer / viem RPC) — pin to the Node.js runtime, never Edge.
 export const runtime = "nodejs";
@@ -74,6 +75,18 @@ export async function POST(_req: NextRequest, props: { params: Promise<{ publicO
             ? 409
             : 400;
     return NextResponse.json(accepted, { status });
+  }
+
+  // Additive lifecycle-feed hook (runs AFTER accept committed; never throws).
+  // Skip on a repeat accept so the feed isn't duplicated.
+  if (!accepted.alreadyAccepted) {
+    await recordOrderEvent({
+      orderId: order.id,
+      actorRole: isBuyer ? "buyer" : "admin",
+      eventType: "status_change",
+      fromStatus: order.status,
+      toStatus: "accepted",
+    });
   }
 
   // Attempt release only when real payments + signer are ready.

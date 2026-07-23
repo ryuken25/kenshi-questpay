@@ -194,6 +194,24 @@ CREATE TABLE IF NOT EXISTS questpay_order_events (
 );
 CREATE INDEX IF NOT EXISTS questpay_order_events_order_idx ON questpay_order_events(order_id, created_at DESC);
 
+-- Buyer/creator-facing lifecycle feed (status transitions + private creator
+-- progress notes) shown on /orders/[publicOrderId]. SEPARATE from the low-level
+-- questpay_order_events audit log above. Access is server-only and gated to the
+-- order's participants (buyer / assigned creator / admin) in application code —
+-- progress notes are private and never exposed on public surfaces. See
+-- supabase/migrations/20260723_questpay_v13_order_events.sql for the backfill.
+CREATE TABLE IF NOT EXISTS order_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id uuid NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  actor_role text NOT NULL CHECK (actor_role IN ('buyer','creator','admin','system')),
+  event_type text NOT NULL CHECK (event_type IN ('status_change','progress_note')),
+  from_status text,
+  to_status text,
+  note text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS order_events_order_created_idx ON order_events(order_id, created_at);
+
 CREATE TABLE IF NOT EXISTS questpay_email_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id uuid,
