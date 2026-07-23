@@ -162,8 +162,10 @@ export default function PayPageClient({ publicOrderId, order, serviceName }: Pro
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">Payments are being upgraded. Do not send real funds until the production real-payment gate is PASS.</div>
-          <button onClick={payWithWallet} disabled={busy || !REAL_PAYMENTS_ENABLED} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-verse-blue px-5 font-black text-black disabled:opacity-40"><Wallet size={18} />{REAL_PAYMENTS_ENABLED ? (busy ? "Processing..." : `Pay ${amountHuman} ${tokenSymbol} with Wallet`) : "Wallet payment temporarily disabled"}</button>
+          {!REAL_PAYMENTS_ENABLED && <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">Wallet payment is temporarily disabled while the production real-payment gate is finalized.</div>}
+          <div className="qp-cta-dock">
+            <button onClick={payWithWallet} disabled={busy || !REAL_PAYMENTS_ENABLED} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-verse-blue px-5 font-black text-black disabled:opacity-40"><Wallet size={18} />{REAL_PAYMENTS_ENABLED ? (busy ? "Processing..." : `Pay ${amountHuman} ${tokenSymbol} with Wallet`) : "Wallet payment temporarily disabled"}</button>
+          </div>
 
           <div className="rounded-3xl border border-white/10 bg-[rgba(8,8,14,.72)] p-4">
             <p className="mb-2 text-sm font-bold text-secondary">Already sent? Paste your tx hash:</p>
