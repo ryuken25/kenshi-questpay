@@ -593,10 +593,15 @@ function parseReturning(columns: string): string {
 
 function serializeValue(value: unknown): unknown {
   if (value === undefined) return null;
+  // BigInt (e.g. a viem receipt's blockNumber/gasUsed) can't be bound by node-pg
+  // nor JSON.stringify'd. Convert to string — both for a top-level bigint column
+  // and for bigints nested inside a jsonb object (raw_receipt). Without this,
+  // recording a verified payment throws "Do not know how to serialize a BigInt"
+  // and the order never reaches `paid`.
+  if (typeof value === "bigint") return value.toString();
   if (value !== null && typeof value === "object" && !(value instanceof Date) && !Buffer.isBuffer(value)) {
-    // jsonb columns accept objects; pg will serialize if we pass JSON string for safety on unknown types
-    // Prefer native objects — node-pg handles them for jsonb when type is known; for inserts use JSON.stringify for plain objects/arrays
-    return JSON.stringify(value);
+    // jsonb columns accept objects; serialize with a BigInt-safe replacer.
+    return JSON.stringify(value, (_key, v) => (typeof v === "bigint" ? v.toString() : v));
   }
   return value;
 }

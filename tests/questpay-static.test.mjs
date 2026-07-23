@@ -55,6 +55,16 @@ test('wallet config includes Polygon and staged BNB Chain, no testnets, and no B
   }
 });
 
+test('db adapter serializes BigInt safely (verified payments record without crashing)', () => {
+  // A viem receipt carries BigInt fields (blockNumber/gasUsed). Recording a
+  // verified payment stores it in the raw_receipt jsonb column, so serializeValue
+  // must convert BigInt → string; otherwise "Do not know how to serialize a
+  // BigInt" throws and the order never reaches `paid`.
+  const db = read('src/lib/db.ts');
+  assert.match(db, /typeof value === "bigint"/);
+  assert.match(db, /typeof v === "bigint" \? v\.toString\(\)/);
+});
+
 test('payment page does not use direct window.ethereum transaction path', () => {
   const pay = read('src/components/PayPageClient.tsx');
   assert.doesNotMatch(pay, /window\.ethereum|eth_sendTransaction|wallet_switchEthereumChain/);
