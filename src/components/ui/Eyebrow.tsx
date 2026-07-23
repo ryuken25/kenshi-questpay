@@ -1,12 +1,15 @@
 import Image from "next/image";
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
 
 /**
  * Kenshi QuestPay DS — Eyebrow.
  * Mono UPPERCASE pill with wide tracking, optionally prefixed by the VERSE mark
  * (e.g. "POWERED BY VERSE", "REAL PAYMENT LADDER").
+ *
+ * Accepts a `ref` (React 19 passes it as a plain prop) so the motion layer can
+ * measure the pill for the overflow-only marquee.
  */
-export interface EyebrowProps extends HTMLAttributes<HTMLSpanElement> {
+export interface EyebrowProps extends ComponentPropsWithRef<"span"> {
   /** Show the VERSE glyph before the label. */
   verse?: boolean;
   children?: ReactNode;

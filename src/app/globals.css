@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700;800&display=swap');
+/* Choreography system (spotlight cards, scroll reveals, accordion reflow,
+   connector rail, chip pill). Ported from the Design project handoff. */
+@import "./qp-motion.css";
 
 @tailwind base;
 @tailwind components;
@@ -995,8 +998,11 @@ body {
   color: var(--qp-violet-300);
 }
 
-/* Status filter pills (All / Active / Delivered / Completed / Closed). */
+/* Status filter pills (All / Active / Delivered / Completed / Closed).
+   `position: relative` keeps the label above the absolutely-positioned
+   `.qp-chip-pill` that slides behind the row. */
 .qp-filter {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -1016,13 +1022,15 @@ body {
     background .18s var(--qp-ease-out), box-shadow .18s var(--qp-ease-out);
 }
 .qp-filter:hover { color: var(--qp-text-strong); border-color: var(--qp-border-hover); }
+/* Active state is drawn by the sliding `.qp-chip-pill` behind the row, so the
+   pressed chip itself only carries the text/count treatment. */
 .qp-filter[aria-pressed="true"] {
-  background: rgba(135, 82, 255, 0.20);
-  border-color: rgba(135, 82, 255, 0.50);
+  background: transparent;
+  border-color: transparent;
   color: #fff;
-  box-shadow: 0 0 22px rgba(135, 82, 255, 0.22);
 }
 .qp-filter__count { font-family: var(--qp-font-mono); font-size: 11px; font-weight: 600; }
+.qp-filter[aria-pressed="true"] .qp-filter__count { color: #fff; }
 
 /* Receipt / order card — the core element. */
 .qp-receipt-card {
@@ -1085,12 +1093,11 @@ body {
 .qp-disclosure__chevron { transition: transform .24s var(--qp-ease-out); }
 .qp-disclosure[aria-expanded="true"] .qp-disclosure__chevron { transform: rotate(180deg); }
 
-.qp-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s var(--qp-ease-out); }
-.qp-reveal[data-open="true"] { grid-template-rows: 1fr; }
-.qp-reveal__inner { overflow: hidden; min-height: 0; }
+/* The grid-rows disclosure panel is now the shared `.qp-acc-panel` primitive
+   from qp-motion.css (same 0fr -> 1fr reflow, one duration scale). The old
+   `.qp-reveal` name was reclaimed by the scroll-entrance system. */
 @media (prefers-reduced-motion: reduce) {
   .qp-disclosure__chevron { transition: none; }
-  .qp-reveal { transition: none; }
 }
 
 /* Detail tile (Network / Locked amount / Transaction). */

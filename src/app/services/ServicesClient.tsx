@@ -1,8 +1,14 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, SlidersHorizontal, PackageX, Sparkles, Clock, Tag } from "lucide-react";
+import {
+  SpotlightCard,
+  applyFilterTransition,
+  useRevealFallback,
+  type SpotlightHue,
+} from "@/components/motion/SpotlightCard";
 import { SERVICES, type ServicePackage } from "@/lib/services";
 import { SITE } from "@/lib/site";
 import { ENABLED_TOKEN_SYMBOLS } from "@/lib/token-metadata";
@@ -28,6 +34,12 @@ function deriveCategory(svc: ServicePackage): ServiceCategory {
 }
 
 const ALL_CATEGORIES: ServiceCategory[] = ["Review", "Build", "Integration"];
+
+/** Category → spotlight accent hue (Review violet-500 · Build VERSE blue ·
+ *  Integration violet-300). Same mapping the design system ships. */
+function hueOf(category: ServiceCategory): SpotlightHue {
+  return category.toLowerCase() as SpotlightHue;
+}
 
 // ---------------------------------------------------------------------------
 // Turnaround sorting helper — parse "12-24 hours", "3-5 days", etc. into hours.
@@ -70,6 +82,9 @@ export default function ServicesClient() {
   const [activeCategory, setActiveCategory] = useState<ServiceCategory | "all">("all");
   const [sortKey, setSortKey] = useState<SortKey>("recommended");
   const [loading, setLoading] = useState(true);
+
+  const gridRef = useRef<HTMLDivElement>(null);
+  useRevealFallback(gridRef);
 
   // Brief mount-time loading skeleton — gives the page a polished feel without
   // faking network latency. Resolves on next paint.
@@ -166,7 +181,10 @@ export default function ServicesClient() {
             <select
               id="sort-select"
               value={sortKey}
-              onChange={(e) => setSortKey(e.target.value as SortKey)}
+              onChange={(e) => {
+                const next = e.target.value as SortKey;
+                applyFilterTransition(() => setSortKey(next));
+              }}
               className="min-h-12 flex-1 rounded-xl bg-transparent px-1 pr-3 text-base font-medium text-secondary focus:outline-none sm:text-sm"
             >
               {SORT_OPTIONS.map((opt) => (
@@ -178,27 +196,11 @@ export default function ServicesClient() {
           </div>
         </div>
 
-        {/* Category chips */}
-        <div className="mb-8 flex flex-wrap items-center gap-2">
-          <Chip
-            active={activeCategory === "all"}
-            onClick={() => setActiveCategory("all")}
-            label="All"
-            count={SERVICES.length}
-          />
-          {ALL_CATEGORIES.map((cat) => {
-            const count = SERVICES.filter((s) => deriveCategory(s) === cat).length;
-            return (
-              <Chip
-                key={cat}
-                active={activeCategory === cat}
-                onClick={() => setActiveCategory(cat)}
-                label={cat}
-                count={count}
-              />
-            );
-          })}
-        </div>
+        {/* Category chips — the active state is a single pill that slides */}
+        <ChipRow
+          active={activeCategory}
+          onPick={(next) => applyFilterTransition(() => setActiveCategory(next))}
+        />
 
         <p className="sr-only" aria-live="polite">{filtered.length} services shown</p>
 
@@ -208,7 +210,10 @@ export default function ServicesClient() {
         ) : filtered.length === 0 ? (
           <EmptyState onReset={() => { setQuery(""); setActiveCategory("all"); }} />
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            ref={gridRef}
+            className="qp-grid-stagger grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {filtered.map((svc) => (
               <ServiceCard key={svc.slug} svc={svc} />
             ))}
@@ -220,14 +225,85 @@ export default function ServicesClient() {
 }
 
 // ---------------------------------------------------------------------------
-// Chip — category filter button
+// ChipRow — category filters with one absolutely-positioned pill that slides
+// between the active chip's measured box (offsetLeft/Top/Width/Height).
 // ---------------------------------------------------------------------------
+type CategoryFilter = ServiceCategory | "all";
+
+type PillBox = { x: number; y: number; w: number; h: number };
+
+function ChipRow({
+  active,
+  onPick,
+}: {
+  active: CategoryFilter;
+  onPick: (next: CategoryFilter) => void;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState<PillBox | null>(null);
+
+  const measure = useCallback(() => {
+    const wrap = rowRef.current;
+    if (!wrap) return;
+    const btn = wrap.querySelector<HTMLElement>(`[data-chip="${active}"]`);
+    if (!btn) return;
+    setPill((prev) => {
+      const next = { x: btn.offsetLeft, y: btn.offsetTop, w: btn.offsetWidth, h: btn.offsetHeight };
+      if (prev && prev.x === next.x && prev.y === next.y && prev.w === next.w && prev.h === next.h) {
+        return prev;
+      }
+      return next;
+    });
+  }, [active]);
+
+  // The pill only mounts once it has a measured box, so it never slides in
+  // from x=0 on first paint. Re-measure on resize (the row wraps when narrow).
+  useEffect(() => {
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [measure]);
+
+  const chips: { key: CategoryFilter; label: string; count: number }[] = [
+    { key: "all", label: "All", count: SERVICES.length },
+    ...ALL_CATEGORIES.map((cat) => ({
+      key: cat as CategoryFilter,
+      label: cat,
+      count: SERVICES.filter((s) => deriveCategory(s) === cat).length,
+    })),
+  ];
+
+  return (
+    <div ref={rowRef} className="relative mb-8 flex flex-wrap items-center gap-2">
+      {pill && (
+        <span
+          aria-hidden="true"
+          className="qp-chip-pill"
+          style={{ left: 0, top: pill.y, width: pill.w, height: pill.h, transform: `translateX(${pill.x}px)` }}
+        />
+      )}
+      {chips.map(({ key, label, count }) => (
+        <Chip
+          key={key}
+          id={key}
+          active={active === key}
+          onClick={() => onPick(key)}
+          label={label}
+          count={count}
+        />
+      ))}
+    </div>
+  );
+}
+
 function Chip({
+  id,
   active,
   onClick,
   label,
   count,
 }: {
+  id: CategoryFilter;
   active: boolean;
   onClick: () => void;
   label: string;
@@ -236,17 +312,16 @@ function Chip({
   return (
     <button
       type="button"
+      data-chip={id}
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
-        active
-          ? "border-[var(--qp-violet-500)]/50 bg-[var(--qp-violet-500)]/20 text-white"
-          : "border-white/10 bg-[var(--qp-surface)] text-subtle hover:border-white/20 hover:text-secondary"
+      className={`qp-press relative inline-flex min-h-11 items-center gap-1.5 rounded-full border bg-transparent px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors duration-[180ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        active ? "border-transparent text-white" : "border-white/10 text-subtle hover:text-secondary"
       }`}
     >
       {label}
       <span
-        className={`rounded-full px-1.5 text-[10px] font-mono ${
+        className={`rounded-full px-1.5 font-mono text-[10px] ${
           active ? "bg-white/20 text-white" : "bg-white/5 text-subtle"
         }`}
       >
@@ -262,14 +337,19 @@ function Chip({
 function ServiceCard({ svc }: { svc: ServicePackage }) {
   const category = deriveCategory(svc);
   return (
-    <article data-reveal className="group flex flex-col rounded-[1.5rem] p-5 glass-panel transition-all duration-300 hover:border-[var(--qp-violet-500)]/30 hover:bg-[var(--qp-surface-hover)] sm:p-6">
+    <SpotlightCard
+      data-reveal
+      hue={hueOf(category)}
+      style={{ viewTransitionName: `svc-${svc.slug}` }}
+      className="qp-reveal group flex flex-col rounded-[1.5rem] p-5 glass-panel sm:p-6"
+    >
       {/* Top row: category badge + price */}
       <div className="flex items-start justify-between gap-3">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[var(--qp-surface)] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-secondary">
           <Tag size={11} />
           {category}
         </span>
-        <span className="rounded-full bg-verse-blue/10 px-3 py-1 font-mono text-xs font-bold text-[var(--qp-violet-300)]">
+        <span className="qp-price-pulse inline-block rounded-full bg-verse-blue/10 px-3 py-1 font-mono text-xs font-bold text-[var(--qp-violet-300)]">
           ${svc.usd} USD
         </span>
       </div>
@@ -309,11 +389,14 @@ function ServiceCard({ svc }: { svc: ServicePackage }) {
       {/* CTA */}
       <Link
         href={`/services/${svc.slug}`}
-        className="mt-5 inline-flex min-h-11 items-center justify-center rounded-2xl bg-verse-purple/20 px-4 py-3 font-bold text-[#C1B6FF] border border-verse-purple/30 transition-all group-hover:bg-verse-purple/30"
+        className="qp-arrow-row qp-press mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-verse-purple/30 bg-verse-purple/20 px-4 py-3 font-bold text-[#C1B6FF] transition-all group-hover:bg-verse-purple/30"
       >
         View package
+        <span aria-hidden="true" className="qp-arrow">
+          →
+        </span>
       </Link>
-    </article>
+    </SpotlightCard>
   );
 }
 

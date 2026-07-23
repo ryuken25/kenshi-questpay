@@ -1,8 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ExternalLink, ScrollText } from "lucide-react";
+import {
+  SpotlightCard,
+  applyFilterTransition,
+  usePauseOffscreen,
+  useRevealFallback,
+} from "@/components/motion/SpotlightCard";
 import Badge, { type BadgeTone } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import HashChip from "@/components/ui/HashChip";
@@ -126,6 +132,33 @@ export default function ReceiptWorkspace({
   rows: WorkspaceRow[];
 }) {
   const [filter, setFilter] = useState<FilterKey>("all");
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const chipsRef = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  useRevealFallback(listRef);
+  usePauseOffscreen(rootRef);
+
+  // Slide the active-filter pill to the measured chip box.
+  const measurePill = useCallback(() => {
+    const wrap = chipsRef.current;
+    if (!wrap) return;
+    const btn = wrap.querySelector<HTMLElement>(`[data-chip="${filter}"]`);
+    if (!btn) return;
+    setPill((prev) => {
+      const next = { x: btn.offsetLeft, y: btn.offsetTop, w: btn.offsetWidth, h: btn.offsetHeight };
+      if (prev && prev.x === next.x && prev.y === next.y && prev.w === next.w && prev.h === next.h) {
+        return prev;
+      }
+      return next;
+    });
+  }, [filter]);
+
+  useEffect(() => {
+    measurePill();
+    window.addEventListener("resize", measurePill);
+    return () => window.removeEventListener("resize", measurePill);
+  }, [measurePill]);
 
   const counts = useMemo(() => {
     const c: Record<FilterKey, number> = { all: rows.length, active: 0, delivered: 0, completed: 0, closed: 0 };
@@ -142,11 +175,14 @@ export default function ReceiptWorkspace({
   const noun = variant === "receipts" ? "receipts" : "orders";
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
+    <div ref={rootRef} className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
       <header>
         <p className="qp-work-eyebrow">Buyer workspace · Polygon Mainnet</p>
         <h1 className="mt-3 font-sora text-[clamp(2.2rem,6vw,3.15rem)] font-extrabold leading-[0.98] tracking-[-0.055em] text-[var(--qp-text-strong)]">
-          My <span className="qp-shimmer">{heading}</span>
+          My{" "}
+          <span className="qp-shimmer" data-loop>
+            {heading}
+          </span>
         </h1>
         <p className="mt-3 max-w-[62ch] text-[0.95rem] leading-[1.75] text-[var(--qp-text-secondary)]">
           {variant === "receipts" ? (
@@ -168,14 +204,27 @@ export default function ReceiptWorkspace({
       </header>
 
       {rows.length > 0 && (
-        <div className="mt-7 flex flex-wrap gap-2" role="group" aria-label="Filter orders by status">
+        <div
+          ref={chipsRef}
+          className="relative mt-7 flex flex-wrap gap-2"
+          role="group"
+          aria-label="Filter orders by status"
+        >
+          {pill && (
+            <span
+              aria-hidden="true"
+              className="qp-chip-pill"
+              style={{ left: 0, top: pill.y, width: pill.w, height: pill.h, transform: `translateX(${pill.x}px)` }}
+            />
+          )}
           {FILTERS.map((f) => (
             <button
               key={f.key}
               type="button"
-              className="qp-filter"
+              data-chip={f.key}
+              className="qp-filter qp-press"
               aria-pressed={filter === f.key}
-              onClick={() => setFilter(f.key)}
+              onClick={() => applyFilterTransition(() => setFilter(f.key))}
             >
               {f.label}
               <span className="qp-filter__count">{counts[f.key]}</span>
@@ -184,7 +233,7 @@ export default function ReceiptWorkspace({
         </div>
       )}
 
-      <div className="mt-6 space-y-3.5">
+      <div ref={listRef} className="mt-6 space-y-3.5">
         {visible.map((row) => (
           <OrderCard key={row.id} row={row} variant={variant} />
         ))}
@@ -226,7 +275,12 @@ function OrderCard({ row, variant }: { row: WorkspaceRow; variant: "receipts" | 
   const amountLine = row.amountHuman ? `${row.amountHuman} ${row.tokenSymbol ?? ""}`.trim() : "";
 
   return (
-    <article className="qp-receipt-card" {...(variant === "orders" ? { "data-testid": "order-row" } : {})}>
+    <SpotlightCard
+      className="qp-receipt-card qp-reveal"
+      data-reveal
+      style={{ viewTransitionName: `rcpt-${row.publicOrderId.toLowerCase().replace(/[^a-z0-9]+/g, "-")}` }}
+      {...(variant === "orders" ? { "data-testid": "order-row" } : {})}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -238,7 +292,7 @@ function OrderCard({ row, variant }: { row: WorkspaceRow; variant: "receipts" | 
           <p className="mt-1.5 font-mono text-[13px] font-bold text-[var(--qp-violet-300)]">{row.publicOrderId}</p>
           {amountLine && (
             <p className="mt-1 text-sm">
-              <span className="qp-amount">{amountLine}</span>
+              <span className="qp-amount qp-price-pulse inline-block">{amountLine}</span>
               {usdText && <span className="ml-2 text-[var(--qp-text-subtle)]">{usdText}</span>}
             </p>
           )}
@@ -257,18 +311,18 @@ function OrderCard({ row, variant }: { row: WorkspaceRow; variant: "receipts" | 
         {row.txHash && <InlineVerify txHash={row.txHash} showOrderLink={false} />}
         <button
           type="button"
-          className="qp-disclosure ml-auto"
+          className="qp-disclosure qp-press ml-auto"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
           Receipt details
-          <ChevronDown size={15} className="qp-disclosure__chevron" />
+          <ChevronDown size={15} className="qp-chevron" />
         </button>
       </div>
 
-      <div className="qp-reveal mt-3" data-open={open}>
-        <div className="qp-reveal__inner">
-          <div className="grid gap-2.5 pt-1 sm:grid-cols-3">
+      <div className="qp-acc-panel mt-3" data-open={open}>
+        <div className="qp-acc-clip">
+          <div className="qp-acc-body grid gap-2.5 pt-1 sm:grid-cols-3">
             <div className="qp-tile">
               <p className="qp-tile__label">Network</p>
               <p className="qp-tile__value">Polygon Mainnet</p>
@@ -309,7 +363,7 @@ function OrderCard({ row, variant }: { row: WorkspaceRow; variant: "receipts" | 
           </div>
         </div>
       </div>
-    </article>
+    </SpotlightCard>
   );
 }
 

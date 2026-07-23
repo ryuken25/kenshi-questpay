@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 390" fill="none">
+<defs><radialGradient id="gl" cx="0" cy="0" r="1" gradientTransform="translate(430 90) rotate(145) scale(360 260)"><stop stop-color="#8B4DFF" stop-opacity=".22"></stop><stop offset="1" stop-color="#020207" stop-opacity="0"></stop></radialGradient></defs>
+<rect width="660" height="390" rx="32" fill="#05050B"></rect><rect width="660" height="390" rx="32" fill="url(#gl)"></rect>
+<text x="48" y="62" fill="#B886FF" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">04</text>
+<circle cx="248" cy="164" r="30" fill="#8B4DFF" opacity=".25"></circle><path d="M240 164h18M252 156l8 8-8 8" stroke="#B886FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M286 164h44" stroke="#8B4DFF" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity=".6"></path>
+<path d="M396 108l58 22v38c0 36-25 57-58 70-33-13-58-34-58-70v-38z" fill="#0D0A19" stroke="#8B4DFF" stroke-opacity=".5" stroke-width="2"></path><path d="M374 168l16 16 30-36" stroke="#D8C3FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"></path>
+<rect x="220" y="236" width="220" height="22" rx="11" fill="#0D0A19"></rect><rect x="230" y="243" width="76" height="8" rx="4" fill="#8B4DFF" opacity=".45"></rect><rect x="316" y="243" width="40" height="8" rx="4" fill="#fff" opacity=".12"></rect><rect x="366" y="243" width="62" height="8" rx="4" fill="#fff" opacity=".08"></rect>
+<text x="48" y="318" fill="#F7F5FB" font-family="Arial, sans-serif" font-size="27" font-weight="700">Pay and verify</text>
+<text x="48" y="350" fill="#9D96A8" font-family="Arial, sans-serif" font-size="15">Chain, receiver, exact amount, and uniqueness checked.</text>
+</svg>

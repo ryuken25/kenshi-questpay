@@ -1,0 +1,261 @@
+/* ==========================================================================
+   qp-motion.css — Kenshi QuestPay choreography system (visual layer only)
+   One easing family · one duration scale · one stagger rhythm.
+   Ported from the Design project handoff (handoff/qp-motion.css).
+   Imported once from globals.css. Pairs with components/motion/SpotlightCard.
+
+   Two deliberate deviations from the handoff copy, both documented inline:
+   1. `.qp-shimmer` is NOT redefined here — globals.css already owns it.
+   2. `.qp-reveal` scroll entrances are gated to >=1024px so they never fight
+      the existing mobile GSAP tier (MobileReveal.tsx drives [data-reveal]
+      below 1024px). Hover choreography is already gated by pointer: fine.
+   ========================================================================== */
+
+:root {
+  /* Easing: the existing --qp-ease-out token value. No new curves. */
+  --qp-dur-hover: 180ms;      /* fast: hover / press feedback   */
+  --qp-dur-expand: 360ms;     /* medium: accordion, chip slider, shuffle */
+  --qp-dur-entrance: 600ms;   /* slow: entrances, line draws    */
+  --qp-stagger: 70ms;         /* sibling rhythm, cap 5 steps    */
+  --qp-lift: -3px;
+  --qp-travel: 24px;
+  --qp-spot-radius: 320px;
+}
+
+@property --qp-border-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+
+/* --- Category hue mapping (existing tokens only) -------------------------
+   Review = violet-500 · Build = VERSE blue · Integration = violet-300.
+   Set by SpotlightCard hue prop or a qp-cat-* class from deriveCategory().
+   NOTE: the default MUST be declared before the qp-cat-* rules — they carry
+   the same specificity, so a trailing default would win and flatten every card
+   to violet. */
+.qp-spot-card       { --qp-hue: #8752ff; } /* default */
+.qp-cat-review      { --qp-hue: #8752ff; }
+.qp-cat-build       { --qp-hue: #69bde8; }
+.qp-cat-integration { --qp-hue: #bea7ff; }
+
+/* --- Spotlight card ------------------------------------------------------ */
+.qp-spot-card {
+  position: relative;
+  overflow: hidden;
+  --qp-x: 50%;
+  --qp-y: 0px;
+  transition:
+    transform var(--qp-dur-hover) var(--qp-ease-out),
+    border-color var(--qp-dur-hover) var(--qp-ease-out),
+    box-shadow var(--qp-dur-hover) var(--qp-ease-out);
+}
+.qp-spot-card--soft { --qp-spot-radius: 200px; } /* how-it-works: 60% intensity */
+
+@media (hover: hover) and (pointer: fine) {
+  /* spotlight overlay */
+  .qp-spot-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(var(--qp-spot-radius) circle at var(--qp-x) var(--qp-y),
+      color-mix(in srgb, var(--qp-hue) 14%, transparent), transparent 70%);
+    opacity: 0;
+    transition: opacity var(--qp-dur-hover) var(--qp-ease-out);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .qp-spot-card--soft::before {
+    background: radial-gradient(var(--qp-spot-radius) circle at var(--qp-x) var(--qp-y),
+      color-mix(in srgb, var(--qp-hue) 9%, transparent), transparent 70%);
+  }
+  /* rotating conic hairline */
+  .qp-spot-card::after {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--qp-border-angle),
+      transparent 8%, color-mix(in srgb, var(--qp-hue) 40%, transparent) 22%, transparent 42%,
+      transparent 55%, color-mix(in srgb, var(--qp-hue) 27%, transparent) 72%, transparent 92%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--qp-dur-expand) var(--qp-ease-out);
+    animation: qp-border-spin 8s linear infinite paused;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .qp-spot-card:hover { transform: translateY(var(--qp-lift)); border-color: color-mix(in srgb, var(--qp-hue) 35%, transparent); box-shadow: 0 20px 60px rgb(0 0 0 / 0.38); }
+  .qp-spot-card:hover::before { opacity: 1; }
+  .qp-spot-card:hover::after { opacity: 1; animation-play-state: running; }
+  /* one-shot price pulse, synced to card hover — never loops */
+  .qp-spot-card:hover .qp-price-pulse { animation: qp-pulse 0.5s var(--qp-ease-out) 1; }
+}
+
+/* Card content sits above the spotlight/hairline layers. */
+.qp-spot-card > * { position: relative; z-index: 2; }
+
+/* Touch: no pointer tracking. Static diagonal sheen + accent border + press. */
+@media (hover: none), (pointer: coarse) {
+  .qp-spot-card { border-color: color-mix(in srgb, var(--qp-hue) 24%, transparent); }
+  .qp-spot-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--qp-hue) 8%, transparent), transparent 46%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .qp-spot-card:active .qp-price-pulse { animation: qp-pulse 0.5s var(--qp-ease-out) 1; }
+}
+
+/* Press state — every interactive card/chip/CTA */
+.qp-press:active { transform: scale(0.98); transition-duration: 120ms; }
+
+@keyframes qp-border-spin { to { --qp-border-angle: 360deg; } }
+@keyframes qp-pulse { 0% { transform: scale(1); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
+
+/* --- Grid stagger-reveal on scroll ---------------------------------------
+   Desktop only (>=1024px): below that the GSAP [data-reveal] tier owns
+   entrances and a second engine would double-animate the same nodes.
+   Primary: CSS scroll-driven animation. Fallback: useRevealFallback() adds
+   .is-in via IntersectionObserver with per-index --qp-delay. */
+/* The entrance travels on the independent `translate` property, NOT on
+   `transform`. A scroll-driven animation wins over any regular declaration, so
+   animating `transform` here would permanently cancel the card's hover lift —
+   the two compose cleanly as separate properties instead. */
+@keyframes qp-reveal { from { opacity: 0; translate: 0 var(--qp-travel); } to { opacity: 1; translate: none; } }
+@media (min-width: 1024px) {
+  @supports (animation-timeline: view()) {
+    .qp-reveal { animation: qp-reveal linear both; animation-timeline: view(); animation-range: entry 5% entry 38%; }
+    /* column stagger inside a 3-col grid */
+    .qp-grid-stagger > :nth-child(3n + 2) { animation-range: entry 10% entry 43%; }
+    .qp-grid-stagger > :nth-child(3n)     { animation-range: entry 15% entry 48%; }
+  }
+  @supports not (animation-timeline: view()) {
+    .qp-reveal { opacity: 0; translate: 0 var(--qp-travel); }
+    .qp-reveal.is-in {
+      opacity: 1; translate: none;
+      transition: opacity var(--qp-dur-entrance) var(--qp-ease-out) var(--qp-delay, 0ms),
+                  translate var(--qp-dur-entrance) var(--qp-ease-out) var(--qp-delay, 0ms);
+    }
+  }
+}
+
+/* --- Headline ------------------------------------------------------------ */
+/* Wrap each line: <span class="qp-line"><span class="qp-line-inner">…</span></span> */
+.qp-line { display: block; overflow: hidden; padding-bottom: 0.06em; margin-bottom: -0.06em; }
+.qp-line-inner { display: block; animation: qp-rise 0.7s var(--qp-ease-out) both; }
+.qp-line:nth-child(2) .qp-line-inner { animation-delay: var(--qp-stagger); }
+@keyframes qp-rise { from { opacity: 0; transform: translateY(105%); } to { opacity: 1; transform: none; } }
+
+/* Accent-word shimmer lives in globals.css (.qp-shimmer, 7s) — not forked here. */
+
+/* --- Badge pill: breathe at rest, marquee only on real overflow ----------- */
+.qp-breathe { animation: qp-breathe 4s ease-in-out infinite; }
+@keyframes qp-breathe {
+  0%, 100% { border-color: rgba(174, 139, 255, 0.16); box-shadow: 0 0 0 rgba(135, 82, 255, 0); }
+  50%      { border-color: rgba(174, 139, 255, 0.42); box-shadow: 0 0 16px rgba(135, 82, 255, 0.16); }
+}
+/* Marquee track holds two copies of the content, 40px apart — but only once
+   the pill genuinely overflows (useMarqueeOnOverflow toggles .qp-marquee-on).
+   Until then the duplicate is display:none so the measured scrollWidth is the
+   single-copy width the hook expects. */
+.qp-marquee-dupe { display: none; }
+.qp-marquee-on .qp-marquee-dupe { display: inline; }
+.qp-marquee-on .qp-marquee { display: inline-flex; white-space: nowrap; animation: qp-marquee 18s linear infinite; }
+@keyframes qp-marquee { to { transform: translateX(-50%); } }
+
+/* --- Icon line-draw (feature strip, payment-protected check) --------------
+   Geometry gets pathLength="1" + data-draw (injected by useDrawOnView for
+   icon sets that render their own paths, e.g. lucide-react). */
+.qp-draw [data-draw] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: qp-draw-in var(--qp-dur-entrance) var(--qp-ease-out) var(--qp-draw-delay, 0ms) forwards paused;
+}
+.qp-draw.is-in [data-draw] { animation-play-state: running; }
+@keyframes qp-draw-in { to { stroke-dashoffset: 0; } }
+/* hover micro-bounce — icon only, one shot */
+@media (hover: hover) {
+  .qp-icon-bounce:hover { animation: qp-bounce 0.45s var(--qp-ease-out) 1; }
+}
+@keyframes qp-bounce { 0% { transform: translateY(0); } 40% { transform: translateY(-4px); } 70% { transform: translateY(1px); } 100% { transform: translateY(0); } }
+
+/* --- Illustration tile idle float (pause off-screen via data-loop IO) ----- */
+.qp-float { animation: qp-float 4s ease-in-out infinite alternate; }
+@keyframes qp-float { from { transform: translateY(1.5px); } to { transform: translateY(-1.5px); } }
+/* card hover deepens the artwork tile and scales its glyph */
+.qp-art-tile { transition: box-shadow var(--qp-dur-hover) var(--qp-ease-out), border-color var(--qp-dur-hover) var(--qp-ease-out); }
+.qp-art-glyph { transition: transform var(--qp-dur-hover) var(--qp-ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .qp-spot-card:hover .qp-art-tile { box-shadow: 0 0 34px rgba(139, 77, 255, 0.34); border-color: rgba(190, 167, 255, 0.34); }
+  .qp-spot-card:hover .qp-art-glyph { transform: scale(1.12); }
+}
+
+/* --- Arrow nudge / CTA sweep ---------------------------------------------- */
+.qp-arrow { display: inline-block; transition: transform var(--qp-dur-hover) var(--qp-ease-out); }
+@media (hover: hover) { .qp-arrow-row:hover .qp-arrow, .qp-spot-card:hover .qp-arrow { transform: translateX(4px); } }
+.qp-sweep { position: relative; overflow: hidden; }
+.qp-sweep > .qp-sweep-band {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-130%) skewX(-18deg);
+  pointer-events: none;
+}
+@media (hover: hover) { .qp-sweep:hover > .qp-sweep-band { animation: qp-sweep var(--qp-dur-entrance) var(--qp-ease-out) 1 forwards; } }
+@keyframes qp-sweep { from { transform: translateX(-130%) skewX(-18deg); } to { transform: translateX(230%) skewX(-18deg); } }
+
+/* --- Accordion: reflow, never overlay -------------------------------------
+   Panels live in flow; grid-template-rows 0fr -> 1fr pushes siblings. */
+.qp-acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--qp-dur-expand) var(--qp-ease-out); }
+.qp-acc-panel[data-open="true"] { grid-template-rows: 1fr; }
+.qp-acc-panel > .qp-acc-clip { min-height: 0; overflow: hidden; }
+.qp-acc-body { opacity: 0; transition: opacity 0.3s var(--qp-ease-out); }
+.qp-acc-panel[data-open="true"] .qp-acc-body { opacity: 1; transition-delay: 80ms; }
+.qp-chevron { transition: transform var(--qp-dur-expand) var(--qp-ease-out); }
+button[aria-expanded="true"] .qp-chevron { transform: rotate(180deg); }
+
+/* --- Connector spine (how-it-works) ---------------------------------------
+   .qp-rail-track = hairline; .qp-rail-fill = gradient, scaleY by progress.
+   Primary: scroll-driven; fallback + active badge: useConnectorRail(). */
+.qp-rail-track { position: absolute; top: 14px; bottom: 14px; width: 2px; background: rgba(255, 255, 255, 0.07); }
+.qp-rail-fill {
+  position: absolute; top: 14px; bottom: 14px; width: 2px;
+  background: linear-gradient(180deg, #69bde8, #8752ff 40%, #a27cff);
+  box-shadow: 0 0 12px rgba(135, 82, 255, 0.35);
+  transform: scaleY(0); transform-origin: top;
+}
+@supports (animation-timeline: view()) {
+  @media (hover: hover) and (pointer: fine) {
+    .qp-rail-fill { animation: qp-rail-draw linear both; animation-timeline: view(); animation-range: cover 10% cover 65%; }
+  }
+}
+@keyframes qp-rail-draw { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+/* Touch: static gradient rail */
+@media (hover: none), (pointer: coarse) { .qp-rail-fill { transform: scaleY(1); opacity: 0.55; animation: none; } }
+
+/* --- Filter chips: sliding active pill (measured in JS) ------------------- */
+.qp-chip-pill {
+  position: absolute; border-radius: 999px;
+  background: rgba(135, 82, 255, 0.2);
+  border: 1px solid rgba(135, 82, 255, 0.5);
+  box-shadow: 0 0 18px rgba(135, 82, 255, 0.14);
+  transition: transform var(--qp-dur-expand) var(--qp-ease-out), width var(--qp-dur-expand) var(--qp-ease-out), top var(--qp-dur-expand) var(--qp-ease-out);
+  pointer-events: none;
+}
+
+/* --- View Transitions shuffle (re-sort / filter) -------------------------- */
+::view-transition-group(*) { animation-duration: var(--qp-dur-expand); animation-timing-function: var(--qp-ease-out); }
+
+/* --- Reduced motion: full respect ----------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .qp-line-inner, .qp-rail-fill { animation: none; opacity: 1; transform: none; }
+  .qp-reveal { animation: none; opacity: 1; translate: none; transform: none; }
+  .qp-breathe, .qp-float { animation: none; }
+  .qp-marquee-on .qp-marquee { animation: none; transform: none; }
+  .qp-draw [data-draw] { animation: none; stroke-dashoffset: 0; }
+  .qp-spot-card, .qp-press, .qp-chevron, .qp-acc-panel, .qp-acc-body, .qp-chip-pill, .qp-arrow,
+  .qp-art-tile, .qp-art-glyph { transition: none; }
+  .qp-spot-card:hover { transform: none; }
+  .qp-press:active { transform: none; }
+  .qp-spot-card::after { animation: none; opacity: 0; }
+  .qp-spot-card:hover .qp-price-pulse, .qp-icon-bounce:hover, .qp-sweep:hover > .qp-sweep-band { animation: none; }
+}
