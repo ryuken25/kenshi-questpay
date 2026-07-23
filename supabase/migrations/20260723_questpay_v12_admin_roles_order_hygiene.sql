@@ -21,9 +21,14 @@ DECLARE
   creator_wallet  text := '0xea8ab08eabbead7e3d28cb067ec7f638d40b39cf';
 BEGIN
   -- Dedicated creator account — buyer + creator ONLY, never super_admin.
-  INSERT INTO accounts (id, display_name, status)
-  VALUES (creator_account, 'QuestPay Creator', 'active')
+  -- (accounts has no display_name column — that lives on account_profiles.)
+  INSERT INTO accounts (id, status)
+  VALUES (creator_account, 'active')
   ON CONFLICT (id) DO NOTHING;
+
+  INSERT INTO account_profiles (account_id, display_name)
+  VALUES (creator_account, 'QuestPay Creator')
+  ON CONFLICT (account_id) DO NOTHING;
 
   INSERT INTO account_roles (account_id, role, grant_reason)
   VALUES
