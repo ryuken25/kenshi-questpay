@@ -52,14 +52,27 @@ test('loading.tsx skeletons exist for the data-heavy routes (no hard loads)', ()
   }
 });
 
-test('vercel.json pins the function region to Neon (sin1 = ap-southeast-1)', () => {
+// REGRESSION GUARDS — deploy incident 2026-07-23.
+// Pinning `regions` in vercel.json AND setting outputFileTracingRoot/Excludes in
+// next.config.js together crashed EVERY serverless function at boot (all dynamic
+// routes 500'd with the Pages-Router _error page while CDN-static pages stayed up).
+// Root cause: this repo carries two lockfiles (npm + pnpm); the tracing overrides
+// mis-traced the function bundle so runtime deps weren't included. Both were reverted
+// to restore prod. Do NOT reintroduce either without deploying to a PREVIEW url and
+// curling a dynamic route first. See memory: vercel-deploy-tracing-trap.
+test('vercel.json does NOT pin a function region (region pin crashed all functions)', () => {
   const vercel = JSON.parse(read('vercel.json'));
-  assert.ok(Array.isArray(vercel.regions), 'vercel.json must declare regions[]');
-  assert.ok(vercel.regions.includes('sin1'), 'regions must include sin1');
+  assert.ok(
+    vercel.regions === undefined,
+    'vercel.json must NOT declare regions[] — the sin1 pin was part of the 2026-07-23 all-functions-500 incident',
+  );
 });
 
-test('next.config keeps the Hardhat toolchain out of function bundles', () => {
+test('next.config does NOT set outputFileTracing overrides (they broke function bundling)', () => {
   const cfg = read('next.config.js');
-  assert.match(cfg, /outputFileTracingExcludes/);
-  assert.match(cfg, /hardhat/);
+  assert.doesNotMatch(
+    cfg,
+    /outputFileTracingRoot|outputFileTracingExcludes/,
+    'next.config must NOT set outputFileTracingRoot/Excludes — they mis-traced bundles on this 2-lockfile repo and crashed prod',
+  );
 });
